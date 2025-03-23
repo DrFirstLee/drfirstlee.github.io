@@ -1,9 +1,7 @@
 ---
+layout: post
 title: "일등박사의 블로그가 개설되었습니다!"
-author:
-  name: 일등박사
-  link: https://github.com/univdev
-date: 2025-03-24 09:00:00 +0900
+date: 2025-03-23 09:00:00 +0900
 categories: [공지]
 tags: [Drfirst, Jekyll]
 ---
