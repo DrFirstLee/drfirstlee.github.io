@@ -1,12 +1,11 @@
 ---
 layout: post
 title: "DrFirsts blog has been launched! - 일등박사의 블로그가 개설되었습니다!"
-author:
-  name: DrFirst
-  link: https://drfirstlee.github.io/
+author: DrFirst
 date: 2025-03-23 09:00:00 +0900
 categories: [Announcement]
 tags: [Drfirst, blog, AI, 일등박사]
+lastmod : 2025-03-23 09:00:00
 sitemap :
   changefreq : daily
   priority : 1.0
@@ -24,7 +23,7 @@ I hope the stories shared here will bring a spark of inspiration to you.
 
 Looking forward to your support and interest! 🚀  
 
-— *Dr. First*
+— *DrFirst*
 
 ---
 
