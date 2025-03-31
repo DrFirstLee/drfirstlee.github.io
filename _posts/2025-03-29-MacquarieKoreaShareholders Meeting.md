@@ -16,6 +16,8 @@ sitemap :
 
 👉 [주주총회 개최 공지문](https://www.mkif.com/assets/mkif/ko-kr/investor-centre/public-filings-and-reports/2025/ir-release-2502-convening-of-agm-kor.pdf)
 
+## 📋 주주총회 현장 분위기!
+
 저도 당당한 주주의 자격으로 직접 참석해봤는데요~  
 행사는 **서울시청 앞 '더플라자 호텔' 그랜드볼룸**에서 진행되었습니다.
 ![그랜드볼룸입구](https://github.com/user-attachments/assets/387db5d8-33d7-43bb-9dcf-dff07d2c841a)
@@ -92,6 +94,8 @@ sitemap :
 # 👋 Hello!
 
 On **March 28, 2025**, **Macquarie Infrastructure Fund (088980)** held its **26th Annual General Meeting (AGM)**!
+
+## 📋 AGM Locations
 
 👉 [Click here to view the official notice](https://www.mkif.com/assets/mkif/ko-kr/investor-centre/public-filings-and-reports/2025/ir-release-2502-convening-of-agm-kor.pdf)
 
