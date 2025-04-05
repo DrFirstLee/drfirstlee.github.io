@@ -1,72 +1,232 @@
 ---
 layout: post
-title: "Understanding Vision Transformers (ViT) - 비전 트랜스포머 이해하기"
+title: "Exploring Major Journals in AI - AI와 관련된 주요 저널 알아보기 (feat. h-index)"
 author: [DrFirst]
-date: 2025-03-24 09:00:00 +0900
+date: 2025-04-05 09:00:00 +0900
 categories: [Computer Vision, Research]
-tags: [ViT, Vision Transformer, AI]
-lastmod : 2025-03-24 09:00:00
+tags: [
+  h-index, 
+  h5-index, 
+  citation-metrics, 
+  research-impact, 
+  academic-ranking, 
+  Google-Scholar, 
+  CVPR, 
+  ICCV, 
+  ECCV, 
+  NeurIPS, 
+  ICML, 
+  ICLR, 
+  AAAI, 
+  AI-conferences, 
+  computer-vision, 
+  artificial-intelligence, 
+  machine-learning, 
+  deep-learning, 
+  academic-career, 
+  researcher-guide, 
+  publication-metrics, 
+  conference-ranking, 
+  AI-research, 
+  top-AI-venues, 
+  연구지표, 
+  인공지능학회, 
+  논문작성, 
+  저널추천, 
+  AI저널비교
+]
+lastmod : 2025-04-05 09:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
-# Hello, everyone! 👋
+# Exploring Major Journals in AI (feat. h-index)
 
-Today, let’s dive into the world of **Vision Transformers (ViT)** — a groundbreaking approach in computer vision  
-that applies the **Transformer architecture**, originally designed for natural language processing, to image understanding.
+Hello there!! 👋
 
-Unlike traditional CNNs that rely on convolutions to extract spatial features,  
-**ViT splits an image into patches**, embeds them, and processes them through a Transformer encoder —  
-treating the image more like a sequence of tokens than a grid of pixels.
+Today, let’s take a look at some of the **major journals and conferences related to Artificial Intelligence (AI)**.
 
-This paradigm shift has opened new doors in computer vision research and has shown competitive or even superior results  
-on large-scale image recognition tasks, especially when trained on massive datasets.
+But before we dive in, let’s first understand how the **research performance of journals and researchers** can be measured **quantitatively**.
 
-I'll be sharing more about ViT’s core ideas, its architecture, and practical implications in future posts —  
-including comparisons with CNNs and hybrid models.
+Shall we visit **Google Scholar**, which lets us explore various journals at a glance?  
+🔗 [Go to Google Scholar](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
 
-Stay tuned for more deep dives into the intersection of **AI** and **vision**. 👁️🤖
+📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
-— *DrFirst*
+As you can see from the image above, Google uses the **h5-index** as a key metric to rank journals.  
+Not only that, it also lets us evaluate **individual researchers’ performance** using similar metrics!
+
+📸 ![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
 
 ---
 
-## 🧪 Sample Code: Using ViT in Python
+## 🔍 Let’s Start with the h-index!
 
-Here’s a simple example of how to use a pre-trained Vision Transformer model from Hugging Face to classify an image:
+The **h-index** was proposed in 2005 by physicist Jorge Hirsch.  
+It allows us to measure a researcher’s **productivity and impact** simultaneously.
 
-```python
-from transformers import ViTFeatureExtractor, ViTForImageClassification
-from PIL import Image
-import requests
-import torch
+### ✅ Definition  
+> “A researcher has an h-index of *h* if *h* of their papers have each been cited at least *h* times.”
 
-# Load image from URL
-url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/cats.png"
-image = Image.open(requests.get(url, stream=True).raw)
+📸 ![h-index](https://github.com/user-attachments/assets/fbaae532-1a1f-4d1a-ad27-e8397d498ab3)
 
-# Load feature extractor and model
-extractor = ViTFeatureExtractor.from_pretrained("google/vit-base-patch16-224")
-model = ViTForImageClassification.from_pretrained("google/vit-base-patch16-224")
+### 🔎 Example  
+- If a researcher has published 10 papers, and 5 of them have been cited at least 5 times → **h-index = 5**  
+- Even if someone has published 100 papers, if only a few are cited frequently, the h-index may be low.
 
-# Preprocess the image
-inputs = extractor(images=image, return_tensors="pt")
+### 🧠 Advantages  
+- Reduces the impact of a single “hit paper”  
+- Reflects **consistent academic influence**
 
-# Run inference
-with torch.no_grad():
-    outputs = model(**inputs)
-    logits = outputs.logits
-    predicted_class_idx = logits.argmax(-1).item()
+### ⚠️ Limitations  
+- **Time-sensitive**: May disadvantage early-career researchers  
+- Does **not account for disciplinary citation patterns**  
+  (e.g., biology vs. philosophy or mathematics)
 
-# Print result
-print("Predicted class:", model.config.id2label[predicted_class_idx])
-```
+---
 
-Make sure to install the required packages:
+## 📊 So, What is the h5-index?
 
-```bash
-pip install transformers torch pillow
-```
+The **h5-index**, used by Google Scholar, is a variation of the h-index that focuses on **recent performance**.
+
+### ✅ Definition  
+> “The h5-index is the h-index for articles published in the last 5 complete calendar years.”
+
+In other words, it’s the same concept, but **limited to the last 5 years** 🤓  
+Very useful in rapidly evolving fields like AI, where **recent research impact matters**.
+
+---
+
+## 🧠 GPT’s Suggested h-index Benchmarks for Researchers
+
+| Level | h-index Range | Description |
+|-------|---------------|-------------|
+| 🐣 Early-Career | 0–10 | Master's graduates, Ph.D. students, or early postdocs |
+| 🌱 Emerging Scholar | 10–20 | A few years post-Ph.D. |
+| 🌿 Mid-Career | 20–40 | Active researchers at Assistant/Associate Professor level |
+| 🌳 Established | 40–60+ | Full Professors, lab directors, or senior leaders |
+| 🧠 Renowned Expert | 60–100+ | Global leaders and theory creators in the field |
+
+> 📌 Note: This is **not a strict rule**, as citation practices vary by field.
+
+---
+
+## 🔁 Let’s Head Back to Google Scholar!
+
+🔗 [Google Scholar Metrics](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
+
+📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
+
+In the global rankings, you’ll find **Nature** at Rank 1 and the well-known **Science** at Rank 4!  
+These journals need no introduction 😄
+
+---
+
+## 🎯 Now Let’s Explore AI & Computer Vision Fields!
+
+🔗 [Top Journals in Engineering & Computer Science](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng)
+
+📸 ![computerscience](https://github.com/user-attachments/assets/c783efbd-3d92-4e7d-b018-9485ebffea86)
+
+### Here are some top conferences I personally refer to:
+
+| Rank | Conference | h5-index |
+|------|------------|----------|
+| 1 | IEEE/CVF Conference on Computer Vision and Pattern Recognition (**CVPR**) | 440 |
+| 2 | Neural Information Processing Systems (**NeurIPS**) | 337 |
+| 4 | International Conference on Learning Representations (**ICLR**) | 304 |
+| 5 | IEEE/CVF International Conference on Computer Vision (**ICCV**) | 291 |
+| 7 | International Conference on Machine Learning (**ICML**) | 268 |
+| 13 | AAAI Conference on Artificial Intelligence (**AAAI**) | 220 |
+| 18 | European Conference on Computer Vision (**ECCV**) | 206 |
+
+---
+
+## 🗓️ Summary of Conference Characteristics
+
+| Rank | Conference | Field | Frequency | Month | Key Highlights |
+|------|------------|-------|-----------|--------|----------------|
+| 1 | CVPR | Computer Vision | Annual | June | Leading in industrial and applied vision research |
+| 2 | NeurIPS | Machine Learning | Annual | Nov–Dec | Covers both ML theory and applications |
+| 4 | ICLR | Deep Learning | Annual | Apr–May | Strong focus on representation learning and new trends |
+| 5 | ICCV | Computer Vision | Biennial (odd years) | October | More theoretical than CVPR |
+| 7 | ICML | Machine Learning | Annual | July | Strong in mathematical foundations |
+| 13 | AAAI | Classical + Deep AI | Annual | Jan–Feb | Blends logic-based AI and modern techniques |
+| 18 | ECCV | Computer Vision | Biennial (even years) | October | Europe’s premier CV research venue |
+
+---
+
+## 💡 Interesting Observations!
+
+Both **ICCV** and **ECCV** are biennial conferences,  
+but despite occurring only once every two years, they still **rank highly** on the h5-index!
+
+📸 ![scholar2](https://github.com/user-attachments/assets/f93b44aa-dcbf-4acd-a234-78716580670e)
+
+Even more impressive:  
+**Four of the top 14 venues worldwide** are AI-related conferences!
+
+- CVPR ranks **above Science** and is **just below Nature** at **#2** globally!
+
+---
+
+## 🎉 In Summary…
+
+This shows how competitive and dynamic the field of **Computer Science**, especially **AI and Computer Vision**, has become.
+
+Major conferences like **CVPR, NeurIPS, ICLR, ICML, AAAI, ICCV, and ECCV**  
+are **among the most prestigious venues in the world**.
+
+Papers published in these venues are **carefully selected** through **rigorous peer review**,  
+representing the **cutting edge of global research** 😊
+
+---
+
+## 📎 Appendix: Detailed Descriptions of Conferences
+
+<details>
+<summary>🧠 Click to Expand</summary>
+
+**1. CVPR**  
+- Full Name: *IEEE/CVF Conference on Computer Vision and Pattern Recognition*  
+- Held: Annually (June–July)  
+- Highlights: The largest CV conference. Topics include Object Detection, Segmentation, Vision Transformers, and 3D Vision.
+
+**2. NeurIPS**  
+- Full Name: *Conference on Neural Information Processing Systems*  
+- Held: Annually (Nov–Dec)  
+- Highlights: Covers theory and practice of ML, LLMs, AI Ethics, Reinforcement Learning. Highly selective and active workshop sessions.
+
+**3. ICLR**  
+- Full Name: *International Conference on Learning Representations*  
+- Held: Annually (Apr–May)  
+- Highlights: OpenReview system. Focuses on representation learning, diffusion models, and reproducibility.
+
+**4. ICCV**  
+- Full Name: *IEEE/CVF International Conference on Computer Vision*  
+- Held: Biennially (Odd Years, October)  
+- Highlights: More theoretical than CVPR. Strong international participation.
+
+**5. ICML**  
+- Full Name: *International Conference on Machine Learning*  
+- Held: Annually (June–July)  
+- Highlights: Emphasizes mathematical and statistical foundations in ML.
+
+**6. AAAI**  
+- Full Name: *AAAI Conference on Artificial Intelligence*  
+- Held: Annually (Jan–Feb)  
+- Highlights: Classical AI topics like reasoning and planning, as well as modern NLP, DL, and RL research.
+
+**7. ECCV**  
+- Full Name: *European Conference on Computer Vision*  
+- Held: Biennially (Even Years, October)  
+- Highlights: Europe's top CV conference. Highly respected globally for innovation in vision technologies.
+
+</details>
+
+---
+
+Thanks for reading! 🚀
 
 ---
 # AI와 관련된 주요 저널 알아보기 (feat. h-index)
@@ -146,7 +306,7 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 
 🔗 [Google Scholar Metrics 바로가기](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
 
-📸 *[이미지: 구글스코랄]*
+📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
 `Rank 1`에는 모두가 아는 **Nature**, `Rank 4`에도 유명한 **Science**가 위치해 있네요!  
 너무 유명한 저널이라 별도 설명은 생략할게요 😄
@@ -157,7 +317,7 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 
 🔗 [AI 분야 저널 랭킹 바로가기](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng)
 
-📸 *[이미지: computerscience]*
+![computerscience](https://github.com/user-attachments/assets/c783efbd-3d92-4e7d-b018-9485ebffea86)
 
 ### 제가 자주 참고하는 주요 학회들을 정리해보면 다음과 같습니다:
 
@@ -192,7 +352,7 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 **ICCV**와 **ECCV**는 격년제임에도 불구하고 상위권에 포진해 있다는 사실!  
 (즉, 다른 학회에 비해 절반만 열리는데도 h5-index가 높음)
 
-📸 *[이미지: scholar2]*
+![scholar2](https://github.com/user-attachments/assets/f93b44aa-dcbf-4acd-a234-78716580670e)
 
 그리고 놀랍게도…  
 **전 세계 학술지 상위 14위 안에 AI 관련 학회가 무려 4개**나 포함되어 있습니다!!
@@ -256,4 +416,4 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 
 ---
 
-감사합니다! 다음 포스트에서는 이들 학회에서 나온 **대표 논문들**을 소개해볼게요 😄
+감사합니다! 
