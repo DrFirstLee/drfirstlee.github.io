@@ -49,14 +49,14 @@ Today, let’s take a look at some of the **major journals and conferences relat
 But before we dive in, let’s first understand how the **research performance of journals and researchers** can be measured **quantitatively**.
 
 Shall we visit **Google Scholar**, which lets us explore various journals at a glance?  
-🔗 [Go to Google Scholar](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
+<a href="https://scholar.google.com/citations?view_op=metrics_intro&hl=en" target="_blank" rel="noopener noreferrer">Go to Google Scholar</a>
 
-📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
+![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
 As you can see from the image above, Google uses the **h5-index** as a key metric to rank journals.  
 Not only that, it also lets us evaluate **individual researchers’ performance** using similar metrics!
 
-📸 ![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
+![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
 
 ---
 
@@ -68,7 +68,7 @@ It allows us to measure a researcher’s **productivity and impact** simultaneou
 ### ✅ Definition  
 > “A researcher has an h-index of *h* if *h* of their papers have each been cited at least *h* times.”
 
-📸 ![h-index](https://github.com/user-attachments/assets/fbaae532-1a1f-4d1a-ad27-e8397d498ab3)
+![h-index](https://github.com/user-attachments/assets/fbaae532-1a1f-4d1a-ad27-e8397d498ab3)
 
 ### 🔎 Example  
 - If a researcher has published 10 papers, and 5 of them have been cited at least 5 times → **h-index = 5**  
@@ -115,7 +115,7 @@ Very useful in rapidly evolving fields like AI, where **recent research impact m
 
 🔗 [Google Scholar Metrics](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
 
-📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
+![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
 In the global rankings, you’ll find **Nature** at Rank 1 and the well-known **Science** at Rank 4!  
 These journals need no introduction 😄
@@ -126,7 +126,7 @@ These journals need no introduction 😄
 
 🔗 [Top Journals in Engineering & Computer Science](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng)
 
-📸 ![computerscience](https://github.com/user-attachments/assets/c783efbd-3d92-4e7d-b018-9485ebffea86)
+![computerscience](https://github.com/user-attachments/assets/c783efbd-3d92-4e7d-b018-9485ebffea86)
 
 ### Here are some top conferences I personally refer to:
 
@@ -161,7 +161,7 @@ These journals need no introduction 😄
 Both **ICCV** and **ECCV** are biennial conferences,  
 but despite occurring only once every two years, they still **rank highly** on the h5-index!
 
-📸 ![scholar2](https://github.com/user-attachments/assets/f93b44aa-dcbf-4acd-a234-78716580670e)
+![scholar2](https://github.com/user-attachments/assets/f93b44aa-dcbf-4acd-a234-78716580670e)
 
 Even more impressive:  
 **Four of the top 14 venues worldwide** are AI-related conferences!
@@ -238,15 +238,15 @@ Thanks for reading! 🚀
 알아보기에 앞서!! 저널들, 그리고 연구자들의 **연구 역량을 정량적으로 판단할 수 있는 지표**에 대해 먼저 알아보겠습니다!
 
 먼저 다양한 저널들을 살펴볼 수 있는 **Google Scholar**를 방문해볼까요?  
-🔗 [Google Scholar 바로가기](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
+<a href="https://scholar.google.com/citations?view_op=metrics_intro&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar 바로가기</a>
 
-📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
+ ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
 
 위 이미지를 보면 알 수 있듯, 구글에서는 **h5-index를 저널의 평가지표**로 삼아 순위를 매기고 있습니다.  
 뿐만 아니라 연구자 개개인의 연구 성과도 정량적으로 판단할 수 있답니다!
 
-📸 ![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
+![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
 
 ---
 
@@ -258,7 +258,7 @@ Thanks for reading! 🚀
 ### ✅ 정의  
 > “한 연구자가 발표한 논문 중에서 **h번 이상 인용된 논문이 h편 이상** 있을 때, h-index는 h이다.”
 
-📸 ![h-index](https://github.com/user-attachments/assets/fbaae532-1a1f-4d1a-ad27-e8397d498ab3)
+![h-index](https://github.com/user-attachments/assets/fbaae532-1a1f-4d1a-ad27-e8397d498ab3)
 
 
 ### 🔎 예시  
@@ -306,7 +306,7 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 
 🔗 [Google Scholar Metrics 바로가기](https://scholar.google.com/citations?view_op=metrics_intro&hl=en)
 
-📸 ![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
+![Google Scholar](https://github.com/user-attachments/assets/e2b1716a-259d-440f-882a-340a06e65207)
 
 `Rank 1`에는 모두가 아는 **Nature**, `Rank 4`에도 유명한 **Science**가 위치해 있네요!  
 너무 유명한 저널이라 별도 설명은 생략할게요 😄
