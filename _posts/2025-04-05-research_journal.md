@@ -57,7 +57,7 @@ As you can see from the image above, Google uses the **h5-index** as a key metri
 Not only that, it also lets us evaluate **individual researchers’ performance** using similar metrics!
 
 ![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
-
+We can find h-index on the page of Einstein
 ---
 
 ## 🔍 Let’s Start with the h-index!
@@ -73,6 +73,7 @@ It allows us to measure a researcher’s **productivity and impact** simultaneou
 ### 🔎 Example  
 - If a researcher has published 10 papers, and 5 of them have been cited at least 5 times → **h-index = 5**  
 - Even if someone has published 100 papers, if only a few are cited frequently, the h-index may be low.
+- In Einstein Case, his 156 papers are cited more than 156 times!!! 
 
 ### 🧠 Advantages  
 - Reduces the impact of a single “hit paper”  
@@ -184,45 +185,43 @@ representing the **cutting edge of global research** 😊
 
 ## 📎 Appendix: Detailed Descriptions of Conferences
 
-<details>
-<summary>🧠 Click to Expand</summary>
+## 📎 Appendix: Detailed Conference Descriptions
 
-**1. CVPR**  
-- Full Name: *IEEE/CVF Conference on Computer Vision and Pattern Recognition*  
-- Held: Annually (June–July)  
-- Highlights: The largest CV conference. Topics include Object Detection, Segmentation, Vision Transformers, and 3D Vision.
+### 🧠 1. CVPR  
+- **Full Name**: *IEEE/CVF Conference on Computer Vision and Pattern Recognition*  
+- **Held**: Annually (June–July)  
+- **Highlights**: The largest computer vision conference. Known for applied research like Vision Transformers, Object Detection, Segmentation, and 3D Vision.
 
-**2. NeurIPS**  
-- Full Name: *Conference on Neural Information Processing Systems*  
-- Held: Annually (Nov–Dec)  
-- Highlights: Covers theory and practice of ML, LLMs, AI Ethics, Reinforcement Learning. Highly selective and active workshop sessions.
+### 🧠 2. NeurIPS  
+- **Full Name**: *Conference on Neural Information Processing Systems*  
+- **Held**: Annually (November–December)  
+- **Highlights**: Top-tier machine learning conference. Covers theory, neural networks, LLMs, AI ethics, and reinforcement learning.
 
-**3. ICLR**  
-- Full Name: *International Conference on Learning Representations*  
-- Held: Annually (Apr–May)  
-- Highlights: OpenReview system. Focuses on representation learning, diffusion models, and reproducibility.
+### 🧠 3. ICLR  
+- **Full Name**: *International Conference on Learning Representations*  
+- **Held**: Annually (April–May)  
+- **Highlights**: OpenReview format. Focuses on representation learning, diffusion models, and reproducibility.
 
-**4. ICCV**  
-- Full Name: *IEEE/CVF International Conference on Computer Vision*  
-- Held: Biennially (Odd Years, October)  
-- Highlights: More theoretical than CVPR. Strong international participation.
+### 🧠 4. ICCV  
+- **Full Name**: *IEEE/CVF International Conference on Computer Vision*  
+- **Held**: Biennially (Odd Years, October)  
+- **Highlights**: More theoretical than CVPR. Strong international participation and academic focus.
 
-**5. ICML**  
-- Full Name: *International Conference on Machine Learning*  
-- Held: Annually (June–July)  
-- Highlights: Emphasizes mathematical and statistical foundations in ML.
+### 🧠 5. ICML  
+- **Full Name**: *International Conference on Machine Learning*  
+- **Held**: Annually (June–July)  
+- **Highlights**: Strong emphasis on theoretical and statistical foundations of ML, including optimization and probabilistic modeling.
 
-**6. AAAI**  
-- Full Name: *AAAI Conference on Artificial Intelligence*  
-- Held: Annually (Jan–Feb)  
-- Highlights: Classical AI topics like reasoning and planning, as well as modern NLP, DL, and RL research.
+### 🧠 6. AAAI  
+- **Full Name**: *AAAI Conference on Artificial Intelligence*  
+- **Held**: Annually (January–February)  
+- **Highlights**: Covers both classical AI topics (reasoning, planning) and modern approaches (deep learning, NLP, RL).
 
-**7. ECCV**  
-- Full Name: *European Conference on Computer Vision*  
-- Held: Biennially (Even Years, October)  
-- Highlights: Europe's top CV conference. Highly respected globally for innovation in vision technologies.
+### 🧠 7. ECCV  
+- **Full Name**: *European Conference on Computer Vision*  
+- **Held**: Biennially (Even Years, October)  
+- **Highlights**: Europe’s top computer vision venue. Known for high-impact vision research and global participation.
 
-</details>
 
 ---
 
@@ -247,7 +246,7 @@ Thanks for reading! 🚀
 뿐만 아니라 연구자 개개인의 연구 성과도 정량적으로 판단할 수 있답니다!
 
 ![einstein](https://github.com/user-attachments/assets/564b6e3d-304a-40d7-86d7-6b0fcc295659)
-
+위의 아인슈타인 이미지에서도 h-index를 볼수 있지요!?
 ---
 
 ## 🔍 먼저 h-index부터 알아봅시다!
@@ -264,6 +263,7 @@ Thanks for reading! 🚀
 ### 🔎 예시  
 - A 연구자가 10편의 논문을 냈고, 그 중 5편이 각각 5회 이상 인용되었다면 → **h-index = 5**  
 - 논문 100편을 썼더라도 인용이 골고루 분포되지 않았다면 h-index는 낮을 수 있음
+- 아인슈타인의 h-index가 157이라는것은!! 그의 논문중 157편이 157회이상 인용되었다!!!!
 
 ### 🧠 장점  
 - 인용 수만으로 평가할 때보다, **대박 논문에 의한 왜곡을 줄임**  
@@ -274,19 +274,6 @@ Thanks for reading! 🚀
 - **분야별 인용 문화 차이**를 반영하지 못함  
   (예: 인용이 활발한 생명과학 vs 상대적으로 적은 수학/철학)
 
----
-
-## 📊 그렇다면 h5-index는?
-
-**h5-index**는 Google Scholar에서 사용하는 지표로, **최근 연구 성과를 반영**하기 위한 버전입니다.
-
-### ✅ 정의  
-> "최근 5년간 발표된 논문 중에서, **h번 이상 인용된 논문이 h편 이상**일 때의 h 값"
-
-즉, **h-index의 범위를 최근 5년으로 제한**한 것입니다! 🤓  
-AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최신 영향력을 파악**할 때 유용합니다.
-
----
 
 ## 🧠 GPT가 알려준 연구자 h-index 단계 구분!
 
@@ -301,6 +288,20 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 > 📌 단, 분야와 인용 특성에 따라 다르기 때문에 **절대 기준은 아니며 참고용**입니다.
 
 ---
+---
+
+## 📊 그렇다면 h5-index는?
+
+**h5-index**는 Google Scholar에서 사용하는 지표로, **최근 연구 성과를 반영**하기 위한 버전입니다.
+
+### ✅ 정의  
+> "최근 5년간 발표된 논문 중에서, **h번 이상 인용된 논문이 h편 이상**일 때의 h 값"
+
+즉, **h-index의 범위를 최근 5년으로 제한**한 것입니다! 🤓  
+AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최신 영향력을 파악**할 때 유용합니다.
+
+---
+
 
 ## 🔁 다시 Google Scholar로 돌아가볼까요?
 
@@ -374,45 +375,40 @@ AI와 같이 빠르게 발전하는 분야에서, **저널이나 학회의 최�
 
 ## 📎 참고1: 학회별 세부 소개
 
-<details>
-<summary>🧠 자세히 보기</summary>
+### 🧠 1. CVPR  
+- **정식 명칭**: *IEEE/CVF Conference on Computer Vision and Pattern Recognition*  
+- **개최**: 매년 (6~7월)  
+- **특징**: 세계 최대 컴퓨터 비전 학회. Vision Transformer, 3D Vision 등 실용 중심 논문이 많음
 
-**1. CVPR**  
-- 정식 명칭: *IEEE/CVF Conference on Computer Vision and Pattern Recognition*  
-- 개최: 매년 (6~7월)  
-- 특징: 세계 최대 컴퓨터 비전 학회. Vision Transformer, 3D Vision 등 실용 중심 논문이 많음  
+### 🧠 2. NeurIPS  
+- **정식 명칭**: *Conference on Neural Information Processing Systems*  
+- **개최**: 매년 (11–12월)  
+- **특징**: 머신러닝 이론, 신경망, LLM 등 최첨단 딥러닝 연구 발표
 
-**2. NeurIPS**  
-- 정식 명칭: *Conference on Neural Information Processing Systems*  
-- 개최: 매년 (11–12월)  
-- 특징: 머신러닝 이론, 신경망, LLM 등 최첨단 딥러닝 연구 발표  
+### 🧠 3. ICLR  
+- **정식 명칭**: *International Conference on Learning Representations*  
+- **개최**: 매년 (4–5월)  
+- **특징**: OpenReview 방식, representation learning, diffusion model 중심
 
-**3. ICLR**  
-- 정식 명칭: *International Conference on Learning Representations*  
-- 개최: 매년 (4–5월)  
-- 특징: OpenReview 방식, representation learning, diffusion model 중심  
+### 🧠 4. ICCV  
+- **정식 명칭**: *IEEE/CVF International Conference on Computer Vision*  
+- **개최**: 격년 (홀수 해, 10월)  
+- **특징**: 비전 이론 연구 비중이 크며, 글로벌 연구자 참여 활발
 
-**4. ICCV**  
-- 정식 명칭: *IEEE/CVF International Conference on Computer Vision*  
-- 개최: 격년 (홀수 해, 10월)  
-- 특징: 비전 이론 연구 비중이 크며, 글로벌 연구자 참여 활발  
+### 🧠 5. ICML  
+- **정식 명칭**: *International Conference on Machine Learning*  
+- **개최**: 매년 (6~7월)  
+- **특징**: 머신러닝 수학 이론, 최적화 중심
 
-**5. ICML**  
-- 정식 명칭: *International Conference on Machine Learning*  
-- 개최: 매년 (6~7월)  
-- 특징: 머신러닝 수학 이론, 최적화 중심  
+### 🧠 6. AAAI  
+- **정식 명칭**: *AAAI Conference on Artificial Intelligence*  
+- **개최**: 매년 (1–2월)  
+- **특징**: 전통 AI(추론, 계획)과 최신 딥러닝을 함께 다룸
 
-**6. AAAI**  
-- 정식 명칭: *AAAI Conference on Artificial Intelligence*  
-- 개최: 매년 (1–2월)  
-- 특징: 전통 AI(추론, 계획)과 최신 딥러닝을 함께 다룸  
-
-**7. ECCV**  
-- 정식 명칭: *European Conference on Computer Vision*  
-- 개최: 격년 (짝수 해, 10월)  
-- 특징: 유럽 중심이지만 국제적 영향력 큼. 비전 기술 혁신 소개
-
-</details>
+### 🧠 7. ECCV  
+- **정식 명칭**: *European Conference on Computer Vision*  
+- **개최**: 격년 (짝수 해, 10월)  
+- **특징**: 유럽 중심이지만 국제적 영향력 큼. 비전 기술 혁신 소개
 
 ---
 
