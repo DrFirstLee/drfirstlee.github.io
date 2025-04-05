@@ -182,9 +182,6 @@ Papers published in these venues are **carefully selected** through **rigorous p
 representing the **cutting edge of global research** 😊
 
 ---
-
-## 📎 Appendix: Detailed Descriptions of Conferences
-
 ## 📎 Appendix: Detailed Conference Descriptions
 
 ### 🧠 1. CVPR  
