@@ -4,7 +4,7 @@ title: "Using CLIP with Python - 파이썬으로 CLIP을 사용해보기"
 author: [DrFirst]
 date: 2025-04-08 11:00:00 +0900
 categories: [AI,Experiment]
-tags: []
+tags: [CLIP, Python, OpenAI, Vision-Language, Multimodal, AI, Deep Learning, Image Embedding, Text Embedding, Zero-shot Learning, ViT-B/32]
 lastmod : 2025-04-08 11:00:00
 sitemap :
   changefreq : weekly
