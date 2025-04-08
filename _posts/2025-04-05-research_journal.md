@@ -3,7 +3,7 @@ layout: post
 title: "Exploring Major Journals in AI - AI와 관련된 주요 저널 알아보기 (feat. h-index)"
 author: [DrFirst]
 date: 2025-04-05 09:00:00 +0900
-categories: [Computer Vision, Research]
+categories: [AI, Research]
 tags: [
   h-index, 
   h5-index, 

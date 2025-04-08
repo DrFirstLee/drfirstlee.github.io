@@ -3,7 +3,7 @@ layout: post
 title: "Newly upgraded Sora, now writes well too. - 새로 업그레이드된 소라, 글씨도 잘 써요"
 author: [DrFirst]
 date: 2025-03-31 09:00:00 +0900
-categories: [Computer Vision, Enterprise model, Openai]
+categories: [AI, Enterprise model, Openai]
 tags: [openai, gpt-4o, chatgpt, sora, image generation]
 lastmod : 2025-03-31 09:00:00
 sitemap :
