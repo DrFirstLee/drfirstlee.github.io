@@ -3,7 +3,7 @@ layout: post
 title: "Using CLIP with Python - 파이썬으로 CLIP을 사용해보기"
 author: [DrFirst]
 date: 2025-04-08 11:00:00 +0900
-categories: [AI, Research]
+categories: [AI, Open Source Model]
 tags: []
 lastmod : 2025-04-08 11:00:00
 sitemap :
@@ -303,12 +303,12 @@ tensor([[0.9902, 0.0096]], device='cuda:0', dtype=torch.float16,
 | ViT-L/14      | ViT       | Large     | 약 428M      | 약 75.5%                    | 768            |
 | ViT-L/14@336px| ViT       | Large     | 약 428M      | 약 76.2%                    | 768            |
 
-> 백본 타입이란, CLIP 모델에서 이미지나 텍스트를 처리할 때 사용하는 기본 신경망 구조를 말하며, 예를 들어 ResNet이나 ViT 같은 모델이 백본으로 사용됩니다.
-> Zero-shot ImageNet 정확도 : 모델이 사전 학습만으로 별도 추가 학습 없이 ImageNet 이미지 데이터셋 분류를 수행했을 때의 정확도를 의미
-> 출력 벡터 크기 : 최종 산출되는 임베팅 벡터의 차원!! 
+> 백본 타입이란, CLIP 모델에서 이미지나 텍스트를 처리할 때 사용하는 기본 신경망 구조를 말하며, 예를 들어 ResNet이나 ViT 같은 모델이 백본으로 사용됩니다.  
+> Zero-shot ImageNet 정확도 : 모델이 사전 학습만으로 별도 추가 학습 없이 ImageNet 이미지 데이터셋 분류를 수행했을 때의 정확도를 의미  
+> 출력 벡터 크기 : 최종 산출되는 임베팅 벡터의 차원!!  
 
-위와같이 대표적으로 6개의 모델이 있습니다!
-(실제 Python CLIP 패키지에서는 9개가 available 합니다~ ['RN50', 'RN101', 'RN50x4', 'RN50x16', 'RN50x64', 'ViT-B/32', 'ViT-B/16', 'ViT-L/14', 'ViT-L/14@336px'] )
+위와같이 대표적으로 6개의 모델이 있습니다!  
+(실제 Python CLIP 패키지에서는 9개가 available 합니다~ ['RN50', 'RN101', 'RN50x4', 'RN50x16', 'RN50x64', 'ViT-B/32', 'ViT-B/16', 'ViT-L/14', 'ViT-L/14@336px'] )  
 여러분은 앞으로 사용 목적에 따라!!
 
  - 보다 빠른속도가 중요할떄는 Small의, 파라미터가 적은 모델을
