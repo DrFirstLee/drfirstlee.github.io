@@ -3,7 +3,7 @@ layout: post
 title: "Using CLIP with Python - 파이썬으로 CLIP을 사용해보기"
 author: [DrFirst]
 date: 2025-04-08 11:00:00 +0900
-categories: [AI, Open Source Model]
+categories: [AI,Experiment]
 tags: []
 lastmod : 2025-04-08 11:00:00
 sitemap :
