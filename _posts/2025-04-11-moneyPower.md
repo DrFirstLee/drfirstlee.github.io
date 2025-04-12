@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Learn How to Write Markdown Files - Markdown 언어로 글쓰는 방법 정리!!"
+title: "Reading 'The Power of Money' by Paul Sheard - 폴 시어드의 『돈의 권력』을 읽고 "
 author: [DrFirst]
 date: 2025-04-11 09:00:00 +0900
 categories: [Activity, Books]
@@ -18,7 +18,6 @@ tags: [
   경제책, Economics Book,
   독서노트, Reading Notes, 비트코인, bitcoin, crypto currency
 ]
-
 lastmod : 2025-04-11 09:00:00
 sitemap :
   changefreq : weekly
