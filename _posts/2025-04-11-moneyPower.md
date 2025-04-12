@@ -67,7 +67,10 @@ Rather than arguing that the government must cut spending just because it has �
 the book emphasizes the **purpose and effectiveness of spending**, and its **coordination with monetary policy**.  
 Most strikingly, it argues that **government debt is not inherently a problem**.  
 That said, everything hinges on **how well inflation is managed**.  
+
 > So *that’s* why Jerome Powell is always talking about inflation!!  
+
+
 This book broadened and deepened my understanding of economics,  
 and reminded me that, unlike individuals or businesses, **deficits are not necessarily bad** for governments!!  
 It’ll definitely enrich how I interpret economic news in the future.
@@ -114,7 +117,9 @@ MMT라는 개념은 그동안 뉴스나 칼럼을 통해 가볍게 접해본 적
 **지출의 목적과 효과**, 그리고 **통화 정책과의 조화**가 중요하다는 점이 인상깊으며,  
 무엇보다도, **정부의 부채는 반드시 문제가 되는 것이 아니라는 점**이 매우 인상 깊었다.  
 다만, 이 모든 것은 **인플레이션을 얼마나 효과적으로 관리하느냐**에 달려 있다는 조건부 논리도 명확하게 전달되었다. 
+
 > 그래서 파월아저씨가 인플레이션을 매번 보는거였구나!!  
+
 경제에 대해 보다 넓고 깊은 관점을 갖게 해준 책으로,  
 개인, 기업과는 다르게 정부에서는 꼭 적자가 나쁜것이 아니기에!!,   
 앞으로 여러 뉴스를 바라보는 관점이 더욱 풍부해질 것 같다.
