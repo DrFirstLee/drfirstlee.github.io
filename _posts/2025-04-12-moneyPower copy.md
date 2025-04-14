@@ -3,7 +3,7 @@ layout: post
 title: Howard Marks' Memo Reading “Nobody Knows (Yet Again)” - 하워드 막스의 편지'Nobody Knows'를 읽고
 date: 2025-04-13 09:00:00 +0900
 categories: [Activity, Financials]
-tags: [
+tags: [하워드막스, howard marks, 투자, investments, Nobody Knows, Oaktree Capital Management, 투자서한, The MEMO
 ]
 lastmod : 2025-04-13 09:00:00
 sitemap :
@@ -20,6 +20,7 @@ sitemap :
 > I decided to reflect on one of the greatest investors' messages to organize my thoughts.
 
 ![note](https://github.com/user-attachments/assets/ebe4b7cd-b674-4969-a711-8d5b1c55b99a)
+[See origin document](https://www.oaktreecapital.com/insights/memo-podcast/nobody-knows-yet-again)
 
 
 ## 🧔 Who is Howard Marks?
@@ -42,7 +43,7 @@ then the crash should be seen as a buying opportunity!
 
 ## 📬 Key Sections of the 2025 Memo
 
-Here are the major themes in the latest memo:
+Here are the major four paragraph titles in the latest memo:
 
 - **The Uncertain Outlook**  
 - **Tariffs**  
@@ -140,7 +141,7 @@ Let’s go! Time to find those undervalued gems 🛒📉🚀
 > 투자의 대가 중 한명의 메세지를 읽어보며 느낀점을 정리해보았습니다  
 
 ![note](https://github.com/user-attachments/assets/ebe4b7cd-b674-4969-a711-8d5b1c55b99a)
-
+[원문보기](https://www.oaktreecapital.com/insights/memo-podcast/nobody-knows-yet-again)
 
 ## 우선!! 🧔 하워드 막스는 누구인가?
 
@@ -161,7 +162,7 @@ Let’s go! Time to find those undervalued gems 🛒📉🚀
 
 ## 📬 이번 메모의 주요 소제목들
 
-이번 2025년 메모에서 다루는 핵심 주제는 아래 4가지임  
+이번 2025년 메모는 아래 4가지 소제목으로 구성
 
 - **The Uncertain Outlook** (불확실한 전망)  
 - **Tariffs** (관세)  
@@ -247,6 +248,7 @@ Let’s go! Time to find those undervalued gems 🛒📉🚀
 불확실성과 마주하는 **인간의 자세와 투자자의 태도**에 대하여 그의 생각의 논리와 결과를 알 수 있었음
 
 > “When the time comes to buy, you won’t want to.”  
+> "사야할 시간이 오면, 너는 그러고 싶지 않을거야!"
 > — Walter Deemer (막스가 좋아하는 애널리스트)
 
 불확실성은 언제나 우리를 마비시키지만,  
