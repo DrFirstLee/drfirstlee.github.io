@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Howard Marks' Memo Reading “Nobody Knows (Yet Again)” - 하워드 막스의 편지'Nobody Knows'를 읽고
+author: [DrFirst]
 date: 2025-04-13 09:00:00 +0900
 categories: [Activity, Financials]
 tags: [하워드막스, howard marks, 투자, investments, Nobody Knows, Oaktree Capital Management, 투자서한, The MEMO

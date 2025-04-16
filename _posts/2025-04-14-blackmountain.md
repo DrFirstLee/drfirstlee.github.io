@@ -1,19 +1,17 @@
 ---
 layout: post
-title: Howard Marks' Memo Reading “Nobody Knows (Yet Again)” - 김훈 작가의 '흑산(黑山)'를 읽고
-date: 2025-04-13 09:00:00 +0900
-categories: [Activity, Financials]
-tags: [김훈, 흑산, 신유박해, 정약용, 정약전, 이승훈, 황사영, 천주교,
+title: 김훈 작가의 '흑산(黑山)'를 읽고 - Reading *Heuksan (Black Mountain)* by Kim Hoon
+author: [DrFirst]
+date: 2025-04-14 09:00:00 +0900
+categories: [Activity, Books]
+tags: [김훈, 흑산, 신유박해, 정약용, 정약전, 이승훈, 황사영, 천주교, Kim Hoon, Shinyu Persecution, Black Mountain
 ]
-lastmod : 2025-04-13 09:00:00
+lastmod : 2025-04-14 09:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
 
-
-
----
 
 
 ## (한국어)김훈 작가의 '흑산(黑山)'를 읽고
@@ -101,7 +99,7 @@ sitemap :
 
 ![thumbnail](https://github.com/user-attachments/assets/a6179b8b-0252-4679-9cf7-c859607ec75c)
 
-📖 **Title**: *Heuksan*  
+📖 **Title**: *Heuksan* (Black Mountain)  
 ✍️ **Author**: Kim Hoon  
 🎯 **Recommended for**: Those interested in late Joseon dynasty history and religious persecution; readers seeking emotionally resonant literature  
 🌟 **One-line review**: “A novel that seeps in slowly, yet leaves a deep resonance.”
