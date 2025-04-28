@@ -11,6 +11,297 @@ sitemap :
   priority : 0.9
 
 ---
+
+## (English) Exploring Image Classification with ViT Model in Python
+
+Hello everyone! 😊
+
+In the [previous post](https://drfirstlee.github.io/posts/ViT/#image-you-can-do-transformer-too---the-emergence-of-vit-iclr-2021), we delved into the theory behind ViT based on the original paper! Today, we will actually download this ViT model and perform image classification in a Python environment!!
+
+## 1. Importing ViT Model from torchvision! (The Simplest Way)
+
+You can easily import the Vision Transformer (ViT) model through **torchvision**, a core library for image-related tasks in the PyTorch ecosystem.
+
+### What kind of package is torchvision that provides models?
+
+**torchvision** is a package developed and maintained by the PyTorch team, providing commonly used datasets, image transformations (transforms), and **pre-trained model architectures** in the field of computer vision.
+
+torchvision provides models for the following reasons:
+
+* **Convenience:** It supports researchers and developers in easily utilizing models with verified performance without the hassle of implementing image-related deep learning models from scratch.
+* **Rapid Prototyping:** Pre-trained models allow for quick experimentation with new ideas and development of prototypes.
+* **Saving Learning Resources:** Using models pre-trained on large-scale datasets saves the time and computational resources required for direct training.
+* **Leveraging Learned Representations:** Pre-trained models have already learned general image features, enabling good performance on specific tasks with less data (transfer learning).
+
+### Types and Features of ViT Models Provided by torchvision
+
+torchvision provides various CNN-based models as well as ViT models. Currently (as of April 28, 2025), the main types and features of ViT models provided by torchvision are as follows:
+
+| Name       | Patch Size | Model Name | Features                                                                                                                               |
+| :--------- | :---------- | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| ViT-Base   | 16x16      | vit_b_16   | Offers a balanced size and performance.                                                                                                |
+| ViT-Base   | 32x32      | vit_b_32   | Larger patch size can reduce computation but may miss fine-grained features.                                                            |
+| ViT-Large  | 16x16      | vit_l_16   | Has more layers and a larger hidden dimension than the Base model, aiming for higher performance. Requires more computational resources. |
+| ViT-Large  | 32x32      | vit_l_32   | A Large model with a larger patch size.                                                                                                |
+| ViT-Huge   | 14x14      | vit_h_14   | One of the largest ViT models, aiming for top-level performance but requires very significant computational resources.                     |
+
+These models all come with pre-trained weights on the ImageNet dataset, allowing for immediate use in image classification tasks. The letters 'b', 'l', and 'h' in the model names indicate the Base, Large, and Huge model sizes, respectively, and the number following indicates the image patch size. A larger patch size means the model looks at the image in larger chunks, which can lead to faster processing but potentially lower accuracy.
+
+---
+
+## 2. Today's Image!! 🐶 Let's Start Classifying!
+
+![dog](https://github.com/user-attachments/assets/0ad9326c-a64e-4d01-9e87-f53fe271c19a)
+
+Today, we will use a cute dog image to see how the ViT model classifies it. The ViT model we will use today is pre-trained on the ImageNet dataset!
+
+### What is imagenet\_classes?
+
+`imagenet_classes` is a list of 1000 image classes used in the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). The pre-trained ViT models provided by torchvision are trained on this ImageNet dataset, so the model's output will be prediction probabilities for these 1000 classes. `imagenet_classes` serves to map these numerical prediction results to human-readable class names (e.g., "golden retriever", "poodle").
+
+### imagenet\_classes.json: A JSON file containing imagenet\_classes information.
+
+Since torchvision itself does not directly include the ImageNet class name list, you need to prepare a separate JSON file containing this information. You can obtain the `imagenet_classes.json` file in the following way:
+
+```python
+import requests
+import json
+
+# Read JSON file directly from URL
+url = "[https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json](https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json)"
+
+response = requests.get(url)
+response.raise_for_status()  # Raise an error for bad status codes
+
+# Load JSON data
+imagenet_labels = response.json()
+
+with open("imagenet_classes.json", "w") as f:
+    json.dump(imagenet_labels, f)
+```
+
+## 3\. Let's Begin the Code\!\!
+
+[Code block for torchvision implementation]
+
+When you run the code above\!\!\! You can see the Top 5 prediction results as below\~!
+
+```text
+Top 5 Prediction Results:
+- Golden Retriever: 0.9126
+- Labrador Retriever: 0.0104
+- Kuvasz: 0.0032
+- Airedale Terrier: 0.0014
+- tennis ball: 0.0012
+```
+
+We can see that the Golden Retriever is predicted with the highest probability of 91.26%.
+
+## 4\. Getting and Running the Model Directly from Hugging Face\! + Analysis (Less Simple, But Customizable)
+
+This time, let's try importing the model directly from the [Hugging Face ViT model](https://huggingface.co/google/vit-base-patch16-224) and proceed\!
+
+thon
+import torch
+import torchvision.models as models
+from torchvision import transforms
+from PIL import Image
+import json
+
+# 1. ViT 모델 불러오기 (ViT-Base, 패치 크기 16 사용)
+vit_b_16 = models.vit_b_16(pretrained=True)
+vit_b_16.eval()  # 추론 모드로 설정
+
+# 2. 이미지 전처리 정의
+# 이미지 크기가 다 다르니 256으로 리사이즈하고 224로 중앙 부분을 패치합니다.
+# 그리고 ImageNet 데이터셋의 평균과 표준편차로 정규화합니다.
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+# 3. 강아지 이미지 불러오기 (본인의 이미지 파일 경로로 변경해주세요)
+image_path = "dog.jpg"
+try:
+    image = Image.open(image_path).convert('RGB')
+    input_tensor = transform(image).unsqueeze(0) # 배치 차원 추가
+except FileNotFoundError:
+    print(f"Error: 이미지 파일 '{image_path}'을 찾을 수 없습니다.")
+    exit()
+
+# 4. 모델에 입력하여 예측 수행
+with torch.no_grad():
+    output = vit_b_16(input_tensor)
+
+# 5. 예측 결과 후처리 및 클래스 이름 출력
+with open("imagenet_classes.json", "r") as f:
+       imagenet_classes = json.load(f)
+
+_, predicted_idx = torch.sort(output, dim=1, descending=True)
+top_k = 5
+print(f"Top {top_k} 예측 결과:")
+for i in range(top_k):
+       class_idx = predicted_idx[0, i].item()
+       confidence = torch.softmax(output, dim=1)[0, class_idx].item()
+       print(f"- {imagenet_classes[class_idx]}: {confidence:.4f}")
+```
+
+Similarly, it was classified as number 207, Golden Retriever\!\!\! But\! Let's look at the differences from the existing torchvision and model customization here\!  
+
+### a. Image Preprocessing Method\!\!
+
+Looking at the preprocessing part below, `ViTFeatureExtractor` already knows the preprocessing method used when the model was trained, allowing you to perform image preprocessing simply without writing a complex `transforms.Compose` process directly\!
+
+```python
+feature_extractor = ViTFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
+
+# 3. 전처리 : 직접 crop 및 resize 할 필요가 없어요!
+inputs = feature_extractor(images=image, return_tensors="pt")
+```
+
+### b. Viewing the CLS Token\!\!
+
+In the previous theoretical learning post, we learned that it consists of 196 patches + 1 CLS token, totaling 197 patches\! We confirmed that the overall information of the image is contained in this first CLS token\! You can see the CLS Token with the following code\!
+
+
+
+```python
+from transformers import ViTModel, ViTImageProcessor
+import torch
+from PIL import Image
+
+# 1. ViTModel (Classification head 없는 순수 모델)
+model = ViTModel.from_pretrained('google/vit-base-patch16-224')
+model.eval()
+
+# Feature Extractor → ViTImageProcessor로 최신화
+processor = ViTImageProcessor.from_pretrained('google/vit-base-patch16-224')
+
+# 2. 이미지 불러오기
+image = Image.open("dog.jpg").convert('RGB')
+inputs = processor(images=image, return_tensors="pt")
+
+# 3. 모델 추론
+with torch.no_grad():
+    outputs = model(**inputs)
+
+# 4. CLS 토큰 추출
+last_hidden_state = outputs.last_hidden_state  # (batch_size, num_tokens, hidden_dim)
+cls_token = last_hidden_state[:, 0, :]  # 0번째 토큰이 CLS
+
+# 5. CLS 토큰 출력
+print("CLS token shape:", cls_token.shape)  # torch.Size([1, 768])
+print("CLS token values (앞 5개):", cls_token[0, :5])
+```
+
+If you run the code above, you can see the 768-dimensional CLS token as expected\! Subsequent research uses this token for various other information\!
+
+```text
+CLS token shape: torch.Size([1, 768])
+CLS token values (first 5): tensor([-0.5934, -0.3203, -0.0811,  0.3146, -0.7365])
+```
+
+### c. ViT's CAM\!\! Attention Rollout
+
+In traditional CNN-based image classification, a CAM (Class Activation Map) was placed at the end of the model to visualize which parts became important\!\!\!
+
+[CAM Theory Summary\!\!](https://drfirstlee.github.io/posts/CAM_research/)
+[CAM Practice\!\!](https://drfirstlee.github.io/posts/CAM_usage/)
+
+Our ViT model is different from CAM, so it's difficult to proceed in the same way\! However, you can visualize which of the remaining 196 patches the most important CLS package paid attention to using a method called **Attention Rollout**\!
+
+Looking at the structure\!\!
+
+As shown below, Attention is the process by which [CLS] assigns weights to each patch like "you're important" or "you're not important," and visualizing these attentions is Attention Rollout\!
+
+```text
+[CLS]   → Patch_1   (Attention weight: 0.05)
+[CLS]   → Patch_2   (Attention weight: 0.02)
+[CLS]   → Patch_3   (Attention weight: 0.01)
+...
+[CLS]   → Patch_196 (Attention weight: 0.03)
+```
+
+In the end\!\! You can see a visualization of which patches were considered important as below\!
+
+  * Red areas → Patches that [CLS] paid much attention to.
+  * Blue areas → Patches that [CLS] paid less attention to.
+
+Looking at the code:
+
+
+```python
+from transformers import ViTModel, ViTFeatureExtractor
+import torch
+from PIL import Image
+import requests
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1. 모델과 Feature Extractor 불러오기
+model = ViTModel.from_pretrained('google/vit-base-patch16-224', output_attentions=True)
+model.eval()
+
+feature_extractor = ViTFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
+
+# 2. 이미지 불러오기
+image = Image.open("dog.jpg").convert('RGB')
+inputs = feature_extractor(images=image, return_tensors="pt")
+
+# 3. 모델 추론 (attention 출력)
+with torch.no_grad():
+    outputs = model(**inputs)
+    attentions = outputs.attentions  # list of (batch, heads, tokens, tokens)
+
+# 4. Attention Rollout 계산
+def compute_rollout(attentions):
+    # Multiply attention matrices across layers
+    result = torch.eye(attentions[0].size(-1))
+    for attention in attentions:
+        attention_heads_fused = attention.mean(dim=1)[0]  # (tokens, tokens)
+        attention_heads_fused += torch.eye(attention_heads_fused.size(-1))
+        attention_heads_fused /= attention_heads_fused.sum(dim=-1, keepdim=True)
+        result = torch.matmul(result, attention_heads_fused)
+    return result
+
+rollout = compute_rollout(attentions)
+
+# 5. [CLS] 토큰에서 이미지 패치로 가는 Attention 추출
+mask = rollout[0, 1:].reshape(14, 14).detach().cpu().numpy()
+
+# 6. 시각화
+def show_mask_on_image(img, mask):
+    img = img.resize((224, 224))
+    mask = (mask - mask.min()) / (mask.max() - mask.min())
+    fig, ax = plt.subplots()
+    ax.imshow(img)
+    ax.imshow(mask, cmap='jet', alpha=0.5)
+    ax.axis('off')
+    plt.show()
+
+show_mask_on_image(image, mask)
+
+```
+And the result is\!\!\!??
+
+![patch](https://github.com/user-attachments/assets/82e9e668-d62a-4b06-9464-75e4eb3f967b)
+
+Does it look right\~?
+
+-----
+
+## 5\. 💡 Conclusion: Simple and Fast ViT
+
+How was it? You ran the code directly, and it was possible to execute the code easily and quickly\!
+
+Like this, ViT, which was theoretically significant\! Since models trained on large-scale datasets can also be easily implemented in code, research based on Transformers has exploded in the field of computer vision ever since\!
+
+In the future, we will also explore and practice various Vision Transformer-based models such as DINO, DeiT, CLIP, Swin Transformer, etc.! ^^
+
+Thank you!!! 🚀🔥
+
 ---
 
 ## (한국어) 파이썬으로 ViT 모델을 활용, 이미지 분류하보기
