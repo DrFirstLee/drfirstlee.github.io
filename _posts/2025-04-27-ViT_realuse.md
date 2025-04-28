@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Image classification using ViT with Python - 파이썬으로 ViT 모델을 활용, 이미지 분류하보기"
+title: "Image classification using ViT with Python - 파이썬으로 ViT 모델을 활용, 이미지 분류하기"
 author: [DrFirst]
 date: 2025-04-27 11:00:00 +0900
 categories: [AI,Experiment]
@@ -45,7 +45,9 @@ torchvision provides various CNN-based models as well as ViT models. Currently (
 | ViT-Large  | 32x32      | vit_l_32   | A Large model with a larger patch size.                                                                                                |
 | ViT-Huge   | 14x14      | vit_h_14   | One of the largest ViT models, aiming for top-level performance but requires very significant computational resources.                     |
 
-These models all come with pre-trained weights on the ImageNet dataset, allowing for immediate use in image classification tasks. The letters 'b', 'l', and 'h' in the model names indicate the Base, Large, and Huge model sizes, respectively, and the number following indicates the image patch size. A larger patch size means the model looks at the image in larger chunks, which can lead to faster processing but potentially lower accuracy.
+These models all come with pre-trained weights on the ImageNet dataset, allowing for immediate use in image classification tasks.  
+The letters 'b', 'l', and 'h' in the model names indicate the Base, Large, and Huge model sizes, respectively, and the number following indicates the image patch size.  
+A larger patch size means the model looks at the image in larger chunks, which can lead to faster processing but potentially lower accuracy.
 
 ---
 
@@ -101,7 +103,7 @@ We can see that the Golden Retriever is predicted with the highest probability o
 
 This time, let's try importing the model directly from the [Hugging Face ViT model](https://huggingface.co/google/vit-base-patch16-224) and proceed\!
 
-thon
+```python
 import torch
 import torchvision.models as models
 from torchvision import transforms
