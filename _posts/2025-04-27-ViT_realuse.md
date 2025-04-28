@@ -84,7 +84,58 @@ with open("imagenet_classes.json", "w") as f:
 
 ## 3\. Let's Begin the Code\!\!
 
-[Code block for torchvision implementation]
+```python
+import torch
+import torchvision.models as models
+from torchvision import transforms
+from PIL import Image
+import json
+
+# 1. Load ViT model (ViT-Base, patch size 16)
+vit_b_16 = models.vit_b_16(pretrained=True)
+vit_b_16.eval()  # Set the model to evaluation mode
+
+# 2. Define image preprocessing
+# Resize images to 256 and then center crop to 224.
+# Normalize using the mean and standard deviation of the ImageNet dataset.
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+# 3. Load the dog image (replace with your image file path)
+image_path = "dog.jpg"
+try:
+    image = Image.open(image_path).convert('RGB')
+    input_tensor = transform(image).unsqueeze(0) # Add batch dimension
+except FileNotFoundError:
+    print(f"Error: Image file '{image_path}' not found.")
+    exit()
+
+# 4. Perform prediction
+with torch.no_grad():
+    output = vit_b_16(input_tensor)
+
+# 5. Post-process the prediction results and print the class names
+try:
+    with open("imagenet_classes.json", "r") as f:
+        imagenet_classes = json.load(f)
+
+    _, predicted_idx = torch.sort(output, dim=1, descending=True)
+    top_k = 5
+    print(f"Top {top_k} prediction results:")
+    for i in range(top_k):
+        class_idx = predicted_idx[0, i].item()
+        confidence = torch.softmax(output, dim=1)[0, class_idx].item()
+        print(f"- {imagenet_classes[class_idx]}: {confidence:.4f}")
+except FileNotFoundError:
+    print("Error: 'imagenet_classes.json' file not found. Please prepare the file in step 2.")
+    print("Predicted class indices:", predicted_idx[0, :5].tolist())
+except Exception as e:
+    print(f"Error during prediction processing: {e}")
+```
 
 When you run the code above\!\!\! You can see the Top 5 prediction results as below\~!
 
@@ -110,13 +161,13 @@ from torchvision import transforms
 from PIL import Image
 import json
 
-# 1. ViT 모델 불러오기 (ViT-Base, 패치 크기 16 사용)
+# 1. Load ViT model (ViT-Base, patch size 16)
 vit_b_16 = models.vit_b_16(pretrained=True)
-vit_b_16.eval()  # 추론 모드로 설정
+vit_b_16.eval()  # Set the model to evaluation mode
 
-# 2. 이미지 전처리 정의
-# 이미지 크기가 다 다르니 256으로 리사이즈하고 224로 중앙 부분을 패치합니다.
-# 그리고 ImageNet 데이터셋의 평균과 표준편차로 정규화합니다.
+# 2. Define image preprocessing
+# Resize images to 256 and then center crop to 224.
+# Normalize using the mean and standard deviation of the ImageNet dataset.
 transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -124,33 +175,34 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-# 3. 강아지 이미지 불러오기 (본인의 이미지 파일 경로로 변경해주세요)
+# 3. Load the dog image (replace with your image file path)
 image_path = "dog.jpg"
 try:
     image = Image.open(image_path).convert('RGB')
-    input_tensor = transform(image).unsqueeze(0) # 배치 차원 추가
+    input_tensor = transform(image).unsqueeze(0) # Add batch dimension
 except FileNotFoundError:
-    print(f"Error: 이미지 파일 '{image_path}'을 찾을 수 없습니다.")
+    print(f"Error: Image file '{image_path}' not found.")
     exit()
 
-# 4. 모델에 입력하여 예측 수행
+# 4. Perform prediction
 with torch.no_grad():
     output = vit_b_16(input_tensor)
 
-# 5. 예측 결과 후처리 및 클래스 이름 출력
+# 5. Post-process the prediction results and print the class names
 with open("imagenet_classes.json", "r") as f:
-       imagenet_classes = json.load(f)
+        imagenet_classes = json.load(f)
 
 _, predicted_idx = torch.sort(output, dim=1, descending=True)
 top_k = 5
-print(f"Top {top_k} 예측 결과:")
+print(f"Top {top_k} results:")
 for i in range(top_k):
-       class_idx = predicted_idx[0, i].item()
-       confidence = torch.softmax(output, dim=1)[0, class_idx].item()
-       print(f"- {imagenet_classes[class_idx]}: {confidence:.4f}")
+        class_idx = predicted_idx[0, i].item()
+        confidence = torch.softmax(output, dim=1)[0, class_idx].item()
+        print(f"- {imagenet_classes[class_idx]}: {confidence:.4f}")
 ```
 
-Similarly, it was classified as number 207, Golden Retriever\!\!\! But\! Let's look at the differences from the existing torchvision and model customization here\!  
+Similarly, it was classified as number 207, Golden Retriever\!\!\!  
+But\! Let's look at the differences from the existing torchvision and model customization here\!  
 
 ### a. Image Preprocessing Method\!\!
 
@@ -159,7 +211,7 @@ Looking at the preprocessing part below, `ViTFeatureExtractor` already knows the
 ```python
 feature_extractor = ViTFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
 
-# 3. 전처리 : 직접 crop 및 resize 할 필요가 없어요!
+# 3. preprocess : no need to  crop and resize
 inputs = feature_extractor(images=image, return_tensors="pt")
 ```
 
@@ -174,28 +226,28 @@ from transformers import ViTModel, ViTImageProcessor
 import torch
 from PIL import Image
 
-# 1. ViTModel (Classification head 없는 순수 모델)
+# 1. ViTModel (Pure model without classification head)
 model = ViTModel.from_pretrained('google/vit-base-patch16-224')
 model.eval()
 
-# Feature Extractor → ViTImageProcessor로 최신화
+# Feature Extractor → Updated to ViTImageProcessor
 processor = ViTImageProcessor.from_pretrained('google/vit-base-patch16-224')
 
-# 2. 이미지 불러오기
+# 2. Load Image
 image = Image.open("dog.jpg").convert('RGB')
 inputs = processor(images=image, return_tensors="pt")
 
-# 3. 모델 추론
+# 3. Model Inference
 with torch.no_grad():
     outputs = model(**inputs)
 
-# 4. CLS 토큰 추출
+# 4. Extract CLS Token
 last_hidden_state = outputs.last_hidden_state  # (batch_size, num_tokens, hidden_dim)
-cls_token = last_hidden_state[:, 0, :]  # 0번째 토큰이 CLS
+cls_token = last_hidden_state[:, 0, :]  # The 0th token is CLS
 
-# 5. CLS 토큰 출력
+# 5. Print CLS Token
 print("CLS token shape:", cls_token.shape)  # torch.Size([1, 768])
-print("CLS token values (앞 5개):", cls_token[0, :5])
+print("CLS token values (first 5):", cls_token[0, :5])
 ```
 
 If you run the code above, you can see the 768-dimensional CLS token as expected\! Subsequent research uses this token for various other information\!
@@ -209,8 +261,8 @@ CLS token values (first 5): tensor([-0.5934, -0.3203, -0.0811,  0.3146, -0.7365]
 
 In traditional CNN-based image classification, a CAM (Class Activation Map) was placed at the end of the model to visualize which parts became important\!\!\!
 
-[CAM Theory Summary\!\!](https://drfirstlee.github.io/posts/CAM_research/)
-[CAM Practice\!\!](https://drfirstlee.github.io/posts/CAM_usage/)
+[CAM Theory Summary\!\!](https://drfirstlee.github.io/posts/CAM_research/)  
+[CAM Practice\!\!](https://drfirstlee.github.io/posts/CAM_usage/)  
 
 Our ViT model is different from CAM, so it's difficult to proceed in the same way\! However, you can visualize which of the remaining 196 patches the most important CLS package paid attention to using a method called **Attention Rollout**\!
 
@@ -242,22 +294,22 @@ import requests
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. 모델과 Feature Extractor 불러오기
+# 1. Load model and Feature Extractor
 model = ViTModel.from_pretrained('google/vit-base-patch16-224', output_attentions=True)
 model.eval()
 
 feature_extractor = ViTFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
 
-# 2. 이미지 불러오기
+# 2. Load Image
 image = Image.open("dog.jpg").convert('RGB')
 inputs = feature_extractor(images=image, return_tensors="pt")
 
-# 3. 모델 추론 (attention 출력)
+# 3. Model Inference (output attention)
 with torch.no_grad():
     outputs = model(**inputs)
     attentions = outputs.attentions  # list of (batch, heads, tokens, tokens)
 
-# 4. Attention Rollout 계산
+# 4. Calculate Attention Rollout
 def compute_rollout(attentions):
     # Multiply attention matrices across layers
     result = torch.eye(attentions[0].size(-1))
@@ -270,10 +322,10 @@ def compute_rollout(attentions):
 
 rollout = compute_rollout(attentions)
 
-# 5. [CLS] 토큰에서 이미지 패치로 가는 Attention 추출
+# 5. Extract Attention from [CLS] token to image patches
 mask = rollout[0, 1:].reshape(14, 14).detach().cpu().numpy()
 
-# 6. 시각화
+# 6. Visualization
 def show_mask_on_image(img, mask):
     img = img.resize((224, 224))
     mask = (mask - mask.min()) / (mask.max() - mask.min())
