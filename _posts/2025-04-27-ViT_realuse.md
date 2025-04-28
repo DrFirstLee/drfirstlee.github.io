@@ -2,10 +2,10 @@
 layout: post
 title: "Image classification using ViT with Python - 파이썬으로 ViT 모델을 활용, 이미지 분류하보기"
 author: [DrFirst]
-date: 2025-04-08 11:00:00 +0900
+date: 2025-04-27 11:00:00 +0900
 categories: [AI,Experiment]
-tags: [CLIP, Python, OpenAI, Vision-Language, Multimodal, AI, Deep Learning, Image Embedding, Text Embedding, Zero-shot Learning, ViT-B/32]
-lastmod : 2025-04-08 11:00:00
+tags: [ ViT,AI, Python,Deep Learning, Image Embedding, ViT-B/32, torchvision,vit-base-patch16-224]
+lastmod : 2025-04-27 11:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
@@ -16,7 +16,6 @@ sitemap :
 ## (한국어) 파이썬으로 ViT 모델을 활용, 이미지 분류하보기
 
 안녕하세요! 😊  
-
 
 [지난 포스팅](https://drfirstlee.github.io/posts/ViT/#image-you-can-do-transformer-too---the-emergence-of-vit-iclr-2021) 에서는 ViT의 Paper를 바탕으로 이론을 알아보았는데요!  
 오늘은 실제 이 ViT델을 다운받아 Python 환경에서 이미지 분류 작업을 진행해보겠습니다!!  
@@ -50,7 +49,7 @@ torchvision은 다양한 CNN 기반 모델뿐만 아니라 ViT 모델도 제공�
 
 ## 2. 오늘의 이미지!! 🐶  분류 시작!
 
-![dog](https://github.com/user-attachments/assets/7e34a71b-d976-4341-850c-de1c8cc70249)
+![dog](https://github.com/user-attachments/assets/0ad9326c-a64e-4d01-9e87-f53fe271c19a)
  
 오늘은 귀여운 강아지 이미지를 사용하여 ViT 모델이 어떻게 이미지를 분류하는지 확인해보겠습니다.  
 그리고 오늘의 ViT 모델은 Imagenet의 데이터셋으로 학숩된 모델을 활용할 예정입니다!!  
@@ -156,7 +155,7 @@ Top 5 예측 결과:
 골든리트리버를 91.26%로 가장 높은 확률로 예측함을 볼수 있었습니다
 
 
-## 4. ViT 모델!! Huggingface 에서 모델을 받아서 실행하기! + 분석 (덜 간단, but 커스터마이징 가능)
+## 4. Huggingface 에서 직접 모델을 받아서 실행하기! + 분석 (덜 간단, but 커스터마이징 가능)
 
 이번에는 직접 [허깅페이스의 ViT 모델](https://huggingface.co/google/vit-base-patch16-224)로부터 직접  
 모델을 임포트하여 진행해보겠습니다~!  
@@ -233,12 +232,6 @@ inputs = feature_extractor(images=image, return_tensors="pt")
 
 
 ```python
-### a. 이미지의 전처리방식!!
-
-아래의 전처리 부분을 보면, ViTFeatureExtractor는 해당 모델이 학습될 때 사용했던 전처리 방식을 미리 알고 있어,  
-복잡한 transforms.Compose 과정을 직접 작성하지 않고 간단하게 이미지 전처리를 수행할 수 있게 해준답니다~!!
-
-```python
 from transformers import ViTModel, ViTImageProcessor
 import torch
 from PIL import Image
@@ -269,6 +262,7 @@ print("CLS token values (앞 5개):", cls_token[0, :5])
 
 위 코드를 실행해보면, 예상한대로 768 차원의CLS 토큰을 볼수 있지요~~  
 이후 여러 연구들은 이 토큰을 활용해서 다른 정보로 활용하기도합니다!   
+
 ```text 
 CLS token shape: torch.Size([1, 768])
 CLS token values (앞 5개): tensor([-0.5934, -0.3203, -0.0811,  0.3146, -0.7365])
@@ -278,7 +272,7 @@ CLS token values (앞 5개): tensor([-0.5934, -0.3203, -0.0811,  0.3146, -0.7365
 
 기존 CNN 방식의 이미지 분류는 모델의 마지막단에 CAM(Class Activation Map)을 두어서 어떤 부분이 중요하게 되었는지 시각화 할수 있었습니다!!!  
 
-[CAM의 이론 정리!!](https://drfirstlee.github.io/posts/CAM_research/)
+[CAM의 이론 정리!!](https://drfirstlee.github.io/posts/CAM_research/)  
 [CAM 실습!!](https://drfirstlee.github.io/posts/CAM_usage/) 
 
 우리의 ViT 모델은 CAM과는 다르기에 동일한 방식으로 진행은 어렵지만!!  
@@ -358,7 +352,20 @@ show_mask_on_image(image, mask)
 
 이고 그 결과는!!!??
 
-![patch](https://drfirstlee.github.io/posts/CAM_usage/) 
+![patch](https://github.com/user-attachments/assets/82e9e668-d62a-4b06-9464-75e4eb3f967b)
 
 입니다~! 맞는것 같나요~?
 
+---
+
+## 5. 💡 결론 : 간단하고 빠른 ViT
+
+어떤가요? 코드를 직접 실행해보았는데~!!  
+큰 어려움없이, 그리고 빠르게 코드를 실행할수 있었지요!?
+
+이처럼 이론적으로도 유의미했던 ViT! 
+대규모 데이터셋에서 학습된 모델이 코드로도 쉽게 구현이 가능해서 이후로 컴퓨터 비전 분야에서 Transformer 기반 연구가 폭발적으로 증가하게 되었다고합니다!!  
+
+앞으로 DINO, DeiT, CLIP, Swin Transformer 등 다양한 비전 Transformer 기반의 모델도 알아보며 실습해볼 수 있도록 하겠습니다~! ^^
+
+감사합니다!!! 🚀🔥
