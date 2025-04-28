@@ -70,7 +70,8 @@ import requests
 import json
 
 # Read JSON file directly from URL
-url = "[https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json](https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json)"
+url = "https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json"
+
 
 response = requests.get(url)
 response.raise_for_status()  # Raise an error for bad status codes
