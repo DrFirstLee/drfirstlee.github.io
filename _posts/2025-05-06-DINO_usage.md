@@ -11,6 +11,233 @@ sitemap :
   priority : 0.9
 ---
 
+## (English) DINO Python Experiment!! So Cool!!
+
+> In the [previous post](https://drfirstlee.github.io/posts/DINO/), we learned the theory behind DINO!!  
+> Today, let’s actually run the DINO model and see how it performs~!
+
+![dino_result](https://github.com/user-attachments/assets/71580e84-ee1a-4571-ba64-0d4f776de11d)
+
+- Starting with the conclusion today!!!  
+- It highlights important parts of the image with a tada~ using attention  
+- Isn't that amazing!?  
+- Let’s explore how it works~!
+
+---
+
+#### 1. What is timm?!!
+
+> In this post, we’ll load the DINO model using `timm`.  
+> Let’s first understand what `timm` (Torch Image Models) is!
+
+- **timm** stands for **Torch Image Models**,  
+- A **library** that provides a wide array of tools and pretrained models for handling image tasks in PyTorch!!
+
+**Main features of timm:**
+
+* **Offers various modern image models:**  
+  - Includes ResNet, EfficientNet, Vision Transformer (ViT), Swin Transformer, and more — easily usable for image classification, detection, semantic segmentation, etc.  
+* **Rich pretrained weights:**  
+  - Provides weights pretrained on large datasets such as ImageNet, JFT, BeiT, which makes transfer learning easier without the need for training from scratch  
+* **Easy model creation:**  
+  - With `timm.create_model()`, you can create your desired model by name + conveniently load pretrained weights  
+* **Modular design:**  
+  - Easily access and modify components like backbone, pooling layer, classifier head — highly flexible for building custom models or fine-tuning existing ones  
+* **Various utility functions:**  
+  - Offers helpful tools for image transforms, dataset handling, optimizers, schedulers, etc.  
+* **Active community:**  
+  - An open-source project actively maintained and continuously updated with new models and features  
+
+* **Example of using timm**
+
+```
+import timm
+
+# USE DINO-ViT MODEL (pretrained)
+model = timm.create_model('vit_base_patch16_224_dino', pretrained=True)
+model.eval()
+```
+
+This loads the DINO model structure!!  
+(We’ll focus on hands-on today — for architecture details, please check the theory post~)
+
+---
+
+#### 2. Encoding Images with ViT-based DINO!! (Into Vectors)
+
+> The core idea of ViT is turning an image into a vector using Transformer techniques!!
+
+![hold_fork](https://github.com/user-attachments/assets/1b8536c2-fbdc-4eba-96b0-f2f7d1cd4728)
+
+Let’s start with this image of someone holding a fork!!  
+And now@!
+
+```
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import torch
+import timm
+import torchvision.transforms as T
+
+# USE DINO-ViT MODEL (pretrained)
+model = timm.create_model('vit_base_patch16_224_dino', pretrained=True)
+model.eval()
+
+# Load image 
+image_path = "hold_fork.jpg" 
+image = Image.open(image_path).convert('RGB')  
+
+# Image preprocess
+transform = T.Compose([
+    T.Resize((224, 224)),
+    T.ToTensor(),
+    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+img_tensor = transform(image).unsqueeze(0)
+
+# Model output with attention weights
+with torch.no_grad():
+    outputs = model.forward_features(img_tensor)  # Shape: (batch_size, 197, feature_dim)
+
+np.shape(outputs)
+```
+
+Breaking down the code above:  
+- Load the model  
+- Load the image as RGB vector  
+- Preprocess and normalize the image to (224, 224)  
+- Feed it into DINO → Get final output!!
+
+And the output will be:
+
+```text
+torch.Size([1, 197, 768])
+```
+
+So the output is a vector of shape 197 (1 CLS token + 196 patch tokens) × 768 (DINO’s internal dimension)!!
+
+That’s the end of the image encoding process!!!!  
+You can now analyze each patch token or the CLS token depending on your purpose~~!!
+
+---
+
+#### 3. Visualizing the Encoded Output!! (Decoding)
+
+> The result is in vector form — great for computers,  
+> but hard for us to interpret, right?  
+> Let’s decode it so we can actually **see** it!
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import torch
+import timm
+import torchvision.transforms as T
+
+# USE DINO-ViT MODEL (pretrained)
+model = timm.create_model('vit_base_patch16_224_dino', pretrained=True)
+model.eval()
+
+# Load image 
+image_path = "hold_fork.jpg" 
+image = Image.open(image_path).convert('RGB')  
+
+# Image preprocess
+transform = T.Compose([
+    T.Resize((224, 224)),
+    T.ToTensor(),
+    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+img_tensor = transform(image).unsqueeze(0)
+
+# Model output with attention weights
+with torch.no_grad():
+    # Get features including attention
+    outputs = model.forward_features(img_tensor)  # Shape: (batch_size, 197, feature_dim)
+    
+    # Extract patch tokens (excluding CLS)
+    patch_tokens = outputs[:, 1:, :]  # (batch_size, 196, feature_dim)
+    
+    # Attention map: compute importance using norm of patch tokens
+    attn_map = torch.norm(patch_tokens, dim=-1).reshape(14, 14)  # (14x14)
+    
+    # Normalize (scale to range 0–1)
+    attn_map = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min())
+
+# Visualize full Attention Map
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+
+# Original image
+ax[0].imshow(image)
+ax[0].axis('off')
+ax[0].set_title('Original Image')
+
+# Attention Map
+attn_map_resized = np.array(Image.fromarray(attn_map.numpy()).resize(image.size, resample=Image.Resampling.BILINEAR))
+ax[1].imshow(image)
+ax[1].imshow(attn_map_resized, cmap='jet', alpha=0.5)  # Attention Map > heat map
+ax[1].axis('off')
+ax[1].set_title('DINO-ViT Attention Map')
+
+plt.tight_layout()
+plt.show()
+```
+
+This code builds upon the previous one by adding visualization!  
+The most important part is:
+
+```
+# Model output with attention weights
+with torch.no_grad():
+    outputs = model.forward_features(img_tensor)  # Shape: (batch_size, 197, feature_dim)
+
+    # Extract patch tokens (exclude CLS)
+    patch_tokens = outputs[:, 1:, :]  # (batch_size, 196, feature_dim)
+    
+    # Attention map: compute importance via patch token norm
+    attn_map = torch.norm(patch_tokens, dim=-1).reshape(14, 14)  # (14x14)
+    
+    # Normalize (scale to 0–1)
+    attn_map = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min())
+```
+
+This part excludes 1 out of the 197 patch outputs.  
+Understanding why is essential!!
+
+`That’s because we must exclude the CLS token!!`
+
+Once visualized, you get the same result as shown at the beginning of this post:
+
+![dino_result](https://github.com/user-attachments/assets/71580e84-ee1a-4571-ba64-0d4f776de11d)
+
+The DINO model, trained **without any labels**,  
+intelligently identifies and highlights important regions in red,  
+while marking less important ones in blue!
+
+---
+
+#### 4. Conclusion!!
+
+With DINO, it’s incredibly easy to turn images into vectors and **visualize** them!!  
+Building and training the model may have been tough,  
+but actually using it is super simple and impressive!!  
+Definitely something we should remember and leverage in future research~! 😊
+
+Also, big thanks to `timm` for making model usage so convenient!  
+It supports not just DINO, but many other models as well!
+
+```
+timm.list_models()
+```
+
+You can use this to see the long list of available models~  
+*In my version, over 1,200 models are available!*  
+*I also saw resnet, swin, RegNet, EfficientNet — looks like I need to study those too!!*
+
+
+---
 ## (한국어) DINO 파이썬 실습!! 완전 신기해!!
 
 > [지난 포스팅](https://drfirstlee.github.io/posts/DINO/) 에서 배웠던 DINO 이론!!  
