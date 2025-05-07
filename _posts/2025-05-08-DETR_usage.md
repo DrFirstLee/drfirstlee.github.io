@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "DETR을 활용한 객채 탐지! 파이썬 실습!!"
+title: "DETR을 활용한 객체 탐지! 파이썬 실습!!"
 author: [DrFirst]
 date: 2025-05-08 07:00:00 +0900
 categories: [AI, Experiment]
@@ -247,16 +247,16 @@ However, it takes 8.5 seconds to detect objects in a single image... it's still 
 
 ---
 
-## (한국어) DETR을 활용한 객채 탐지! 파이썬 실습!!
+## (한국어) DETR을 활용한 객체 탐지! 파이썬 실습!!
 
 > [지난 포스팅](https://drfirstlee.github.io/posts/DETR/) 에서 공부해보았던 DETR!!  
-> 오늘은 이 DETR 모델을 바탕으로 직접 객채 탐지(Object Detection)을 진행해 알아보겠습니다~!   
+> 오늘은 이 DETR 모델을 바탕으로 직접 객체 탐지(Object Detection)을 진행해 알아보겠습니다~!   
 
 ![detr_result](https://github.com/user-attachments/assets/cfb15e15-999d-4fc7-a1f2-5fa3f3f674bc)
 
 - 오늘도도 결론부터!!!  
-- 이미지에서 탐지된 여러 객채들을 찾아서 보여줍니다!!  
-- 많은 사람들과 프리스비 등 객채를 정확도와 함께 보여줍니다!!   
+- 이미지에서 탐지된 여러 객체들을 찾아서 보여줍니다!!  
+- 많은 사람들과 프리스비 등 객체를 정확도와 함께 보여줍니다!!   
 - 함께, 파이썬 코드로 그 과정을 알아보아요!!  
 
 ### 1. huggingface에서 DETR 모델 받기!!
@@ -336,12 +336,12 @@ DetrImageProcessor {
 2.  **트랜스포머 인코더-디코더 (Transformer Encoder-Decoder):** 추출된 특징들을 트랜스포머 구조를 통해 처리하여 이미지 내 객체 간의 관계를 파악하고, 각 객체의 정보를 학습  
 3.  **객체 예측 (Object Prediction):** 최종적으로 이미지 내에 존재하는 객체들의 **바운딩 박스 좌표**, 해당 객체의 **클래스 레이블**, 그리고 예측의 **신뢰도 점수** 출력
 
-아래와 같이 DETR으 모델로 구성됨을 볼수 있습니다!!
+아래와 같이 DETR의 모델로 구성됨을 볼수 있습니다!!
 
 ![detr_model](https://github.com/user-attachments/assets/93a59c85-f6b3-484a-ab68-97360bcbda92)
 
 
-#### 2. DETR로 객채탐지 시작!  
+#### 2. DETR로 객체탐지 시작!  
 
 > 간단한 코드 몇줄이면 끝!!!
 
@@ -394,7 +394,7 @@ for score, label, box in zip(results["scores"], results["labels"], results["boxe
 - `results` 에서 탐지된 내용 print 하기!!
 
 그럼 그 output은!!  
-아래와 같이!! 탐지된 객채와, 그 정확도(confidence), 마지막으로 바운딩 박스 좌표를 알려줍니다@!
+아래와 같이!! 탐지된 객체와, 그 정확도(confidence), 마지막으로 바운딩 박스 좌표를 알려줍니다@!
 
 ```text
 Detected person with confidence 0.783 at [12.91, 355.33, 32.23, 383.66]
@@ -419,7 +419,7 @@ Detected person with confidence 0.73 at [597.38, 342.37, 613.34, 380.89]
 Detected person with confidence 0.998 at [304.64, 70.92, 538.5, 410.45]
 ```
 
-#### 3. 객채 탐지결과물의 시각화!!(디코딩)   
+#### 3. 객체 탐지결과물의 시각화!!(디코딩)   
 
 > 단순 텍스트 탐지가 아니라 그림에 바운딩박스로 표시해봅니다!@  
 
@@ -480,11 +480,11 @@ print(f"Detection result saved as {output_path}")
 ```
 
 위 코드를 통하여,  
-감지된 객채를 시각화하고  
+감지된 객체를 시각화하고  
 `detr_output.jpg` 로도 저장하게됩니다~!!  
 
 ![detr_result](https://github.com/user-attachments/assets/cfb15e15-999d-4fc7-a1f2-5fa3f3f674bc)
 
 
-객채 탐지, 참 쉽죠~?  
-다만, 1개 이미지에서 객채 탐지에 시간이 8.5초가 소요,, 역시 좀 오래걸리네요!  
+객체 탐지, 참 쉽죠~?  
+다만, 1개 이미지에서 객체 탐지에 시간이 8.5초가 소요,, 역시 좀 오래걸리네요!  
