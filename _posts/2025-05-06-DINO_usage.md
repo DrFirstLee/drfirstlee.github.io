@@ -433,7 +433,7 @@ with torch.no_grad():
 `바로 CLS를 제외해야하기 때문이에요!!`
 
 이렇게 시각화해보면,  
-포스팅에 처음에서 보았던 아래와 같은 결과물을 볼수 있습니다~  
+포스팅에 처음에서 보았던, 아래와 같은 결과물을 볼수 있습니다~  
 
 ![dino_result](https://github.com/user-attachments/assets/71580e84-ee1a-4571-ba64-0d4f776de11d)
 
