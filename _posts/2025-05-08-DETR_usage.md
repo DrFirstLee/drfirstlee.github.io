@@ -240,7 +240,7 @@ Through the code above,
 The detected objects are visualized,   
 And saved as `detr_output.jpg`!!  
 
-![detr_model](https://github.com/user-attachments/assets/93a59c85-f6b3-484a-ab68-97360bcbda92)
+![detr_result](https://github.com/user-attachments/assets/cfb15e15-999d-4fc7-a1f2-5fa3f3f674bc)
 
 Object detection, it's really easy, right?  
 However, it takes 8.5 seconds to detect objects in a single image... it's still a bit slow!  
@@ -483,7 +483,7 @@ print(f"Detection result saved as {output_path}")
 감지된 객채를 시각화하고  
 `detr_output.jpg` 로도 저장하게됩니다~!!  
 
-![detr_model](https://github.com/user-attachments/assets/93a59c85-f6b3-484a-ab68-97360bcbda92)
+![detr_result](https://github.com/user-attachments/assets/cfb15e15-999d-4fc7-a1f2-5fa3f3f674bc)
 
 
 객채 탐지, 참 쉽죠~?  
