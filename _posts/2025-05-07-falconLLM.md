@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "한때 주목받던 UAE의 LLM, 팰컨의 근황"
+title: "The Rise and Fall of UAE's Once-Prominent LLM, Falcon - 한때 주목받던 UAE의 LLM, 팰컨의 근황"
 author: [DrFirst]
 date: 2025-05-07 14:00:00 +0900
 categories: [AI, Experiment]
@@ -10,6 +10,88 @@ sitemap :
   changefreq : weekly
   priority : 0.9
 ---
+## (English) The Rise and Fall of UAE's Once-Prominent LLM, Falcon
+
+![leaderboard](https://github.com/user-attachments/assets/fc25addd-5f0f-42eb-aafb-b8e6c5283e19)
+
+Developed by the **Technology Innovation Institute (TII)** of the UAE, the **Falcon** series of large language models (LLMs) was one of the most spotlighted open-source AI projects in 2023.
+
+- **Ranked #1 on Hugging Face’s Open LLM Leaderboard**
+- **Over 55 million downloads**
+- **The first global AI model from the Middle East**
+
+However, as of 2024, Falcon appears to be gradually falling behind in the competitive open-source LLM landscape.
+
+---
+
+### ⚡ Falcon's Glory Days: Why It Was a Big Deal
+
+- **Fully open-source license**
+- **Multilingual support** (English, French, German, Spanish, and more)
+- **Lightweight and efficient for edge devices**
+- **Collaborations with Microsoft, Qualcomm, Cerebras**
+- **Applied across industries like healthcare, finance, and energy**
+
+---
+
+### 📉 Why Did Falcon Fall Behind?
+
+- The rapid emergence of mega-models like **Meta's LLaMA 2** and **Google’s Gemini**
+- TII focused more on developing successors than maintaining older models
+- Shift in strategy from technical competition to ecosystem-building
+
+As a result, Falcon has now slipped **below the top 500** on the Hugging Face leaderboard.
+
+- Most recently, as of January 2025, **Falcon 3 ranks around 501st**...
+
+---
+
+## 🧪 Falcon 3 Launch: Technically Strong, Market Response Weak
+
+![falcon3](https://github.com/user-attachments/assets/02132f6e-f81d-4a63-b5ed-a68d94cb1f1d)
+
+In 2024, TII launched the next-generation **Falcon 3** series with high hopes.
+
+### Falcon 3 Key Highlights
+
+[Official sites](https://falconllm.tii.ae/falcon3/index.html)
+
+- **Optimized for lightweight devices** like laptops and Raspberry Pi
+- **Model sizes**: 1B, 3B, 7B, 10B (available as Base/Instruct variants)
+- **Supports 32K context** and **131K vocabulary tokens**
+- **Built with FlashAttention2 + Grouped Query Attention**
+- **Trained on 14 trillion tokens**, up to 244 tokens/sec inference on H100
+
+> Benchmarks showed Falcon 3 surpassing Qwen, LLaMA, and Mistral in its size class...
+
+### So Why Didn’t It Catch On?
+
+- **Lack of visibility on major LLM leaderboards post-release**
+- **Weak marketing and community engagement**
+- **Fewer real-world use cases and follow-up adoption than its predecessors**
+- And perhaps most importantly... **the overwhelming surge of Chinese open-source models!**  
+  ~~Everyone is talking about DeepSeek these days!!~~
+
+Ultimately, Falcon 3 is a case where **technical brilliance didn't translate into market traction**.
+
+---
+
+### So What's Next for Open-Source AI?
+
+**Falcon was a symbolic milestone in the democratization of open-source LLMs.**  
+It was proudly released at a time when closed models from OpenAI and Anthropic dominated.  
+But with Meta and other global players now flooding the space, **open-source LLMs are in fierce competition**.
+
+> We may now be entering an era where **fine-tuning open models is more valuable than building new ones from scratch**.
+
+Can Falcon 4, or a new strategy from TII, bring about a turnaround?  
+Will UAE retain its AI leadership on the global stage?
+
+Let’s wait and see—  
+And we also hope to see strong contributions from Korea's own players like NAVER!
+
+
+--- 
 
 ## (한국어) 한때 주목받던 UAE의 LLM, 팰컨의 근황
 
@@ -56,6 +138,8 @@ UAE의 **TII(Technology Innovation Institute)**가 개발한 대형언어모델(
 2024년 TII는 차세대 모델 **Falcon 3 시리즈**를 야심차게 공개했습니다.
 
 ### Falcon 3의 특징 요약
+
+[Official sites](https://falconllm.tii.ae/falcon3/index.html)
 
 - **경량 디바이스 최적화**: 노트북, 라즈베리파이 같은 환경에서도 구동 가능
 - **모델 구성**: 1B, 3B, 7B, 10B 모델 (Base/Instruct 버전 제공)
