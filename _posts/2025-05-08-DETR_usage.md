@@ -2,16 +2,47 @@
 layout: post
 title: "DETR을 활용한 객채 탐지! 파이썬 실습!!"
 author: [DrFirst]
-date: 2025-05-08 09:00:00 +0900
+date: 2025-05-08 07:00:00 +0900
 categories: [AI, Experiment]
 tags: [CVPR, CVPR 2020, Python, Detr, Object Detection, Huggingface,  detr-resnet-50]
-lastmod : 2025-05-08 09:00:00
+lastmod : 2025-05-08 07:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
 
+## (English) Object Detection with DETR! Python Practice!!
 
+> In the [previous post](https://drfirstlee.github.io/posts/DETR/) we studied DETR!!
+> Today, based on this DETR model, we will directly perform Object Detection!
+
+![detr_result](https://github.com/user-attachments/assets/cfb15e15-999d-4fc7-a1f2-5fa3f3f674bc)
+
+- Let's start with the conclusion again!!!
+- It finds and shows multiple detected objects in the image!!
+- It accurately displays many people and frisbees, along with their accuracy!!
+- Let's explore the process together with Python code!!
+
+### 1. Loading the DETR model from Hugging Face!!
+
+> Today's DETR model will be loaded from Hugging Face, using the `facebook/detr-resnet-50` model.
+
+```python
+import torch
+import torchvision.transforms as T
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from PIL import Image
+from transformers import DetrImageProcessor, DetrForObjectDetection
+
+
+# 1️⃣ Set device (use CUDA if GPU is available)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# 2️⃣ Load DETR model and processor (pretrained model)
+model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50").to(device)
+processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
+```
 
 ---
 ## (한국어) DETR을 활용한 객채 탐지! 파이썬 실습!!
