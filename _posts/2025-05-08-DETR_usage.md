@@ -178,7 +178,7 @@ Detected person with confidence 0.73 at [597.38, 342.37, 613.34, 380.89]
 Detected person with confidence 0.998 at [304.64, 70.92, 538.5, 410.45]
 ```
 
-#### 3. Visualization of Object Detection Results!! (Decoding)
+#### 3. Visualization of Object Detection Results!!  
 
 > Instead of simple text detection, let's display bounding boxes on the image!
 
@@ -419,7 +419,7 @@ Detected person with confidence 0.73 at [597.38, 342.37, 613.34, 380.89]
 Detected person with confidence 0.998 at [304.64, 70.92, 538.5, 410.45]
 ```
 
-#### 3. 객체 탐지결과물의 시각화!!(디코딩)   
+#### 3. 객체 탐지결과물의 시각화!!   
 
 > 단순 텍스트 탐지가 아니라 그림에 바운딩박스로 표시해봅니다!@  
 
