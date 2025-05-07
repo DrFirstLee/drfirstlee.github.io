@@ -2,10 +2,10 @@
 layout: post
 title: 명불허전, 『왕자와 거지』를 읽고
 author: [DrFirst]
-date: 2025-05-07 09:00:00 +0900
+date: 2025-05-03 09:00:00 +0900
 categories: [Activity, Books]
 tags: [마크 트웨인, 왕자와 거지, Mark Twain, 고전문학, 명작, The king and The pauper, Samuel Langhorne Clemens, 새뮤얼 랭혼 클레먼스]
-lastmod : 2025-05-07 09:00:00
+lastmod : 2025-05-03 09:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
