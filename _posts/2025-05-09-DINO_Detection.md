@@ -15,7 +15,7 @@ sitemap :
 _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해결한 강력한 대안!_
 
 > 논문: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)  
-> 발표: ICLR 2023 (by IDEA Research & Alibaba DAMO Academy)  
+> 발표: ICLR 2023 (by IDEA Research)  
 > 코드: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
 
 ---
@@ -40,14 +40,14 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 
 ---
 
-## #💡 DINO의 핵심 아이디어
+### 💡 DINO의 핵심 아이디어
 
 | 주요 구성 요소              | 설명 |
 |----------------------------|------|
 | 🔧 **DeNoising Training**   | 학습 시, GT 주위에 노이즈 박스를 일부러 생성하여 Query를 빠르게 수렴시킴 |
 | 🧲 **Matching Queries**     | GT에 가까운 위치에 고정된 Query Anchor를 배치해 안정적인 학습 유도 |
 | 🧠 **Two-stage 구조 추가**  | Encoder에서 coarse object 후보를 뽑고, Decoder에서 refinement 수행 |
-| 🪄 **Look Forward Twice**   | Decoder에서 한 번이 아니라 두 번 attention을 주는 방식으로 정확도 향상 |
+| **Look Forward Twice**   | Decoder에서 한 번이 아니라 두 번 attention을 주는 방식으로 정확도 향상 |
 
 ---
 
@@ -164,7 +164,7 @@ DINO에서는 학습 초기에 object query들이 **정답(GT) 주변 정보를 
 ### 📌 요약
 
 - DINO는 DETR의 구조를 유지하면서, **실제 사용에 적합하도록 빠르고 정확하게 개선**한 모델
-- 다양한 후속 연구(Grounding DINO, DINO-DETR, DINOv2)의 기반이 되는 핵심 모델
+- 다양한 후속 연구(Grounding DINO, DINgfO-DETR, DINOv2)의 기반이 되는 핵심 모델
 - 🔥 **open-vocabulary detection**, **grounding**, **segment anything** 같은 최신 비전 연구와도 잘 결합됨
 
 ---
