@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "DETR을 활용한 객체 탐지! 파이썬 실습!!"
+title: "Object Detection with DETR! Python Practice!! - DETR을 활용한 객체 탐지! 파이썬 실습!!"
 author: [DrFirst]
 date: 2025-05-08 07:00:00 +0900
 categories: [AI, Experiment]
-tags: [CVPR, CVPR 2020, Python, Detr, Object Detection, Huggingface,  detr-resnet-50]
+tags: [CVPR, CVPR 2020, Python, Detr, 객체 탐지, Object Detection, Huggingface,  detr-resnet-50]
 lastmod : 2025-05-08 07:00:00
 sitemap :
   changefreq : weekly
