@@ -1,6 +1,6 @@
 ---
 layout: post
-title: " 오늘의 시 : 행복하다가"
+title: " 오늘의 시 : 행복하다가 - A Poem to Share: While I'm Happy"
 author: [DrFirst]
 date: 2025-05-10 09:00:00 +0900
 categories: [Activity, Writing]
@@ -11,138 +11,160 @@ sitemap :
   priority : 0.9
 ---
 
-# 📖 시 한 편: **행복하다가**
+## 📖 시 한 편: **행복하다가**
 
-우리의 삶은  
-**누구와** 함께하느냐에 따라  
-다양한 얼굴의 행복을 보여줍니다.
+![Image](https://github.com/user-attachments/assets/5df3a333-04cb-41b2-ae74-37eee2539b08)
 
-부모님이 곁에 있으면 그게 행복이고,  
-친구들과 웃고 있으면 또 그게 행복이고,  
-사랑하는 사람과 눈을 마주하면 그 순간이 전부가 됩니다.  
-그리고 작은 아기의 손을 꼭 쥐고 있는 그 시간도  
-더없이 따뜻한 행복이죠.
+우리의 행복은 어디에서 비롯될까요?  
+맛있는 음식을 먹을 때, 좋은 음악을 들을 때도 행복하지만  
+결국 가장 오래 남는 건  
+**'누군가와 함께한 순간들'**입니다.
 
 오늘 소개할 시 **「행복하다가」**는  
-이런 ‘삶의 단계에 따른 행복’을 담담하게, 그러나 깊이 있게 담아낸 작품입니다.
+그런 사람과의 관계 속에서 피어나는  
+짧지만 깊은 행복의 순간들을  
+담백하게, 그러나 울림 있게 그려냅니다.
 
 ---
 
-## 📜 시: *행복하다가*
+### 📜 시: *행복하다가*
 
 > **행복하다가**  
 >   
 > 행복하다가  
-> 엄마 아빠만 있으면 행복하다가  
-> 따뜻한 손길 속에 잠드는 저녁이면  
+> 엄마아빠만 있으면 행복하다가  
 >   
 > 행복하다가  
-> 친구만 있으면 행복하다가  
-> 함께 웃고 떠드는 하루 끝이면  
+> 친구랑 놀면 행복하다가  
 >   
 > 행복하다가  
-> 애인만 있으면 행복하다가  
-> 눈빛 속에 서로를 담을 때면  
+> 연인만 생각하면 행복하다가  
 >   
 > 행복하다가  
-> 아기만 있으면 행복하다가  
-> 작은 손가락 움켜쥘 때면  
+> 아기만 바라보면 행복하다가  
 >   
 > 그렇게  
-> 조금씩 다르게,  
-> 조금씩 닮게,  
+> 가까워지고,  
+> 멀어지고,  
+> 만나고,  
+> 해어지고  
+>   
 > 나는 자꾸만  
 > 행복하다가.
 
 ---
 
-## 🌿 시 감상
+### 🌿 시 감상
 
-이 시는 '행복'이라는 감정이  
-크고 특별한 것이 아니라  
-아주 사소한 일상 속에서도  
-얼마든지 피어날 수 있음을 말해줍니다.
+이 시는 단순한 반복 속에 깊은 의미를 담고 있습니다.  
+행복은 특정한 ‘사건’이 아니라,  
+우리를 둘러싼 **‘사람’들**과의 순간에서 피어납니다.
 
-반복되는 “행복하다가”라는 문장은  
-그 순간순간이 얼마나 소중한지를 상기시켜 줍니다.  
-그리고, 우리는 매번 다른 모습으로  
-행복을 만나고, 또 보내며 살아갑니다.
+부모님과의 저녁,  
+친구와의 웃음,  
+연인과의 상상,  
+아기를 바라보는 시선 속에—  
+**우리는 행복하다가**,  
+그리고 또 다시,  
+이별하고, 그리워하고, 다시 만납니다.
 
----
-
-## 🪞 당신에게도 그런 순간이 있었나요?
-
-어쩌면 지금 이 글을 읽고 있는 이 순간,  
-당신도 ‘행복하다가’  
-또 다른 하루로 나아가고 있을지 모릅니다.
-
----
-
-# 📖 A Poem to Share: **While I'm Happy**
-
-In our lives,  
-**who** we are with  
-often shapes the many faces of happiness.
-
-When we're with our parents, that's happiness.  
-Laughing with friends—again, happiness.  
-When we lock eyes with someone we love, that moment feels like everything.  
-And when we gently hold a baby's tiny hand,  
-we feel a warm happiness like no other.
-
-The poem **"While I'm Happy"** that I introduce today  
-quietly but deeply expresses this idea of happiness  
-as it flows through different stages of life.
+시 말미에 등장하는  
+“가까워지고, 멀어지고, 만나고, 해어지고”는  
+불교의 ‘회자정리 거자필반(會者定離 去者必返)’처럼  
+인연의 이면에 있는 **이별과 순환**을 암시합니다.
 
 ---
 
-## 📜 Poem: *While I'm Happy*
+### 🪞 그래서, 우리는 다시 행복합니다
+
+누군가는 머물고, 누군가는 떠나지만  
+그 모든 흐름 안에서 우리는  
+잠시라도,  
+**행복하다가**  
+또 하루를 살아갑니다.
+
+당신의 오늘도  
+그런 ‘함께의 순간’으로  
+따뜻하기를 바랍니다.
+
+---
+
+## 📖 A Poem to Share: **While I'm Happy**
+
+![Image](https://github.com/user-attachments/assets/5df3a333-04cb-41b2-ae74-37eee2539b08)
+
+Where does our happiness come from?  
+We may feel happy when enjoying good food or listening to music—  
+but in the end, the moments that stay with us the longest  
+are those **shared with someone**.
+
+The poem **"While I'm Happy"**  
+gently yet profoundly captures  
+the fleeting but deep moments of happiness  
+that bloom within our relationships with others.
+
+---
+
+### 📜 Poem: *While I'm Happy*
 
 > **While I'm Happy**  
 >   
 > While I'm happy  
 > I'm happy with just Mom and Dad  
-> On evenings I fall asleep in their warm embrace  
 >   
 > While I'm happy  
-> I'm happy with just my friends  
-> At the end of days filled with laughter and chatter  
+> I'm happy when playing with friends  
 >   
 > While I'm happy  
-> I'm happy with just a lover  
-> When we hold each other in a gaze full of meaning  
+> I'm happy just thinking of a lover  
 >   
 > While I'm happy  
-> I'm happy with just a baby  
-> When tiny fingers wrap around mine  
+> I'm happy just looking at a baby  
 >   
 > Like that  
-> A little different each time,  
-> Yet a little more alike,  
+> We grow closer,  
+> Drift apart,  
+> Meet,  
+> And part ways  
+>   
+> Again and again  
 > I find myself  
-> Again and again,  
 > While I'm happy.
 
 ---
 
-## 🌿 Reflections on the Poem
+### 🌿 Reflections on the Poem
 
-This poem reminds us that happiness  
-isn’t always found in grand or special moments—  
-but rather, it blooms in the smallest pieces of everyday life.
+This poem, though simple in its repetition, holds a deep meaning.  
+Happiness is not tied to specific “events,”  
+but rather blossoms through the **moments we share with people**.
 
-The repeated phrase “While I'm happy”  
-gently emphasizes how precious each moment can be.  
-And so, in different forms,  
-we meet happiness,  
-and let it go again and again.
+An evening with parents,  
+laughter with friends,  
+a memory of love,  
+the gaze upon a child—  
+**we are happy**,  
+and then once again,  
+we say goodbye, long for them, and meet again.
+
+The final lines—  
+"Grow closer, drift apart, meet, and part ways"—  
+echo the Buddhist concept of  
+**"Every encounter leads to parting, every departure to reunion"**  
+(會者定離 去者必返).  
+They remind us that **separation and return** are part of all human ties.
 
 ---
 
-## 🪞 Have you ever had such a moment?
+### 🪞 And So, We Find Happiness Again
 
-Perhaps in this very moment, as you read these lines,  
-you too are *while you're happy*,  
-heading into another day.
+Some people stay, others leave,  
+but within that ongoing flow,  
+we find ourselves, even briefly,  
+**while we're happy**,  
+living through another day.
+
+May your today, too,  
+be warmed by such moments of togetherness.
 
 ---
