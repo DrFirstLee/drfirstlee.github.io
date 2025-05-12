@@ -17,7 +17,7 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 > 논문: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)  
 > 발표: ICLR 2023 (by IDEA Research)  
 > 코드: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
-
+> 코멘트 : DETR 공개 이후, DAB-DETR/ DN-DETR / Deformable DETR 등 연속적으로 공개되었고 이런 모델들을 바탕으로 제안한 모델로,., DETR만 공부하고 넘어온 입장에서는 이해하기가 어렵다!  
 ---
 
 ### ✅ DINO란?
@@ -25,9 +25,9 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 > DINO는 **DETR 계열의 한계를 극복**한 객체 탐지 모델  
 > 특히 **학습 속도 향상**과 **소형 객체 성능 개선**에 중점을 둔 구조로 설계  
 
-- DINO = **DETR with Improved DeNoising Anchors**
-- 기본 구조는 DETR 기반이지만, 다양한 전략으로 성능을 강화한 모델
-- **One-stage** 구조지만 **Two-stage 수준의 성능**을 달성!
+- DINO = **DETR with Improved DeNoising Anchors**  
+- 기본 구조는 DETR 기반이지만, 다양한 전략으로 성능을 강화한 모델  
+- **One-stage** 구조지만 **Two-stage 수준의 성능**을 달성!  
 
 ---
 
@@ -52,126 +52,134 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 
 ---
 
+### 간단하게 살펴보는 DINO 전의 DETR 계열의 추가 연구
+
+> DINO 이전의 주요 DETR 계열 연구들을 간략히 정리해보았습니다!!  
+> 각각의 연구도 모두 공부해봐야하겠습니다!!  
+
+아래 연구들은 DETR의 기본 골격을 유지하면서도, 수렴 속도, 학습 안정성, 위치 정밀도 등 다양한 측면에서 개선을 시도해왔습니다.  
+
+---
+
+#### 🔹 **Deformable DETR (2021, Zhu et al.)**
+- 핵심 아이디어: **Deformable Attention**
+  - 이미지 전체가 아닌 **몇 개의 유의미한 위치에만 attention**을 수행.
+- 장점:
+  - 학습 속도 대폭 향상 (10배 이상)
+  - 두 단계(two-stage) 구조 도입으로 coarse-to-fine 탐지 가능
+
+---
+
+#### 🔹 **Anchor DETR (2021, Wang et al.)**
+- Query를 **Anchor-based 방식**으로 재정의.
+- Query가 위치 정보를 갖도록 하여 **더 나은 지역 탐색** 가능.
+
+---
+
+#### 🔹 **DAB-DETR (2022, Liu et al.)**
+- Query를 **Dynamic Anchor Box**로 초기화하고 decoder에서 점진적으로 refine.
+- 학습 초기부터 안정적인 위치 정보를 제공함으로써 수렴성 향상.
+
+---
+
+#### 🔹 **DN-DETR (2022, Zhang et al.)**
+- 학습 안정화를 위한 **DeNoising Training** 도입.
+- 정답 GT 박스에 **노이즈를 추가한 가짜 query**를 함께 학습에 포함시켜,
+  **Bipartite Matching의 불안정성 해소**에 기여.
+
+---
+
 
 ### 💡 DINO의 핵심 아이디어
 
-| 주요 구성 요소              | 설명 |
-|----------------------------|------|
-| 🔧 **DeNoising Training** (+CDN)   | 학습 시, GT 주위에 노이즈 박스를 일부러 생성하여 Query를 빠르게 수렴시킴 <br> DINO에서는 이를 Contrastive하게 확장하여 정답 vs 오답을 구분하는 학습(CDN)도 수행|
-| 🧲 **Matching Queries**     | GT에 가까운 위치에 고정된 Query Anchor를 배치해 안정적인 학습 유도 |
-| 🧠 **Two-stage 구조 추가**  | Encoder에서 coarse object 후보를 뽑고, Decoder에서 refinement 수행 |
-| **Look Forward Twice**   | Decoder에서 한 번이 아니라 두 번 attention을 주는 방식으로 정확도 향상 |
+> DAB-DETR/ DN-DETR / Deformable DETR 등의 이해가 필요한이유!!  
+> DINO 자체의 추가 아이디어(CDN)과 기존 DETR 분야의 연구의 성공적 사례를 잘 조합한 연구입니다!  
+
+| 주요 구성 요소               | 설명 | 도입한 논문 (출처) |
+|----------------------------|------|---------------------|
+| 🔧 **DeNoising Training** (+CDN) | 학습 시, GT 주위에 노이즈 박스를 일부러 생성하여 Query를 빠르게 수렴시킴 <br> DINO에서는 이를 Contrastive하게 확장하여 정답 vs 오답을 구분하는 학습(CDN)도 수행 | **DN-DETR** [G. Zhang et al., 2022] + **DINO** [Zhang et al., 2022] |
+| 🧲 **Matching Queries**     | GT에 가까운 위치에 고정된 Query Anchor를 배치해 안정적인 학습 유도 | **DAB-DETR** [Liu et al., 2022] |
+| 🧠 **Two-stage 구조 추가**  | Encoder에서 coarse object 후보를 뽑고, Decoder에서 refinement 수행 | **Deformable DETR** [Zhu et al., 2021] |
+| 🔁 **Look Forward Twice**   | Decoder에서 한 번이 아니라 두 번 attention을 주는 방식으로 정확도 향상 | **DINO** [Zhang et al., 2022] |
 
 ---
 
 
-#### 💡 해결책1: DeNoising Training (+ CDN)
+### 💡 해결책 1: DeNoising Training (+ CDN)
 
-DINO에서는 학습 초기에 object query들이 **정답(GT) 주변 정보를 빠르게 인식하고 학습**할 수 있도록 돕기 위해  
-**“의도적으로 노이즈를 주입한 학습 샘플”을 사용**합니다.
-
----
-
-##### 🔧 작동 방식
-
-1. **Ground Truth 복제**  
-   - Ground Truth box와 label을 복제하여 query target으로 사용합니다.
-
-2. **의도적으로 노이즈 추가**  
-   - 복제된 box에 위치 노이즈 (좌표 jittering)와 class 노이즈 (잘못된 label)를 추가합니다.
-   - 예:
-     - box 좌표를 살짝 이동시킴 (e.g., 5~10% jitter)
-     - class label을 다른 label로 바꿈 (e.g., person → dog)
-
-3. **Query 분리 학습**  
-   - 전체 object query 중 일부는 denoising query로 지정되고,
-   - 이 query는 원래 GT가 아닌, 노이즈가 섞인 box를 예측하도록 유도됩니다.
-
-4. **Loss 계산에 사용**  
-   - GT에 대한 matching loss 외에도, 노이즈된 query에 대해 예측 정확성을 측정하는 loss가 함께 사용됩니다.
+DINO는 학습 초기에 object query들이 **정답(GT) 주변 정보를 빠르게 인식**하도록 돕기 위해,  
+**의도적으로 노이즈가 섞인 학습 샘플(denoising query)**을 추가로 사용합니다.  
+이 전략은 기존의 불안정한 bipartite matching 문제를 완화하고,  
+DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니다.
 
 ---
 
-##### 🧠 📌 CDN(Contrastive DeNoising) 확장
+#### 🔧 기본 DeNoising Training 방식
 
-DINO에서는 이 DeNoising 전략을 더욱 확장하여, **positive와 negative query를 동시에 구성하는 Contrastive DeNoising (CDN)**을 도입합니다.
+1. **GT 복제 & 노이즈 추가**
+   - Ground truth box와 label을 복제
+   - **위치 노이즈** (e.g., 좌표 jitter 5~10%)와 **클래스 노이즈** (e.g., person → dog) 추가
 
-- **Positive query**:  
-  - GT에서 생성된 노이즈 박스 (위치/클래스만 약간 변경된 진짜에 가까운 것)
+2. **Denoising Query 생성**
+   - 일부 object query를 denoising query로 지정
+   - 노이즈된 box를 예측하게 학습 유도
 
-- **Negative query**:  
-  - 완전히 무관한 박스나 클래스 정보로 생성된 "틀린 예측" 후보
-
-- 이 두 종류의 query를 모두 decoder에 넣어 학습함으로써,
-  - 모델이 정답을 맞추는 것뿐 아니라,
-  - **"정답과 유사한 오답을 구분하는 능력까지 학습"**하게 됩니다.
-
-💡 즉, CDN은 단순히 빠른 수렴을 넘어서,  
-**모델의 표현력과 구분 능력 자체를 강화하는 contrastive 학습 요소**입니다.
+3. **Loss 계산**
+   - 일반 matching query와 별도로, 노이즈 query에 대한 예측 오차도 함께 학습
 
 ---
 
+#### 🧠 CDN (Contrastive DeNoising): DINO의 확장
 
-##### ⚙️ 구성 요소
+기존 denoising 기법을 확장하여,  
+**positive / negative query 쌍을 동시에 학습**하는 contrastive 전략을 도입합니다.
 
-| 요소          | 설명 |
-|---------------|------|
-| 🎯 Positive query | Ground truth box에 노이즈를 추가한 DeNoising 샘플 |
-| ❌ Negative query | 완전히 잘못된 위치나 클래스 정보를 주입한 샘플 |
-| 🧲 Matching Head | 각각에 대해 분리된 디코더에서 예측값을 얻고 학습 |
-| 🧪 Loss           | Positive에는 정확히 예측하도록, Negative에는 확실히 틀리게 예측하도록 유도 |
+| Query 종류      | 생성 방식                            | 학습 목적                  |
+|------------------|-------------------------------------|----------------------------|
+| 🎯 Positive Query | GT에 약간의 노이즈 추가 (위치/클래스) | 정확한 예측 유도            |
+| ❌ Negative Query | 무작위 위치나 잘못된 클래스 삽입     | 확실히 '오답'으로 예측 유도 |
 
----
-
-##### 💡 작동 방식
-
-1. **GT box 복제 → Positive Query**
-   - 약간의 노이즈를 추가하여 GT 근처에서 시작
-2. **랜덤 박스 생성 → Negative Query**
-   - 클래스 오류, 위치 오류 등 의도적 혼란 삽입
-3. **두 query를 같은 디코더에 넣어 예측**
-4. **Loss 계산 시 Positive는 ground truth와 정렬되도록, Negative는 no-object로 분류되도록 유도**
+- 두 종류를 동일한 decoder에 넣고,  
+  각각 다른 방식으로 학습 목표(loss)를 부여
 
 ---
 
-##### 🧠 Contrastive 효과
+#### ⚙️ 주요 구성 요소
 
-- 모델이 **"이건 진짜 객체야!"** vs **"이건 헷갈리지만 가짜야!"** 를 명확히 판단하게 됨
-- 특히 비슷한 배경, 작은 객체, overlap 상황에서 **오탐지 줄이는 데 기여**
-
----
-
-##### ✅ 요약
-
-| 항목        | 설명 |
-|-------------|------|
-| CDN 목적     | 정답과 유사한 오답을 구분하는 능력 강화 |
-| Positive 샘플 | GT 주변 노이즈 추가된 query |
-| Negative 샘플 | 랜덤하거나 잘못된 box/class를 가진 query |
-| 학습 효과    | false positive 감소, 초기 수렴 가속화, 더 견고한 탐지 |
+| 구성 요소         | 설명 |
+|------------------|------|
+| Positive Query   | GT box에 약간의 노이즈 추가 |
+| Negative Query   | GT와 무관한 잘못된 box/class |
+| Matching Head    | 각각에 대해 예측 결과 생성 |
+| Loss             | Positive는 정답과 일치하게, Negative는 no-object로 유도 |
 
 ---
 
-> 📌 CDN은 DeNoising Training을 **contrastive 학습 형태로 확장한 기법**이며,  
-> DINO가 기존 DETR보다 더 빠르고 정확하게 수렴할 수 있게 만들어주는 핵심 기술 중 하나입니다.
+#### 🧠 CDN의 효과 요약
 
+- **false positive 감소**  
+  → 유사한 배경/작은 객체/overlap 상황에서 오탐 방지
 
-#### 📈 시각적으로 표현하면:
+- **빠른 수렴 유도**  
+  → 초기에 무작위였던 query들이 빠르게 정답 근처로 이동
 
-| Query Type       | Input                     | 목표                          |
-|------------------|---------------------------|-------------------------------|
-| Matching Query   | GT box                    | 정확한 객체 예측              |
-| Denoising Query  | GT + noise (jittered box) | 노이즈에 강인한 예측 학습     |
-
+- **모델의 구분 능력 향상**  
+  → 정답과 유사한 오답을 판별하는 표현력 강화
 
 ---
 
-##### 🎯 효과
+#### 📌 핵심 요약
 
-- Query가 **GT 근처에서 학습되도록 유도**
-- “정답 근처지만 정확하지 않은 예측”을 처리하는 능력 향상
-- 초기에 의미 없는 예측을 하던 query들이 **빠르게 정답과 관련된 위치로 수렴**
-- 전체 학습 속도 향상 + 성능 안정화
+| 항목           | 설명 |
+|----------------|------|
+| 🎯 목적         | 정답과 유사한 오답을 구분하는 능력 강화 |
+| 💡 전략         | DeNoising query를 positive/negative로 확장 |
+| ✅ 학습 효과     | 빠른 수렴 + 높은 정확도 + robust detection |
+
+---
+
+> CDN은 단순한 학습 안정화 기법을 넘어,  
+> **DINO가 DETR 계열 중 가장 빠르고 강건하게 학습**될 수 있도록 만든 핵심 기술입니다.
 
 
 ---
@@ -231,7 +239,7 @@ DINO는 기존 DETR의 one-stage 구조를 확장하여
 
 ---
 
-#### 💡 해결책4: Look Forward Twice
+#### 💡 해결책4: Look Forward Twice (LFT)
 
 기존 DETR 계열은 decoder에서 object query가 encoder feature에 attention을 한 번 수행합니다.  
 DINO는 **이 attention 연산을 두 번 반복(Look Twice)** 하여 더 깊은 상호작용을 유도합니다.
@@ -272,23 +280,7 @@ Input Image
 
 
 
----
 
-### ✅ 요약
-
-| 항목                   | 설명 |
-|------------------------|------|
-| 목적                   | Object query 학습 초기 수렴 가속 |
-| 방법                   | GT box에 노이즈를 추가해 query에 학습 유도 |
-| 효과                   | 학습 안정화, 작은 객체에도 민감한 예측 가능 |
-| 최종 성능 기여         | 학습 속도 향상 + AP 성능 향상 |
-
----
-
-> DeNoising Training은 DINO를 DETR보다 훨씬 **실용적이고 빠른 객체 탐지기**로 만들어주는 핵심 기술입니다.
-
-
----
 
 ### 📊 성능 비교 (COCO 기준)
 
@@ -322,8 +314,7 @@ Input Image
 
 ### 💬 개인 정리
 
-> DINO는 **DETR의 학습 효율성과 성능 문제**를 해결한 훌륭한 개선안이다.  
-> 특히 작은 객체, 빠른 학습 수렴, ViT 백본 호환 등 실무 활용도가 매우 높음!  
+> DINO는 여러 연구들을 잘 조합, 본인들만의 새로운 결과하 합쳐서 **DETR의 학습 효율성과 성능 문제**를 해결한 훌륭한 개선연구인것 같다!  
 > Grounding DINO나 DINOv2 등으로 확장할 때도 핵심 개념을 그대로 공유하므로  
-> **DETR 계열 Transformer 탐지 모델을 이해하려면 반드시 알아야 할 모델!**
+> **DETR 계열 Transformer 탐지 모델을 이해하려면 반드시 기억해야 할 모델!**  
 
