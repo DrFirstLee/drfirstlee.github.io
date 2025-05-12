@@ -17,7 +17,7 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 > 논문: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)  
 > 발표: ICLR 2023 (by IDEA Research)  
 > 코드: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
-> 코멘트 : DETR 공개 이후, DAB-DETR/ DN-DETR / Deformable DETR 등 연속적으로 공개되었고 이런 모델들을 바탕으로 제안한 모델로,., DETR만 공부하고 넘어온 입장에서는 이해하기가 어렵다!  
+> 코멘트 : DETR 공개 이후, DAB-DETR/ DN-DETR / Deformable DETR 등 연속적으로 공개되었고 이들의 개념과 DINO 자체 개념을 조합하여 제안한 모델로,., DETR만 공부하고 넘어온 입장에서는 이해하기가 어렵다!  
 ---
 
 ### ✅ DINO란?
@@ -93,7 +93,7 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 ### 💡 DINO의 핵심 아이디어
 
 > DAB-DETR/ DN-DETR / Deformable DETR 등의 이해가 필요한이유!!  
-> DINO 자체의 추가 아이디어(CDN)과 기존 DETR 분야의 연구의 성공적 사례를 잘 조합한 연구입니다!  
+> DINO 자체의 추가 아이디어(CDN, Mixed Query Selection)과 기존 DETR 분야의 연구의 성공적 사례를 잘 조합한 연구입니다!  
 
 | 주요 구성 요소               | 설명 | 도입한 논문 (출처) |
 |----------------------------|------|---------------------|
@@ -101,6 +101,7 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 | 🧲 **Matching Queries**     | GT에 가까운 위치에 고정된 Query Anchor를 배치해 안정적인 학습 유도 | **DAB-DETR** [Liu et al., 2022] |
 | 🧠 **Two-stage 구조 추가**  | Encoder에서 coarse object 후보를 뽑고, Decoder에서 refinement 수행 | **Deformable DETR** [Zhu et al., 2021] |
 | 🔁 **Look Forward Twice**   | Decoder에서 한 번이 아니라 두 번 attention을 주는 방식으로 정확도 향상 | **DINO** [Zhang et al., 2022] |
+| 🧩 **Mixed Query Selection** | Encoder에서 선택된 top-K 위치만 Anchor로 사용하고, Content는 static하게 유지하여 안정성과 표현력 균형 확보 | **DINO** [Zhang et al., 2022] |
 
 ---
 
@@ -241,6 +242,8 @@ DINO는 기존 DETR의 one-stage 구조를 확장하여
 
 #### 💡 해결책4: Look Forward Twice (LFT)
 
+![LFT](https://github.com/user-attachments/assets/774eb274-d61a-48e6-9115-a5d27254acc9)
+
 기존 DETR 계열은 decoder에서 object query가 encoder feature에 attention을 한 번 수행합니다.  
 DINO는 **이 attention 연산을 두 번 반복(Look Twice)** 하여 더 깊은 상호작용을 유도합니다.
 
@@ -263,11 +266,56 @@ DINO는 **이 attention 연산을 두 번 반복(Look Twice)** 하여 더 깊은
 - 복잡한 장면에서도 **정확한 클래스 및 위치 예측 가능**
 - 특히 overlapping 객체, 작은 물체에 대해 **강한 표현력 확보**
 
+---
+
+#### 💡 해결책5: Mixed Query Selection (MQS)
+
+기존 DETR 계열의 query는 대부분 **모든 이미지에서 동일한 static query**를 사용했으며,  
+Deformable DETR처럼 dynamic query를 사용하는 방식도 있었지만 content까지 바꾸면서 오히려 혼란을 줄 수 있음    
+DINO는 이 둘의 장점을 절충한 **Mixed Query Selection** 전략을 도입  
+
+---
+
+##### 🧲 작동 방식
+
+![MQS](https://github.com/user-attachments/assets/49f1db5e-22b4-4ed5-95cf-f17a3834bfd3)
+
+1. **Top-K 중요한 encoder feature 선택**
+   - encoder 출력 중 **objectness 점수가 높은 feature들**을 골라냄
+
+2. **Anchor (위치 정보)는 동적으로 설정**
+   - 선택된 Top-K 위치를 기반으로 각 query의 **초기 anchor box를 설정**
+
+3. **Content는 static하게 유지**
+   - query의 내용 정보는 **학습된 고정된 vector** 그대로 사용
+
+> 즉, **"어디를 볼지는 이미지에 따라 다르게"**,  
+> **"무엇을 찾을지는 모델이 배운 대로 유지"**하는 구조
+
+---
+
+##### 🎯 효과
+
+- 각 이미지에 맞는 더 정확한 위치(anchor)에서 탐색 시작
+- content 정보를 유지함으로써 **모호한 encoder feature로 인한 혼란 방지**
+- **빠른 수렴 + 높은 정탐률**을 동시에 달성
+
+---
+
+##### ✅ 요약
+
+| 구성 요소      | 방식 |
+|----------------|------|
+| Anchor (위치)   | Encoder에서 뽑은 Top-K feature의 위치로 초기화 |
+| Content (내용)  | Static한 학습 vector 유지 |
+| 기대 효과      | 이미지별 위치 적응 + 안정적인 탐색 내용 유지 |
 
 
 ---
 
-### 🧱 DINO 아키텍처 요약
+### 🧱 DINO 아키텍처 
+
+![archi](https://github.com/user-attachments/assets/8dcc79ba-981a-4a29-b67d-c460e87ff535)
 
 ```
 Input Image
@@ -278,22 +326,44 @@ Input Image
          → Predictions {Class, Bounding Box}₁~ₙ
 ```
 
+---
 
+#### 🔍 주요 구성 단계 설명
 
+##### 1. 🖼️ Input Image
+- 입력 이미지는 보통 3채널 RGB 형태로 모델에 입력됩니다.
 
+##### 2. 🧠 CNN Backbone
+- 예: **ResNet-50**, **Swin Transformer** 등
+- 이미지로부터 **저수준 특징(feature map)**을 추출하는 역할
 
-### 📊 성능 비교 (COCO 기준)
+##### 3. 🔁 Transformer Encoder
+- CNN에서 추출한 feature를 받아 **글로벌 context 정보**를 학습
+- 각 위치가 전체 이미지의 다른 부분과 관계를 맺도록 함
 
-| 모델     | AP (val) | FPS | Backbone  |
-|----------|----------|-----|-----------|
-| DETR     | 42.0     | 10  | ResNet-50 |
-| DAB-DETR | 44.9     | 11  | ResNet-50 |
-| DINO     | **49.0+**| 12  | ResNet-50 |
-| DINO     | **~54.0**| --  | Swin-L    |
+##### 4. 🎯 Candidate Object Proposals (Two-stage)
+- Encoder 출력에서 **objectness가 높은 위치 Top-K를 선택**
+- 이를 기반으로 **query의 초기 anchor**를 구성 (Mixed Query Selection 포함)
+
+##### 5. 🧩 Transformer Decoder
+- query들이 encoder feature에 attention을 두 번 수행 (**Look Forward Twice**)  
+- denoising query들도 함께 처리되어 안정적 학습 유도 (CDN 포함)
+
+##### 6. 📦 Predictions
+- 각 query에 대해 최종적으로 **물체 클래스와 박스 위치**를 예측  
+  → 결과: `{class, bounding box}` 쌍이 N개 출력됨
+
 
 ---
 
-### 🧠 DINO vs DETR
+> DINO는 기존 DETR의 심플함은 유지하면서도,  
+> **학습 속도, 정확도, 안정성**을 모두 강화한 **DETR의 결정판 모델 중 하나**입니다.
+
+
+
+---
+
+### 🧠 최종 정리 : DINO vs DETR
 
 | 항목                 | DETR                     | DINO (Improved)              |
 |----------------------|--------------------------|------------------------------|
