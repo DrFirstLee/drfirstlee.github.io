@@ -15,10 +15,10 @@ sitemap :
 ## 🦖 DINO: The Evolutionary Object Detection Model of DETR!!
 _🔍 A powerful alternative that solves the slow training and small object detection issues of DETR-based models!_
 
-> Paper: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)
-> Presentation: ICLR 2023 (by IDEA Research)
-> Code: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
-> Comment: After DETR was released, DAB-DETR/ DN-DETR / Deformable DETR, etc., were continuously released, and this model combines their concepts with DINO's own concepts. It's difficult to understand for someone who has only studied DETR!
+> Paper: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)  
+> Presentation: ICLR 2023 (by IDEA Research)  
+> Code: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)  
+> Comment: After DETR was released, DAB-DETR/ DN-DETR / Deformable DETR, etc., were continuously released, and this model combines their concepts with DINO's own concepts. It's difficult to understand for someone who has only studied DETR!  
 
 ---
 
@@ -26,8 +26,8 @@ _🔍 A powerful alternative that solves the slow training and small object dete
 
 ![manwha](https://github.com/user-attachments/assets/7cada129-804b-45da-a99e-0bfdd91d42eb)
 
-> DINO is an object detection model that **overcomes the limitations of the DETR family**
-> Designed with a focus on **improving training speed** and **small object performance**
+> DINO is an object detection model that **overcomes the limitations of the DETR family**  
+> Designed with a focus on **improving training speed** and **small object performance**  
 
 - DINO = **DETR with Improved DeNoising Anchors**
 - Basic structure is DETR-based, but performance is enhanced through various strategies
@@ -58,8 +58,8 @@ _🔍 A powerful alternative that solves the slow training and small object dete
 
 ### Briefly Looking at Additional Research in the DETR Family Before DINO
 
-> Here's a brief summary of the major DETR family research before DINO!!
-> We should study each of these researches as well!!
+> Here's a brief summary of the major DETR family research before DINO!!  
+> We should study each of these researches as well!!  
 
 The following studies have attempted to improve various aspects such as convergence speed, learning stability, and positional accuracy while maintaining the basic framework of DETR.
 
@@ -95,8 +95,8 @@ The following studies have attempted to improve various aspects such as converge
 
 ### 💡 Core Ideas of DINO
 
-> The reason why understanding DAB-DETR/ DN-DETR / Deformable DETR is necessary!!
-> This research successfully combines DINO's own additional ideas (CDN, Mixed Query Selection) with successful cases from previous DETR research!
+> The reason why understanding DAB-DETR/ DN-DETR / Deformable DETR is necessary!!  
+> This research successfully combines DINO's own additional ideas (CDN, Mixed Query Selection) with successful cases from previous DETR research!  
 
 | Main Components                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Introduced Paper (Source)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -261,7 +261,7 @@ Existing DETR-based models perform attention once on the encoder feature by the 
 
 ####  Idea 5: Mixed Query Selection (MQS)
 
-Existing DETR-based queries mostly used the **same static queries for all images**, and while there was a method like Deformable DETR that used dynamic queries, changing the content as well could 오히려 cause confusion. DINO introduces a **Mixed Query Selection** strategy that compromises the advantages of both.
+Existing DETR-based queries mostly used the **same static queries for all images**, and while there was a method like Deformable DETR that used dynamic queries, changing the content as well could cause confusion. DINO introduces a **Mixed Query Selection** strategy that compromises the advantages of both.
 
 ---
 
