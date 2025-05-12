@@ -1,26 +1,392 @@
 ---
 layout: post
-title: " 🦖 DINO: DETR의 진화형 객체 탐지 모델 DINO!! (ICLR 2023)"
+title: " 🦖 DINO: The Evolutionary Object Detection Model of DETR!! - DINO: DETR의 진화형 객체 탐지 모델!! (ICLR 2023)"
 author: [DrFirst]
 date: 2025-05-09 09:00:00 +0900
 categories: [AI, Research]
 tags: [DETR, DINO, 객체 탐지, Object Detection, Transformer, 딥러닝, CV, ICLR, ICLR 2023]
 lastmod : 2025-05-09 09:00:00
 sitemap :
-  changefreq : monthly
+  changefreq : monthlyg
   priority : 0.9
 ---
 
-## 🦖 DINO: DETR의 진화형 객체 탐지 모델 DINO!! 
+
+## 🦖 DINO: The Evolutionary Object Detection Model of DETR!!
+_🔍 A powerful alternative that solves the slow training and small object detection issues of DETR-based models!_
+
+> Paper: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)
+> Presentation: ICLR 2023 (by IDEA Research)
+> Code: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
+> Comment: After DETR was released, DAB-DETR/ DN-DETR / Deformable DETR, etc., were continuously released, and this model combines their concepts with DINO's own concepts. It's difficult to understand for someone who has only studied DETR!
+
+---
+
+### ✅ What is DINO?
+
+![manwha](https://github.com/user-attachments/assets/7cada129-804b-45da-a99e-0bfdd91d42eb)
+
+> DINO is an object detection model that **overcomes the limitations of the DETR family**
+> Designed with a focus on **improving training speed** and **small object performance**
+
+- DINO = **DETR with Improved DeNoising Anchors**
+- Basic structure is DETR-based, but performance is enhanced through various strategies
+- Achieves **performance comparable to Two-stage** with a **One-stage** structure!
+
+---
+
+### 🚨 Background of DINO's Emergence - Major Limitations of DETR
+1. ❌ **Training is too slow** (hundreds of thousands of steps)
+   - In the early stages of training, DETR's object queries **predict boxes at random locations**
+   - This makes effective matching between queries and GT difficult, resulting in sparse learning signals
+   - → Consequently, the **convergence speed is very slow**, requiring dozens of times more epochs than typical models (500 epochs!?)
+
+2. ❌ **Weak at detecting small objects**
+   - DETR uses only the final feature map of the CNN backbone, resulting in **low resolution**
+     - (e.g., using C5 level features of ResNet → resolution reduction)
+   - Information about small objects almost disappears or is faintly represented in this coarse feature map
+   - Also, **Transformer focuses on global attention**, making it weak in local details
+   - → As a result, **box predictions for small objects are not accurate**
+
+3. ❌ **Low performance of Object Query in the early stages of learning**
+   - DETR's object queries are **randomly initialized** in the beginning
+   - The **role of which query will predict which object is not determined** in the early stages of learning
+   - Hungarian Matching forcibly performs 1:1 matching, but this matching is **inconsistent**
+   - → In the early stages of learning, queries often **overlap or predict irrelevant locations**, leading to low performance
+
+---
+
+### Briefly Looking at Additional Research in the DETR Family Before DINO
+
+> Here's a brief summary of the major DETR family research before DINO!!
+> We should study each of these researches as well!!
+
+The following studies have attempted to improve various aspects such as convergence speed, learning stability, and positional accuracy while maintaining the basic framework of DETR.
+
+---
+
+#### 🔹 **Deformable DETR (2021, Zhu et al.)**
+- Core Idea: **Deformable Attention**
+  - Performs attention only on a **few significant locations** instead of the entire image.
+- Advantages:
+  - Significantly improved training speed (more than 10 times)
+  - Introduction of a two-stage structure enables coarse-to-fine detection
+
+---
+
+#### 🔹 **Anchor DETR (2021, Wang et al.)**
+- Redefined Query in an **Anchor-based manner**.
+- Enables **better local search** by having Query possess location information.
+
+---
+
+#### 🔹 **DAB-DETR (2022, Liu et al.)**
+- Initializes Query as a **Dynamic Anchor Box** and refines it progressively in the decoder.
+- Improves convergence by providing stable location information from the early stages of learning.
+
+---
+
+#### 🔹 **DN-DETR (2022, Zhang et al.)**
+- Introduced **DeNoising Training** for learning stabilization.
+- By including **fake queries with added noise to the ground truth (GT) boxes** in the training,
+  Contributes to **resolving the instability of Bipartite Matching**.
+
+---
+
+### 💡 Core Ideas of DINO
+
+> The reason why understanding DAB-DETR/ DN-DETR / Deformable DETR is necessary!!
+> This research successfully combines DINO's own additional ideas (CDN, Mixed Query Selection) with successful cases from previous DETR research!
+
+| Main Components                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Introduced Paper (Source)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  **DeNoising Training** (+CDN) | Intentionally generates noise boxes around GT during training to quickly converge Queries. <br> DINO extends this contrastively to perform Contrastive DeNoising (CDN) to distinguish between correct and incorrect predictions.                                                                                                                                                                                                                                                                                                                                                                                                                                                   | **DN-DETR** [G. Zhang et al., 2022] + **DINO** [Zhang et al., 2022]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+|  **Matching Queries** | Places fixed Query Anchors at locations close to GT to induce stable learning.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | **DAB-DETR** [Liu et al., 2022]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|  **Adding Two-stage Structure** | The Encoder extracts coarse object candidates, and the Decoder performs refinement.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | **Deformable DETR** [Zhu et al., 2021]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|  **Look Forward Twice** | Improves accuracy by giving attention twice in the Decoder instead of once.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | **DINO** [Zhang et al., 2022]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|  **Mixed Query Selection** | Uses only the top-K locations selected from the Encoder as Anchors, and the Content remains static to balance stability and expressive power.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | **DINO** [Zhang et al., 2022]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+---
+
+####  Idea 1: DeNoising Training (+ CDN)
+
+DINO additionally uses **intentionally noisy training samples (denoising query)** to help object queries quickly recognize information around the **ground truth (GT)** in the early stages of training. This strategy alleviates the existing unstable bipartite matching issue and leads to DINO's unique extension, **CDN (Contrastive DeNoising)**.
+
+---
+
+#####  Basic DeNoising Training Method
+
+1. **GT Replication & Noise Addition**
+   - Replicates the ground truth box and label
+   - Adds **position noise** (e.g., coordinate jitter 5~10%) and **class noise** (e.g., person → dog)
+
+2. **Denoising Query Generation**
+   - Designates some object queries as denoising queries
+   - Induces learning to predict the noisy boxes
+
+3. **Loss Calculation**
+   - Calculates the prediction error for noise queries separately from normal matching queries and includes it in the training
+
+---
+
+#####  CDN (Contrastive DeNoising): DINO's Extension
+
+Extending the existing denoising technique, DINO introduces a contrastive strategy that simultaneously trains **positive / negative query pairs**.
+
+| Query Type       | Generation Method                         | Learning Objective                      |
+|------------------|-----------------------------------------|---------------------------------------|
+|  Positive Query | Slight noise added to GT (position/class) | Induce accurate prediction              |
+| ❌ Negative Query | Insert random location or incorrect class | Induce definite 'incorrect' prediction |
+
+- Both types are put into the same decoder, and a different learning objective (loss) is assigned to each.
+
+---
+
+##### ⚙️ Main Components
+
+| Component         | Description                              |
+|------------------|------------------------------------------|
+| Positive Query   | Slight noise added to GT box             |
+| Negative Query   | Incorrect box/class unrelated to GT      |
+| Matching Head    | Generates prediction results for each    |
+| Loss             | Induces Positive to match GT, Negative to no-object |
+
+---
+
+#####  Summary of CDN Effects
+
+- **Reduced false positives**
+  → Prevents false detections in similar backgrounds/small objects/overlap situations
+
+- **Induced faster convergence**
+  → Queries that were random in the early stages quickly move closer to the correct answer
+
+- **Improved model's discrimination ability**
+  → Strengthens the ability to distinguish between correct answers and similar incorrect answers
+
+---
+
+#####  Key Summary
+
+| Item           | Description                                 |
+|----------------|---------------------------------------------|
+|  Purpose     | Enhance the ability to distinguish correct answers from similar incorrect answers |
+|  Strategy    | Extend DeNoising query to positive/negative |
+| ✅ Learning Effect | Fast convergence + high accuracy + robust detection |
+
+---
+
+> CDN is not just a simple learning stabilization technique; it is a core technology that makes **DINO the fastest and most robust DETR-based model** to train.
+
+---
+
+####  Idea 2: Matching Queries (Fixed Anchor Based)
+
+Unlike DETR, DINO's object queries do not find locations completely randomly but rather **place pre-defined query anchors near GT locations from the beginning**.
+
+---
+
+#####  How it Works
+
+1. **GT Center Anchor Generation**
+   - Generates a fixed number of query anchors based on GT locations during training
+
+2. **Query Assignment to Each Anchor**
+   - These anchors are assigned as responsible queries to predict specific GTs
+
+3. **Matching Process Stabilization**
+   - Hungarian Matching makes it easier to match these anchor queries and GTs in a 1:1 manner
+
+---
+
+#####  Effects
+
+- Queries **start near GT, leading to faster convergence**
+- **Reduces the matching instability issues** that occurred in the early stages
+- Improved **performance and convergence speed** due to each GT having a clearly corresponding query
+
+---
+
+####  Idea 3: Two-stage Structure
+
+DINO extends the existing one-stage structure of DETR by applying a **two-stage structure** consisting of **Encoder → Decoder**.
+
+---
+
+#####  How it Works
+
+1. **Stage 1 (Encoder)**
+   - Extracts **dense object candidates (anchors)** through a CNN + Transformer encoder
+   - Selects Top-K scoring anchors
+
+2. **Stage 2 (Decoder)**
+   - Performs **refined prediction** based on the anchors selected from the Encoder
+   - Adjusts class and accurate box
+
+---
+
+#####  Effects
+
+- Coarsely identifies locations in the first stage and accurately adjusts them in the second stage → **Improved precision**
+- Increased **detection stability** in small objects or complex backgrounds
+
+---
+
+####  Idea 4: Look Forward Twice (LFT)
+
+![LFT](https://github.com/user-attachments/assets/774eb274-d61a-48e6-9115-a5d27254acc9)
+
+Existing DETR-based models perform attention once on the encoder feature by the object query in the decoder. DINO **repeats this attention operation twice (Look Twice)** to induce deeper interaction.
+
+---
+
+#####  How it Works
+
+1. **First Attention**
+   - Object query performs basic attention with the encoder output
+
+2. **Second Attention**
+   - Performs attention on the encoder feature again with the first attention result
+   - That is, **query → encoder → query → encoder**
+
+---
+
+#####  Effects
+
+- Utilizes deeper context information
+- Enables **accurate class and location prediction** even in complex scenes
+- Secures **strong representation power**, especially for overlapping objects and small objects
+
+---
+
+####  Idea 5: Mixed Query Selection (MQS)
+
+Existing DETR-based queries mostly used the **same static queries for all images**, and while there was a method like Deformable DETR that used dynamic queries, changing the content as well could 오히려 cause confusion. DINO introduces a **Mixed Query Selection** strategy that compromises the advantages of both.
+
+---
+
+#####  How it Works
+
+![MQS](https://github.com/user-attachments/assets/49f1db5e-22b4-4ed5-95cf-f17a3834bfd3)
+
+1. **Select Top-K Important Encoder Features**
+   - Selects the **features with high objectness scores** from the encoder output
+
+2. **Anchor (Location Information) is Dynamically Set**
+   - Sets the **initial anchor box** of each query based on the selected Top-K locations
+
+3. **Content Remains Static**
+   - The content information of the query remains the **learned fixed vector** as is
+
+> In other words, a structure where **"where to look changes depending on the image"** and **"what to look for remains as the model has learned."**
+
+---
+
+#####  Effects
+
+- Starts searching from more accurate locations (anchors) suited for each image
+- Prevents confusion caused by ambiguous encoder features by maintaining content information
+- Achieves **fast convergence + high precision** simultaneously
+
+---
+
+##### ✅ Summary
+
+| Component        | Method                                                         |
+|-----------------|----------------------------------------------------------------|
+| Anchor (Location)| Initialized with the location of the Top-K features extracted from the Encoder |
+| Content (Meaning)| Maintains a static learned vector                              |
+| Expected Effect  | Adapts to the location of each image + maintains stable search content |
+
+---
+
+###  DINO Architecture
+
+![archi](https://github.com/user-attachments/assets/8dcc79ba-981a-4a29-b67d-c460e87ff535)
+
+```
+Input Image
+ → CNN Backbone (e.g., ResNet or Swin)
+   → Transformer Encoder
+     → Candidate Object Proposals (Two-stage)
+       → Transformer Decoder
+         → Predictions {Class, Bounding Box}₁~ₙ
+```
+
+
+---
+
+####  Explanation of Main Architecture Stages
+
+> DINO maintains the simplicity of the existing DETR while also being one of the **definitive DETR models** that enhances **training speed, accuracy, and stability**.
+
+
+##### 1. ️ Input Image
+- The input image is typically entered into the model in 3-channel RGB format.
+
+##### 2.  CNN Backbone
+- e.g., **ResNet-50**, **Swin Transformer**, etc.
+- Role of extracting **low-level feature maps** from the image
+
+##### 3.  Transformer Encoder
+- Receives features extracted from the CNN and learns **global context information**
+- Enables each position to relate to other parts of the entire image
+
+##### 4.  Candidate Object Proposals (Two-stage)
+- Selects the **Top-K locations with high objectness** from the Encoder output
+- Configures the **initial anchor** of the query based on this (including Mixed Query Selection)
+
+##### 5.  Transformer Decoder
+- Queries perform attention twice on the encoder feature (**Look Forward Twice**)
+- Denoising queries are also processed together to induce stable learning (including CDN)
+
+##### 6.  Predictions
+- Finally predicts the **object class and box location** for each query
+  → Result: N `{class, bounding box}` pairs are output
+
+
+
+---
+
+###  Final Summary: DINO vs DETR
+
+| Item                   | DETR                     | DINO (Improved)              |
+|------------------------|--------------------------|------------------------------|
+| Training Convergence Speed | Slow                     | ✅ Fast (DeNoising)           |
+| Small Object Detection | Low                      | ✅ Improved                   |
+| Object Query Structure | Simple                   | ✅ Added GT-based Matching   |
+| Stage Structure        | One-stage                | ✅ Includes Two-stage Structure |
+
+---
+
+###  Summary
+
+- DINO maintains the structure of DETR while being a model **quickly and accurately improved for practical use**.
+- A core model that forms the basis of various subsequent studies (Grounding DINO, DINgfO-DETR, DINOv2)
+-  A highly scalable model that combines well with the latest vision research such as **open-vocabulary detection** and **segment anything**!! :)
+
+---
+
+###  Personal Thoughts
+
+DINO seems to be an excellent improvement research that solved the **learning efficiency and performance issues of DETR** by well combining various researches and merging them with their own new results! As the core concepts are shared when extending to Grounding DINO or DINOv2, **it is a model that must be remembered to understand DETR-based Transformer detection models!**
+
+---
+
+
+## 🦖 (한국어) DINO: DETR의 진화형 객체 탐지 모델 DINO!! 
 _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해결한 강력한 대안!_
 
 > 논문: [DINO: DETR with Improved DeNoising Anchor Boxes](https://arxiv.org/abs/2203.03605)  
 > 발표: ICLR 2023 (by IDEA Research)  
-> 코드: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)
-> 코멘트 : DETR 공개 이후, DAB-DETR/ DN-DETR / Deformable DETR 등 연속적으로 공개되었고 이들의 개념과 DINO 자체 개념을 조합하여 제안한 모델로,., DETR만 공부하고 넘어온 입장에서는 이해하기가 어렵다!  
+> 코드: [IDEA-Research/DINO](https://github.com/IDEA-Research/DINO)  
+> 코멘트 : DETR 공개 이후, DAB-DETR/ DN-DETR / Deformable DETR 등 연속적으로 공개되었고 이들의 개념과 DINO 자체 개념을 조합하여 제안한 모델로,., DETR만 공부하고 넘어온 입장에서는 이해하기가 어렵다!   
+
 ---
 
 ### ✅ DINO란?
+
+![manwha](https://github.com/user-attachments/assets/7cada129-804b-45da-a99e-0bfdd91d42eb)  
 
 > DINO는 **DETR 계열의 한계를 극복**한 객체 탐지 모델  
 > 특히 **학습 속도 향상**과 **소형 객체 성능 개선**에 중점을 둔 구조로 설계  
@@ -106,7 +472,7 @@ _🔍 DETR 계열 모델의 느린 학습과 작은 객체 탐지 문제를 해�
 ---
 
 
-### 💡 해결책 1: DeNoising Training (+ CDN)
+#### 💡 아이디어 1: DeNoising Training (+ CDN)
 
 DINO는 학습 초기에 object query들이 **정답(GT) 주변 정보를 빠르게 인식**하도록 돕기 위해,  
 **의도적으로 노이즈가 섞인 학습 샘플(denoising query)**을 추가로 사용합니다.  
@@ -115,7 +481,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### 🔧 기본 DeNoising Training 방식
+##### 🔧 기본 DeNoising Training 방식
 
 1. **GT 복제 & 노이즈 추가**
    - Ground truth box와 label을 복제
@@ -130,7 +496,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### 🧠 CDN (Contrastive DeNoising): DINO의 확장
+##### 🧠 CDN (Contrastive DeNoising): DINO의 확장
 
 기존 denoising 기법을 확장하여,  
 **positive / negative query 쌍을 동시에 학습**하는 contrastive 전략을 도입합니다.
@@ -145,7 +511,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### ⚙️ 주요 구성 요소
+##### ⚙️ 주요 구성 요소
 
 | 구성 요소         | 설명 |
 |------------------|------|
@@ -156,7 +522,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### 🧠 CDN의 효과 요약
+##### 🧠 CDN의 효과 요약
 
 - **false positive 감소**  
   → 유사한 배경/작은 객체/overlap 상황에서 오탐 방지
@@ -169,7 +535,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### 📌 핵심 요약
+##### 📌 핵심 요약
 
 | 항목           | 설명 |
 |----------------|------|
@@ -185,7 +551,7 @@ DINO만의 확장 기법인 **CDN (Contrastive DeNoising)**으로 이어집니�
 
 ---
 
-#### 💡 해결책2: Matching Queries (고정 Anchor 기반)
+#### 💡 아이디어2 : Matching Queries (고정 Anchor 기반)
 
 DINO는 DETR와 달리, object query가 **완전히 랜덤하게 위치를 찾는 방식**이 아니라  
 **초기부터 GT 위치 근처에 정해진 query anchor를 배치**합니다.
@@ -213,7 +579,7 @@ DINO는 DETR와 달리, object query가 **완전히 랜덤하게 위치를 찾�
 
 ---
 
-#### 💡 해결책3: Two-stage 구조
+#### 💡 아이디어3: Two-stage 구조
 
 DINO는 기존 DETR의 one-stage 구조를 확장하여  
 **Encoder → Decoder로 이어지는 두 단계 구조**를 적용합니다.
@@ -240,7 +606,7 @@ DINO는 기존 DETR의 one-stage 구조를 확장하여
 
 ---
 
-#### 💡 해결책4: Look Forward Twice (LFT)
+#### 💡 아이디어4: Look Forward Twice (LFT)
 
 ![LFT](https://github.com/user-attachments/assets/774eb274-d61a-48e6-9115-a5d27254acc9)
 
@@ -268,7 +634,7 @@ DINO는 **이 attention 연산을 두 번 반복(Look Twice)** 하여 더 깊은
 
 ---
 
-#### 💡 해결책5: Mixed Query Selection (MQS)
+#### 💡 아이디어5: Mixed Query Selection (MQS)
 
 기존 DETR 계열의 query는 대부분 **모든 이미지에서 동일한 static query**를 사용했으며,  
 Deformable DETR처럼 dynamic query를 사용하는 방식도 있었지만 content까지 바꾸면서 오히려 혼란을 줄 수 있음    
@@ -330,6 +696,10 @@ Input Image
 
 #### 🔍 주요 구성 단계 설명
 
+> DINO는 기존 DETR의 심플함은 유지하면서도,  
+> **학습 속도, 정확도, 안정성**을 모두 강화한 **DETR의 결정판 모델 중 하나**입니다.
+
+
 ##### 1. 🖼️ Input Image
 - 입력 이미지는 보통 3채널 RGB 형태로 모델에 입력됩니다.
 
@@ -354,10 +724,6 @@ Input Image
   → 결과: `{class, bounding box}` 쌍이 N개 출력됨
 
 
----
-
-> DINO는 기존 DETR의 심플함은 유지하면서도,  
-> **학습 속도, 정확도, 안정성**을 모두 강화한 **DETR의 결정판 모델 중 하나**입니다.
 
 
 
@@ -378,13 +744,13 @@ Input Image
 
 - DINO는 DETR의 구조를 유지하면서, **실제 사용에 적합하도록 빠르고 정확하게 개선**한 모델
 - 다양한 후속 연구(Grounding DINO, DINgfO-DETR, DINOv2)의 기반이 되는 핵심 모델
-- 🔥 **open-vocabulary detection**, **grounding**, **segment anything** 같은 최신 비전 연구와도 잘 결합됨
+- 🔥 **open-vocabulary detection**, **segment anything** 같은 최신 비전 연구와도 잘 결합되는, 확장가능성이 큰 모델!! :) 
 
 ---
 
 ### 💬 개인 정리
 
-> DINO는 여러 연구들을 잘 조합, 본인들만의 새로운 결과하 합쳐서 **DETR의 학습 효율성과 성능 문제**를 해결한 훌륭한 개선연구인것 같다!  
-> Grounding DINO나 DINOv2 등으로 확장할 때도 핵심 개념을 그대로 공유하므로  
-> **DETR 계열 Transformer 탐지 모델을 이해하려면 반드시 기억해야 할 모델!**  
+DINO는 여러 연구들을 잘 조합, 본인들만의 새로운 결과하 합쳐서 **DETR의 학습 효율성과 성능 문제**를 해결한 훌륭한 개선연구인 것 같다!  
+Grounding DINO나 DINOv2 등으로 확장할 때도 핵심 개념을 그대로 공유하므로  
+**DETR 계열 Transformer 탐지 모델을 이해하려면 반드시 기억해야 할 모델!**  
 
