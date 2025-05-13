@@ -2,16 +2,16 @@
 layout: post
 title: "grounding-DINO 실습 with python!"
 author: [DrFirst]
-date: 2025-05-15 07:00:00 +0900
+date: 2025-05-12 07:00:00 +0900
 categories: [AI, Experiment]
 tags: [DETR, DINO, 객체 탐지, Object Detection, Transformer, 딥러닝, CV, ICLR, ICLR 2023, python, 파이썬 실습]
-lastmod : 2025-05-15 07:00:00
+lastmod : 2025-05-12 07:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
 
-## 🦖 Grounding DINO 실습! DINO의 진화 모델을 직접 실행해보자!
+## 🦖(한국어) Grounding DINO 실습! DINO의 진화 모델을 직접 실행해보자!
 
 이번 포스팅은 DINO의 후속 모델인 **Grounding DINO** 실습입니다!  
 DINO와 마찬가지로 GitHub repo에서 코드를 내려받아 실행하지만, 오히려 더 간단하게 구성되어 있더라구요 😊  
@@ -82,11 +82,21 @@ CUDA_VISIBLE_DEVICES={GPU_ID} python demo/inference_on_a_image.py \
 
 `person`. 가장 간단하며 기존 coco dataset에 있는 person!!
 
+![Image](https://github.com/user-attachments/assets/5cc791b3-28e8-4e95-b90b-4691428a2edb)
+
 `cat`. 없는것을 오탐지하지는 않을까요!?  
+
+![Image](https://github.com/user-attachments/assets/19d47f24-49da-4ade-9874-d021f39fbae9)
+
 
 테스트 셋에도 없었을 `rugby`. 럭비라는 단어로 작동을 할까요!?
 
+![Image](https://github.com/user-attachments/assets/ef7e08c1-5072-4d81-a74b-342860d680c1)
+
+
 `jump` 이번엔 동사으로!! 
+
+![Image](https://github.com/user-attachments/assets/41e70375-f8eb-41d1-93d2-b1b65a372abe)
 
 
 `player is jumping` 이번엔 문장!!   
