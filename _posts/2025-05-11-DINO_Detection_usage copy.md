@@ -2,10 +2,10 @@
 layout: post
 title: "🦖 DINO Practice: Running Object Detection with Pretrained Models - DINO 실습: 모델을 받아 직접 객체 탐지 해보기!"
 author: [DrFirst]
-date: 2025-05-12 07:00:00 +0900
+date: 2025-05-11 07:00:00 +0900
 categories: [AI, Experiment]
 tags: [DETR, DINO, 객체 탐지, Object Detection, Transformer, 딥러닝, CV, ICLR, ICLR 2023, python, 파이썬 실습]
-lastmod : 2025-05-12 07:00:00
+lastmod : 2025-05-11 07:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
@@ -25,7 +25,7 @@ sitemap :
 
 ---
 
-### 1. Clone the DINO repository from GitHub
+### 🔗 1. Clone the DINO repository from GitHub
 
 > 🔗 [Official GitHub Repo](https://github.com/IDEA-Research/DINO)
 
@@ -204,7 +204,7 @@ I'll continue experimenting with more models and sharing my findings. Stay tuned
 
 
 
-### 1. GIT 저장소에서 DINO 모델 받기!!
+### 🔗 1. GIT 저장소에서 DINO 모델 받기!!
 
 > 🔗 [공식 GitHub 저장소](https://github.com/IDEA-Research/DINO)
 
