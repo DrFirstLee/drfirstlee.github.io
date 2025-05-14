@@ -21,29 +21,29 @@ So this time, we’ll skip the theory for now and jump straight into running the
 
 ### 🧱 1. Clone the GitHub Repository
 
-$$$
+```bash
 git clone https://github.com/IDEA-Research/GroundingDINO.git
 cd GroundingDINO/
-$$$
+```
 
 ---
 
 ### 📦 2. Install the Model
 
-$$$
+```bash
 pip install -e .
-$$$
+```
 
 ---
 
 ### 🧊 3. Download the Pretrained Weights
 
-$$$
+```bash
 mkdir weights
 cd weights/
 wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 cd ..
-$$$
+```
 
 ---
 
@@ -52,14 +52,14 @@ $$$
 The command structure for running Grounding DINO is shown below.  
 Each part marked with `{}` can be replaced with the appropriate value for your environment:
 
-$$$
+```bash
 CUDA_VISIBLE_DEVICES={GPU_ID} python demo/inference_on_a_image.py \
   -c {CONFIG_PATH} \
   -p {CHECKPOINT_PATH} \
   -i {INPUT_IMAGE_PATH} \
   -o {OUTPUT_DIR} \
   -t "{TEXT_PROMPT}"
-$$$
+```
 
 #### Example values:
 
@@ -140,7 +140,7 @@ DINO와 마찬가지로 GitHub repo에서 코드를 내려받아 실행하지만
 
 ### 🧱 1. GitHub 저장소 클론
 
-```
+```bash
 git clone https://github.com/IDEA-Research/GroundingDINO.git
 cd GroundingDINO/
 ```
@@ -149,7 +149,7 @@ cd GroundingDINO/
 
 ### 📦 2. 모델 설치
 
-```
+```bash
 pip install -e .
 ```
 
@@ -157,7 +157,7 @@ pip install -e .
 
 ### 🧊 3. Pretrained Weight 다운로드
 
-```
+```bash
 mkdir weights
 cd weights/
 wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
@@ -240,3 +240,6 @@ Grounding DINO는 설치도 간단하고, inference도 직관적으로 되어 �
 함께 공부해봅시다!^^  
 
 
+```
+ CUDA_VISIBLE_DEVICES=0 python demo/inference_on_a_image.py  -c groundingdino/config/GroundingDINO_SwinT_OGC.py  -p weights/groundingdino_swint_ogc.pth  -i /home/smartride/DrFirst/LOCATE/AGD20K/Unseen/trainset/exocentric/catch/rugby_ball/catch_rugby_ball_001480.jpg  -o /home/smartride/DrFirst/GroundingDINO/results  -t "hand"
+ ```
