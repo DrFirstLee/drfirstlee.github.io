@@ -1,15 +1,137 @@
 ---
 layout: post
-title: "Grounding SAM 실습 with python!"
+title: "Grounding SAM Hands-On with Python! - Grounding SAM 실습 with python!"
 author: [DrFirst]
-date: 2025-05-12 07:00:00 +0900
+date: 2025-05-14 07:00:00 +0900
 categories: [AI, Experiment]
 tags: [grounding DINO, DINO, 객체 탐지, Object Detection, CV, ECCV, ECCV 2024, python, 파이썬 실습]
-lastmod : 2025-05-12 07:00:00
+lastmod : 2025-05-14 07:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
+
+---
+
+## 🦖 (English) Hands-On with Grounding SAM! Detect objects with DINO, then Segment with SAM!
+
+In this post, we’ll do a hands-on walkthrough of **Grounding DINO** + **SAM** = **Grounding SAM**!  
+We'll keep following the GitHub repo and run the code,  
+but if you go step by step, it’s not too hard!  
+So once again, let's skip the theory for now,  
+and dive straight into the code to understand what **Grounding SAM** is all about!!
+
+---
+
+### 🧱 1. Clone the GitHub Repository
+
+```
+git clone https://github.com/IDEA-Research/Grounded-Segment-Anything
+cd Grounded-Segment-Anything/
+```
+
+---
+
+### 📦 2. Install the Models
+
+- From here on, we’re following the setup from the GitHub repo directly!!  
+- Please start in an environment where PyTorch and GPU are set up correctly.  
+- If not... you'll likely run into many issues! 😅  
+
+```
+export AM_I_DOCKER=False
+export BUILD_WITH_CUDA=True
+export CUDA_HOME=/path/to/cuda-11.3/
+
+# Install SAM
+python -m pip install -e segment_anything
+
+# Install GroundingDINO
+pip install --no-build-isolation -e GroundingDINO
+
+# Install diffusers
+pip install --upgrade diffusers[torch]
+
+# OSX-specific install: I skipped this on Ubuntu, but if you're on Mac, you should run this!!
+git submodule update --init --recursive
+cd grounded-sam-osx && bash install.sh
+
+# Install RAM & Tag2Text
+git clone https://github.com/xinyu1205/recognize-anything.git
+pip install -r ./recognize-anything/requirements.txt
+pip install -e ./recognize-anything/
+
+# Final dependencies – may vary per user!
+pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
+
+# Bonus tip!! The supervision version must match exactly as below!!
+## I found this after many errors – trust me, use this version!
+pip install supervision==0.21.0
+```
+
+---
+
+### 🚀 3. Run Object Detection (from Jupyter Notebook)
+
+Now!! With the provided `grounded_sam.ipynb` from the repo, you can jump straight into segmentation~!  
+I reused the same image from our previous Grounding DINO test.  
+
+Just like before, I input prompts and tested various labels.  
+Here are the results!  
+Please note: only one segment is returned per prompt!
+
+- `person`. The simplest and one of the standard COCO dataset labels!!  
+
+![Image](https://github.com/user-attachments/assets/522aacde-3d8d-44b9-8136-1f44d468eb4f)
+
+> From detection to segmentation – flawless!
+
+- `cat`. We already know Grounding DINO failed to detect this before, so skipping it.
+
+- `rugby`. I hoped it would detect the ball, but sadly, detection failed again!
+
+![Image](https://github.com/user-attachments/assets/51042f61-5a56-48b9-86d9-2f20cdfe0ed1)
+
+- `helmet`. Fantastic result!
+
+![Image](https://github.com/user-attachments/assets/bda75b82-5924-4951-a1d4-a64aaa8d0882)
+
+- `jump`. It accurately captured the jumping person!
+
+![Image](https://github.com/user-attachments/assets/e3dc8fb9-b3e3-4b66-b8af-6485dfa8f74a)
+
+How about a full sentence this time: `player is running`?  
+> Once again, performance on full sentences isn’t quite there yet!
+
+![Image](https://github.com/user-attachments/assets/591e4dde-07ed-47ad-aa03-b235707a4575)
+
+Now I tried a different image.
+
+`holding` – curious to see what it catches~  
+> I was hoping it might isolate just the hand, but I guess that’s asking too much!
+
+![Image](https://github.com/user-attachments/assets/8fa458c9-233c-42d7-ab0a-3c7dcf235a62)
+
+`bat` – can it detect a small baseball bat?
+> Absolutely! To help understand, here’s the mask version too!
+
+![Image](https://github.com/user-attachments/assets/2d18c4ee-170c-44a6-b468-8eca9901c038)
+
+`catcher` and `referee`!!
+> Clearly distinguishes large human figures!
+
+![Image](https://github.com/user-attachments/assets/4cc0df8f-401c-455b-8f70-6bbcb9894ffe)
+
+---
+
+### 🎉 Final Thoughts
+
+Grounding SAM!! After Grounding DINO,  
+we now go from detection to actual image segmentation!  
+SAM alone was conceptually interesting but lacked text input,  
+so Grounding SAM is amazing in that it allows text prompts! 😄  
+That said, imagine how powerful it would be if it could handle large images and multiple segments in one shot!
+
 
 ---
 
@@ -73,17 +195,6 @@ pip install supervision==0.21.0
 
 ### 🚀 3. 객체 탐지 실험 실행 (주피터 노트북에서!!)
 
-```bash
-mkdir weights
-cd weights/
-wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-cd ..
-```
-
----
-
-### 🚀 4. 객체 탐지 실험 실행 (명령어 템플릿)
-
 이젠!! 기존 repo에 제공된 `grounded_sam.ipynb`를 사용하면 바로 segment를 진행할 수 있습니다~!  
 저는 이미지만 지난번 Grounding DINO와 동일한 이미지를 사용해보았습니다!  
 
@@ -140,7 +251,6 @@ cd ..
 
 
 
-
 ---
 
 ### 🎉 마무리
@@ -149,7 +259,9 @@ Grounding SAM!! Grounding DINO에 이어서!!
 디택션 내부의 이미지를 segment!!  
 SAM에서는 Text 프롬포트가 개념적으로만 제시되어 아쉬웠는데  
 이 Grounding SAM에서는 텍스트 제시가 가능해서 너무 좋았습니다!^^  
-다만, 큰 이미지를 넘어 이미지 내의 segment 까지 된다면 얼~~마나 좋을까요~!  
+다만, 큰 이미지를 넘어 이미지 내의 segment 까지 된다면 얼~~마나 좋을까요~! 
+
+
 
 
 ```
