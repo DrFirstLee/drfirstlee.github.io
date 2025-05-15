@@ -3,13 +3,15 @@ layout: post
 title: "AI에서 'Ground'란 무엇인가? Grounding DINO, Grounding SAM, 그리고 Grounded Affordance까지!"
 author: [DrFirst]
 date: 2025-05-15 10:00:00 +0900
-categories: [AI, NLP, CV, Concepts]
-tags: [grounding, grounding dino, grounded sam, affordance grounding, computer vision, AI]
+categories: [AI, Research]
+tags: [grounding, grounding dino, grounded sam,  GLIP, affordance grounding, computer vision, AI]
 sitemap :
   changefreq : monthly
   priority : 0.8
 ---
-## AI에서 'Ground'란 무엇인가? Grounding DINO, Grounding SAM, 그리고 Grounded Affordance까지!
+## AI에서 'Ground'란 무엇인가? GLIP부터 Grounding DINO, Grounding SAM, 그리고 Grounded Affordance까지!
+
+---
 
 ### 🧾 'Ground'의 어원은 어디서 왔을까?
 
@@ -52,6 +54,7 @@ sitemap :
 |------|------|
 | **Grounding DINO** | 텍스트(프롬프트)를 실제 이미지의 객체 위치(박스)와 연결 (Object Detection) |
 | **Grounded SAM** | 텍스트 → 탐지 → 세분화까지 연결 (Text-to-Segment Pipeline) |
+| **GLIP** | 객체 탐지를 프레이즈 기반 grounding 문제로 재정의하여, 언어와 박스를 대조 학습으로 연결 (Phrase-based Object Detection) |
 | **Grounded Affordance** | '잡을 수 있다', '앉을 수 있다' 같은 행동 가능성을 이미지 속 영역과 연결 |
 | **Language Grounding** | 단어, 문장 등을 실제 감각 정보나 경험에 연결 (예: 로봇이 "컵"을 인식하고 집기) |
 | **Grounded Visual Question Answering (VQA)** | 질문에 답을 줄 때, 단순 텍스트가 아닌 이미지 내 실제 요소를 근거로 사용 |
@@ -97,7 +100,7 @@ AI가 점점 더 세상을 이해하고 사람과 소통하게 되는 이 시대
 ---
 
 
-## Understanding "Ground" in AI: Grounding DINO, Grounding SAM, and Grounded Affordance
+## Understanding "Ground" in AI: GLIP, Grounding DINO, Grounding SAM, and Grounded Affordance
 
 ---
 
@@ -142,14 +145,16 @@ This concept is **crucial in AI**, especially in **multimodal models** that comb
 
 | Term | Description |
 |------|-------------|
-| **Grounding DINO** | Links text prompts to object locations (bounding boxes) in images (Open-Vocabulary Object Detection) |
-| **Grounded SAM** | Connects text → detection → segmentation (Text-to-Segment Pipeline) |
-| **Grounded Affordance** | Links affordances (e.g., "graspable", "sittable") to image regions |
-| **Language Grounding** | Maps words/sentences to sensory experience (e.g., robot understanding "cup" and picking it up) |
-| **Grounded Visual Question Answering (VQA)** | Answers questions based on actual image regions, not just text |
-| **Grounded Dialogue Systems** | Connects spoken language to user’s environment, behavior, and visual inputs |
-| **Grounded Embodied AI** | Agents that combine language, perception, and motion in real-world tasks |
-| **Grounded Navigation** | AI that interprets instructions like “go to the bedroom” and navigates accordingly |
+| **Grounding DINO** | Connects text prompts to object locations (bounding boxes) in an image (Open-Vocabulary Object Detection) |
+| **Grounded SAM** | Connects text → detection → segmentation in a unified pipeline (Text-to-Segment Pipeline) |
+| **GLIP** | Reformulates object detection as a phrase grounding task, using contrastive learning between language phrases and object boxes (Phrase-based Object Detection) |
+| **Grounded Affordance** | Maps affordances like "graspable" or "sittable" to specific regions in an image |
+| **Language Grounding** | Links words and sentences to real-world sensory or experiential data (e.g., a robot recognizing and picking up a "cup") |
+| **Grounded Visual Question Answering (VQA)** | Answers questions based on actual visual elements in the image, not just text |
+| **Grounded Dialogue Systems** | Connects spoken language to user behavior, visual context, or spatial position |
+| **Grounded Embodied AI** | Integrates language, vision, and motion for agents interacting in the real world |
+| **Grounded Navigation** | Understands commands like “go to the bedroom” and navigates through real-world environments accordingly |
+
 
 So in AI, **"grounding"** refers to  
 > the ability to **connect abstract inputs like text or symbols to perceivable entities in the real world**.
