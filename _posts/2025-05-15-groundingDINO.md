@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Grounding DINO 논문 공부!"
+title: "Understanding Grounding DINO!! - Grounding DINO 논문 공부!"
 author: [DrFirst]
 date: 2025-05-15 15:00:00 +0900
 categories: [AI, Research]
@@ -10,6 +10,275 @@ sitemap :
   priority : 0.8
 ---
 
+## 📝 Understanding Grounding DINO!!
+_Studying 『Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection』 (ECCV, 2024)_
+
+![manhwa](https://github.com/user-attachments/assets/75d77acb-31e2-455e-a1c2-30864afccf27)
+
+📖 **Paper Title**: Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection  
+✍️ **Authors**: Xinyu Chen, Xueyan Zou, Ze Liu, et al.  
+🌟 **One-line Summary**: A text-prompt-based object detector!
+
+- Today, I’m studying the Grounding DINO paper, which I previously [experimented with in practice](https://drfirstlee.github.io/posts/groundingDINO_Detection_usage/)!
+
+---
+
+### 🧠 Core Ideas Summary
+
+#### 1️⃣ DINO-based Structure with Enhanced Modality Fusion
+
+![detector_structure](https://github.com/user-attachments/assets/8b718698-a4bf-4347-99de-0c428ba597f2)
+
+- Grounding DINO is based on the **Transformer-based object detector DINO**.
+- Unlike Faster R-CNN, DINO’s structure naturally allows **layer-level fusion between text and image**.
+- Grounding DINO performs **cross-modality fusion** in **Neck (Phase A), Query Initialization (Phase B), and Head (Phase C)** stages to boost text-conditioned detection performance.
+
+#### 2️⃣ Generalization through Grounded Pretraining
+- CLIP excels at global image-text alignment but struggles with region-level grounding.
+- To overcome CLIP-style zero-shot limitations, Grounding DINO introduces **contrastive pretraining on region-text pairs**.
+- It enhances GLIP’s phrase grounding approach with **sub-sentence level text processing** to reduce category interference.
+- This allows Grounding DINO to become a true **“text → detection” open-set detector**, achieving new zero-shot benchmarks on COCO and ODinW.
+
+---
+
+### 🔍 Background of the Grounding DINO Research
+
+Grounding DINO was proposed to go **beyond the limitations of fixed class object detection**.  
+Here’s the previous evolution of related models:
+
+---
+
+#### 🧩 From DETR to DINO — Still Bound by Fixed Classes
+
+- **[DETR](https://drfirstlee.github.io/posts/DETR/) (2020, Facebook AI)**  
+  The first Transformer-based end-to-end object detector  
+  → But it only detects **predefined classes**, like those in COCO.
+
+- **[DINO](https://drfirstlee.github.io/posts/DINO_Detection/) (ICLR 2023)**  
+  Improves DETR’s training stability and accuracy  
+  → Great detection, but still limited to **fixed class tokens**
+
+➡️ DINO detects well, but only if you already know what to detect.
+
+---
+
+#### 🧩 Open-Set Object Detection — Breaking Free from Fixed Classes
+
+##### 🔍 GLIP, OV-DETR, etc.
+
+Traditional detectors are **closed-set**, trained only to recognize predefined classes via bounding box annotations.  
+
+To break that limitation, Microsoft proposed **GLIP (Grounded Language-Image Pretraining)**:
+
+- **Open-set Object Detection**  
+- Detecting **arbitrary categories**  
+- Using **natural language generalization** to understand new objects
+
+Similarly, **OV-DETR** uses Transformer-based structure with **language-aware object queries injected into the decoder** for open-vocabulary detection.
+
+##### ⚠️ Limitations of Prior Work
+
+These models mostly fused image and text features at **limited stages**, leading to **sub-optimal generalization**.
+
+##### 📊 Multimodal Fusion Comparison
+
+| Model      | Fusion Location               | Description                                       | Limitation                      |
+|------------|-------------------------------|---------------------------------------------------|----------------------------------|
+| **GLIP**   | Phase A (Feature Enhancement) | Fuses text-image in the neck module               | Lacks fusion in later modules   |
+| **OV-DETR**| Phase B (Decoder Input)       | Injects language-aware queries into the decoder   | Limited fusion with early vision |
+
+➡️ These limited fusions can lead to **weaker alignment** and **lower performance** in open-vocabulary detection.
+
+---
+
+#### 🗣️ SAM’s Possibility and Limitation: Segmentation by Prompt
+
+- **SAM (Segment Anything Model, 2023)**  
+  A universal segmentation model based on point, box, and mask prompts  
+  → Can “segment anything” as the name implies
+
+- But SAM **couldn’t take natural language prompts directly**  
+  (Text prompts were only conceptually proposed — no actual interpretation)
+
+---
+
+### 💡 Enter Grounding DINO!
+
+Grounding DINO bridges both worlds:
+
+- **Detection power of DINO** + **Text interpretation ability of CLIP**
+- → Resulting in a **text-prompt-based open-vocabulary object detector**
+
+It is then combined with SAM into **Grounded-SAM**, completing a full pipeline of:  
+**“Text → Detection → Segmentation”**
+
+---
+
+### 🧪 Grounding DINO Architecture
+
+![full_structure](https://github.com/user-attachments/assets/07a52f52-89bd-4a9c-bc39-66aefe0a7046)
+
+#### 📐 Architecture Overview
+
+Grounding DINO uses a **dual-encoder + single-decoder** design:
+
+1. **Image Backbone**: Extracts visual features
+2. **Text Backbone**: Extracts language features
+3. **Feature Enhancer**: Fuses image-text features (Sec. 3.1)
+4. **Language-Guided Query Selection**: Initializes decoder queries (Sec. 3.2)
+5. **Cross-Modality Decoder**: Refines detections (Sec. 3.3)
+
+---
+
+##### 3.1 🔧 Feature Extraction and Enhancer
+
+- Image features via Swin Transformer (multi-scale)
+- Text features via BERT
+- Fusion includes:
+  - **Deformable Self-Attention** for image
+  - **Vanilla Self-Attention** for text
+  - **Image-to-Text** and **Text-to-Image Cross-Attention**
+- Multiple stacked fusion layers
+
+---
+
+##### 3.2 🎯 Language-Guided Query Selection
+
+Grounding DINO dynamically selects decoder queries **based on the input text**.  
+Unlike fixed queries in DETR, it scores the similarity between text and image patches.
+
+🔍 Process Overview:
+
+1. 📸 Extract image patch features  
+2. 📝 Extract text features from the sentence  
+3. 🔍 Measure how well each image patch matches text tokens  
+4. ⭐ Select top 900 image patches as detection queries  
+5. → Used to predict bounding boxes and labels
+
+Query =  
+- **Positional Part**: Anchor box information  
+- **Content Part**: Learnable feature vector
+
+---
+
+##### 3.3 🔄 Cross-Modality Decoder
+
+Each decoder layer includes:
+
+1. **Self-Attention**  
+2. **Image Cross-Attention**  
+3. **Text Cross-Attention** (added)  
+4. **Feed-Forward Network**
+
+➤ Added **text cross-attention** allows better text-image fusion during decoding.
+
+---
+
+##### 3.4 ✂️ Sub-Sentence Level Text Feature
+
+![subsentence](https://github.com/user-attachments/assets/b701cf93-287b-48e5-8e4c-f0d995172a4b)
+
+Existing approaches:
+- **Sentence-level**: Encodes whole sentence → loses fine details
+- **Word-level**: Encodes all class names together → unintended word interference
+
+Grounding DINO proposes:  
+➡️ **Sub-sentence level encoding** with attention masks  
+→ Removes interference between unrelated words  
+→ Preserves fine-grained per-word features
+
+---
+
+#### 🎯 Loss Function Design
+
+---
+
+##### 🔧 3.5 Loss Function
+
+Grounding DINO combines multiple loss components:
+
+##### 📦 1. Bounding Box Regression
+- **L1 Loss**  
+- **GIoU Loss** for location accuracy
+
+---
+
+##### 🏷️ 2. Classification (Text-based)
+- **Contrastive Loss**: Matches text tokens with predicted boxes
+- Uses:
+  - **Dot product** between queries and text features
+  - **Focal Loss** on logits for robust learning
+
+---
+
+##### 🔄 3. Matching and Final Loss
+
+- Bipartite matching aligns predictions with ground truth  
+- Final loss = Box loss + Classification loss
+
+---
+
+##### 🧱 4. Auxiliary Loss
+
+- Added at:
+  - **Each decoder layer**
+  - **Encoder outputs**
+- Helps stabilize early-stage training and convergence
+
+---
+
+### 📊 Ablation Study Summary
+
+Grounding DINO evaluates the importance of each design by removing or altering modules.  
+Evaluated on COCO and LVIS (minival) for Zero-Shot and Fine-Tune settings.
+
+---
+
+#### 📋 Results (Table 7)
+
+| ID | Model Variant                         | COCO (Zero-Shot) | COCO (Fine-Tune) | LVIS (Zero-Shot) |
+|----|---------------------------------------|------------------|------------------|------------------|
+| 0  | ✅ Full Model                          | **46.7**         | **56.9**         | **16.1**         |
+| 1  | ❌ No Encoder Fusion                   | 45.8             | 56.1             | 13.1             |
+| 2  | ❌ Static Query Selection              | 46.3             | 56.6             | 13.6             |
+| 3  | ❌ No Text Cross-Attention             | 46.1             | 56.3             | 14.3             |
+| 4  | ❌ Word-Level Prompt (vs. Sub-sentence)| 46.4             | 56.6             | 15.6             |
+
+---
+
+#### 🔍 Interpretation
+
+1. **Encoder Fusion** (ID #1) is most critical  
+   - Drop of **-0.9 AP (COCO)** and **-3.0 AP (LVIS)**  
+2. **Static Query Selection** (ID #2) hurts zero-shot performance  
+3. **Text Cross-Attention** (ID #3) improves grounding
+4. **Sub-sentence Prompt** is more effective than word-level
+
+---
+
+#### ✅ Conclusion
+
+- **Encoder Fusion** is the biggest performance booster  
+- **Query Selection & Text Attention** matter especially in open-vocabulary settings  
+- **Sub-sentence prompts** improve fine-grained alignment
+
+---
+
+### 💡 Takeaways
+
+Grounding DINO is not just a better detector —  
+it’s a model that **connects language and vision meaningfully**.
+
+I was especially impressed by how it finds objects not from fixed labels,  
+but from **free-form text prompts**!
+
+---
+
+### 📚 References
+
+1. Paper: https://arxiv.org/abs/2303.05499  
+2. Code: https://github.com/IDEA-Research/GroundingDINO  
+3. Thanks to ChatGPT for summarization 🙏
 
 ---
 
