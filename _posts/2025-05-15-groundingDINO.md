@@ -16,6 +16,8 @@ sitemap :
 ## (한국어) 📝 Grounding DINO 알아보기!!
 _『Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection』(ECCV, 2024) 공부_
 
+![manhwa](https://github.com/user-attachments/assets/75d77acb-31e2-455e-a1c2-30864afccf27)
+
 📖 **논문 제목**: Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection  
 ✍️ **저자**: Xinyu Chen, Xueyan Zou, Ze Liu, et al.  
 🌟 **한줄 요약**: 제시된 텍스트 프롬프트 기반 객체 탐지기!
@@ -28,7 +30,8 @@ _『Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object
 
 #### 1️⃣ DINO 기반 구조와 모달 융합 강화
 
-![detector_structure]()
+![detector_structure](https://github.com/user-attachments/assets/8b718698-a4bf-4347-99de-0c428ba597f2)
+
 
 - Grounding DINO는 **Transformer 기반 객체 탐지기인 DINO**를 기반으로 설계됨.
 - 기존 Faster R-CNN 구조와 달리, DINO는 **텍스트와 이미지 간 layer-level 융합**이 자연스럽게 가능한 구조를 가짐.
@@ -66,12 +69,12 @@ Grounding DINO는 기존의 객체 탐지(Object Detection) 모델들이 가진 
 
 #### 🧩 Open-Set Object Detection, 즉 고정된 객체 한계를 넘어서는 연구들  
 
-##### 🔍 GLIP, OV-DETR* 등 소개
+##### 🔍 GLIP, OV-DETR* 연구
 
 기존 객체 탐지는 사전에 정의된 클래스(bounding box 어노테이션)에만 반응하는  
 **고정 클래스 기반(closed-set)** 탐지 방식에 한정되어 있었습니다.  
 
-이에 대해 **GLIP**(Grounded Language-Image Pre-training, Microsoft)은 다음과 같은 방향을 제시합니다:
+이에 대해 **GLIP**(Grounded Language-Image Pre-training, Microsoft)은 다음과 같은 방향을 제시했음:
 
 - **오픈셋 객체 탐지 (Open-Set Object Detection)**  
 - **임의의 클래스 (arbitrary class)**에 대한 탐지 수행  
@@ -82,7 +85,6 @@ Grounding DINO는 기존의 객체 탐지(Object Detection) 모델들이 가진 
 한편, **OV-DETR**은 Transformer 구조 기반의 객체 탐지기로,  
 언어 정보가 포함된 쿼리(query)를 디코더에 직접 주입하여 open-vocabulary 탐지를 수행합니다.
 
----
 
 ##### ⚠️ 기존 연구들의 한계점
 
@@ -90,7 +92,6 @@ Grounding DINO는 기존의 객체 탐지(Object Detection) 모델들이 가진 
 **일부 모듈에만 국한하여 융합(fusion)**함에 따라,  
 **언어 기반 일반화 성능이 최적보다 낮게(sub-optimal) 작동할 가능성**이 존재합니다.
 
----
 
 ##### 📊 예시: 멀티모달 결합 위치 비교
 
@@ -99,7 +100,6 @@ Grounding DINO는 기존의 객체 탐지(Object Detection) 모델들이 가진 
 | **GLIP**    | Phase A (Feature Enhancement)    | 백본 이후 neck 단계에서 이미지-텍스트 특징 융합 | 이후 디코더와의 연결성 부족 |
 | **OV-DETR** | Phase B (Decoder Input)          | 디코더에 언어 쿼리(query)를 직접 삽입           | 초기 시각 정보와의 깊은 융합 부족 |
 
----
 
 ➡️ 이러한 구조적 제약은,  
 **텍스트와 이미지 간의 깊이 있는 정렬(alignment)이 요구되는 open-vocabulary 탐지**에서  
@@ -108,7 +108,7 @@ Grounding DINO는 기존의 객체 탐지(Object Detection) 모델들이 가진 
 
 ---
 
-#### 🗣️ SAM의 가능성: 텍스트 프롬프트 기반 분할
+#### 🗣️ SAM이 제시한한 가능성과 한계: 텍스트 프롬프트 기반 분할 아디이디어  
 
 - **SAM (Segment Anything Model, 2023)**  
   포인트, 박스, 마스크 기반의 **범용 세그멘테이션 모델**  
@@ -133,7 +133,7 @@ Grounding DINO는 이러한 두 흐름을 **자연스럽게 연결**합니다:
 
 ### 🧪 Grounding DINO의 구성
 
-![full_structure]()
+![full_structure](https://github.com/user-attachments/assets/07a52f52-89bd-4a9c-bc39-66aefe0a7046)
 
 #### 📐 아키텍처 개요
 
@@ -202,7 +202,8 @@ Grounding DINO는 **입력 텍스트에 따라 탐지 쿼리를 동적으로 선
 
 ##### 3.4 ✂️ Sub-Sentence Level Text Feature
 
-![subsentence]() 
+![subsentence](https://github.com/user-attachments/assets/b701cf93-287b-48e5-8e4c-f0d995172a4b)
+  
 
 - 기존 텍스트 인코딩 방식:
 - **Sentence-level**: 문장을 하나의 벡터로 처리 → 정밀도 손실

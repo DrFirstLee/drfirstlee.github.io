@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Grounding SAM Hands-On with Python! - Grounding SAM 실습 with python!"
+title: "Grounded SAM Hands-On with Python! - Grounded SAM 실습 with python!"
 author: [DrFirst]
 date: 2025-05-14 07:00:00 +0900
 categories: [AI, Experiment]
@@ -13,13 +13,13 @@ sitemap :
 
 ---
 
-## 🦖 (English) Hands-On with Grounding SAM! Detect objects with DINO, then Segment with SAM!
+## 🦖 (English) Hands-On with Grounded SAM! Detect objects with DINO, then Segment with SAM!
 
-In this post, we’ll do a hands-on walkthrough of **Grounding DINO** + **SAM** = **Grounding SAM**!  
+In this post, we’ll do a hands-on walkthrough of **Grounding DINO** + **SAM** = **Grounded SAM**!  
 We'll keep following the GitHub repo and run the code,  
 but if you go step by step, it’s not too hard!  
 So once again, let's skip the theory for now,  
-and dive straight into the code to understand what **Grounding SAM** is all about!!
+and dive straight into the code to understand what **Grounded SAM** is all about!!
 
 ---
 
@@ -126,22 +126,22 @@ Now I tried a different image.
 
 ### 🎉 Final Thoughts
 
-Grounding SAM!! After Grounding DINO,  
+Grounded SAM!! After Grounding DINO,  
 we now go from detection to actual image segmentation!  
 SAM alone was conceptually interesting but lacked text input,  
-so Grounding SAM is amazing in that it allows text prompts! 😄  
+so Grounded SAM is amazing in that it allows text prompts! 😄  
 That said, imagine how powerful it would be if it could handle large images and multiple segments in one shot!
 
 
 ---
 
-## 🦖(한국어) Grounding SAM 실습! DINO로 객채 탐지 후 Segment까지!!!
+## 🦖(한국어) Grounded SAM 실습! DINO로 객채 탐지 후 Segment까지!!!
 
-이번 포스팅은 **Grounding DINO** 와 **SAM** 을 결합한  **Grounding SAM**의 실습입니다!  
+이번 포스팅은 **Grounding DINO** 와 **SAM** 을 결합한  **Grounded SAM**의 실습입니다!  
 계속해서 GitHub repo에서 코드를 내려받아 실행하지만,  
 천천히 따라해보면 모두 잘할 수 있습니다!  
 그래서 이번에도 이론은 잠시 뒤로 미뤄두고,  
-**Grounding SAM**이 뭔지 이해하기 위해 바로 코드부터 실행해봅시다!!
+**Grounded SAM**이 뭔지 이해하기 위해 바로 코드부터 실행해봅시다!!
 
 ---
 
@@ -255,10 +255,10 @@ pip install supervision==0.21.0
 
 ### 🎉 마무리
 
-Grounding SAM!! Grounding DINO에 이어서!! 
+Grounded SAM!! Grounding DINO에 이어서!! 
 디택션 내부의 이미지를 segment!!  
 SAM에서는 Text 프롬포트가 개념적으로만 제시되어 아쉬웠는데  
-이 Grounding SAM에서는 텍스트 제시가 가능해서 너무 좋았습니다!^^  
+이 Grounded SAM에서는 텍스트 제시가 가능해서 너무 좋았습니다!^^  
 다만, 큰 이미지를 넘어 이미지 내의 segment 까지 된다면 얼~~마나 좋을까요~! 
 
 
