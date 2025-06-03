@@ -18,7 +18,7 @@ _Reading *Why Stocks Go Up and Down*_
 ![Image](https://github.com/user-attachments/assets/367ed999-1307-472e-b8c1-4d96eae2b560)
 
 📖 **Book Title**: *Why Stocks Go Up and Down*  
-✍️ **Author**: Bill Pike  
+✍️ **Author**: William H. Pike  
 🎯 **Recommended For**: Anyone wanting to build a solid foundation in stock investing. Those interested in corporate management or IPOs. Investors curious about quantitative rather than qualitative decision-making.  
 🌟 **One-Line Review**: Stocks speak more in numbers than in stories.
 
