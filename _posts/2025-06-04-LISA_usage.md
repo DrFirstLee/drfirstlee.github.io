@@ -4,7 +4,7 @@ title: "Reasoning Segmentation LLM LISA 실습!!"
 author: [DrFirst]
 date: 2025-06-04 09:00:00 +0900
 categories: [AI, Experiment]
-tags: [LISA, Segment Anything, Image Segmentation, Python]
+tags: [LISA, Segment Anything, Image Segmentation, Python,  CVPR, CVPR 2024]
 sitemap :
   changefreq : weekly
   priority : 0.9
@@ -102,84 +102,34 @@ text_output:  <s>A chat between a curious human and an artificial intelligence a
 
 이미지를 볼까요!?
 
-
-![NOGPU]()
-
-기존 사용했던 강아지 이미지를, bbox와 함께 segment해보았습니다!!
-
-```python
-img_name = "dog.jpg"
-
-my_bboxes=[1430.2,   828,  4471.9, 3836.4]
-# 박스 프롬프트로 추론 ([x_min, y_min, x_max, y_max])
-results = model(img_name, bboxes=my_bboxes)
-
-# 원본 이미지 로드 (시각화를 위해)
-image = cv2.imread(img_name)
-image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # BGR -> RGB 변환
-
-# 결과 시각화
-plt.figure(figsize=(10, 10))
-plt.imshow(image_rgb)
-
-# 마스크 오버레이
-for result in results:
-    if result.masks is not None:
-        mask = result.masks.data[0].cpu().numpy()  # 첫 번째 마스크 추출
-        plt.imshow(mask, alpha=0.5, cmap='jet')  # 마스크를 반투명하게 표시
-
-# 박스 프롬프트 표시
-rect = plt.Rectangle((my_bboxes[0], my_bboxes[1]), my_bboxes[2] - my_bboxes[0], my_bboxes[3] - my_bboxes[1], 
-                     linewidth=2, edgecolor='red', facecolor='none', label=f'my_bboxes {my_bboxes}')
-plt.gca().add_patch(rect)
-
-# 제목 및 설정
-plt.title(f"SAM2 Segmentation with Box Prompt on {img_name}")
-plt.legend()
-plt.axis('off')
-plt.show()
-
-# 추가 정보 출력 (선택 사항)
-print("Segmentation Result:")
-print(f"Number of masks: {len(results[0].masks.data)}")
-print(f"Mask shape: {results[0].masks.data[0].shape}")
-```
-
-![sam2_dog](https://github.com/user-attachments/assets/9b4db05e-2577-4832-88c8-47ca66e21b82)
+> 아래와 같이 확실하게 솔 부분만 잘 분류하네요~!!
+![toothbrush](https://github.com/user-attachments/assets/05331580-ef6f-4be9-9967-0eaf4fd4b310)
 
 
-참 잘되죠~ 그런데 이건 SAM도 잘하건건데!?
+이 외에도 테스트해보았던 결과물을 아래와 같이 공유합니다~!  
 
----
+> wine glass : 단순한 단어로도 잘 구분하죠!?
+![wine_glass](https://github.com/user-attachments/assets/1fd3ec07-2e5f-4276-962f-dceabc810072)
 
-### 🚀 4. 비디오 Segment 실행!!
 
-그래서, 이번엔 SAM2의 특징인!  
-비디오의 segment도 진행해보았습니다!
+> glove : 손부분만 잘 추출하네요~!
+![glove](https://github.com/user-attachments/assets/7d622a3d-05d6-4315-a204-26723d616465)
 
-저는 고속도로의 CCTV영상을 바탕으로 진행했구요!
-첫 프래임에서 차가 있는 곳의 위치(405,205)를 프롬포트로 제공했습니다!
+> where is the handle? : 문장 잘해!!! 
+![knifehandle](https://github.com/user-attachments/assets/935b823f-4d92-4039-bb2c-9da3b87aad3e)
 
-```python
-from ultralytics.models.sam import SAM2VideoPredictor
+> Which part of a baseball bat is the handle that people hold?
+![baseballhandle](https://github.com/user-attachments/assets/bb687399-68be-491b-9bce-0a59fc446753)
 
-# Create SAM2VideoPredictor
-overrides = dict(conf=0.25, task="segment", mode="predict", imgsz=1024, model="sam2_b.pt")
-predictor = SAM2VideoPredictor(overrides=overrides)
+> Wearing glove : 딱 손부분만 하면 좋겠지만 그렇게는 안되네요!
+![wearingglove](https://github.com/user-attachments/assets/b4844508-49cc-41dd-a9e3-dfdf290be4e3)
 
-# Run inference with single point
-results = predictor(source="street.mp4", points=[405, 205], labels=[1])
-```
-
-동영상을 올릴순 없지만!!  
-아래 스크린샷같이 차가 사라지는 시점까지만 딱!!segment를 정말 잘하더라구요!!
-
-![Image](https://github.com/user-attachments/assets/4a6135fb-077e-4b69-a4e7-982911ad263d)
-![Image](https://github.com/user-attachments/assets/b908a14b-a65f-4a02-a52b-c088e736fbd7)
-![Image](https://github.com/user-attachments/assets/d6a5b11c-b152-4d2c-97b0-841f345d9d48)
+> A vegetable that's healthy but not liked by most kids : 브로콜리.. 잘 못하는군요!!
+![brocoli](https://github.com/user-attachments/assets/279da196-29b6-47f2-be13-5530c65125cd)
 
 ---
 
 ### 🎉 마무리
 
-동영상의 segmentation에 더하여, 저는 Tracking이 이렇게 잘된다는것이 너무 인상적이었습니다!
+Segmentation의 시대! 이제는 단순 Segmentation을 넘어 추론까지!!  
+앞으로 얼마나 더 발전될지 기대됩니다~!  
