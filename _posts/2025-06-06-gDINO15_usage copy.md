@@ -11,6 +11,87 @@ sitemap :
 ---
 
 
+## 🦖 Grounding DINO 1.5 Practice!!
+
+Previously with [groundingDINO](https://drfirstlee.github.io/posts/groundingDINO/), we were able to perform object detection using flexible prompts like sentences or words.  
+
+Today, we’ll practice with the next version: **Grounding DINO 1.5**!  
+Unlike the [previous version’s practice](https://drfirstlee.github.io/posts/groundingDINO_Detection_usage/), which was open source,  
+starting from version 1.5, the IDEA-research team has opted not to open source the model.  
+
+Instead, they offer usage via [DeepDataSpace, the official platform](https://cloud.deepdataspace.com/).  
+This suggests that their research on Grounding DINO 1.5 may not be aimed at open scientific conferences.  
+
+---
+
+### 🧱 1. Accessing and Registering on the Platform
+
+- Go to [DeepDataSpace](https://cloud.deepdataspace.com/) and sign up!  
+- Besides China-based OAuth options like WeChat, **Google OAuth is also available**.  
+- Upon registering, you get a **20 yuan credit (~5,000 KRW)** — which is more than enough for testing!
+
+  ![Image](https://github.com/user-attachments/assets/3298117c-6552-4313-a4df-f8db44198d07)
+
+- You can also check out their [official API documentation](https://cloud.deepdataspace.com/docs)!
+
+---
+
+### 📦 2. Testing DINO on the Site
+
+I tested the model directly on their playground!  
+They offer the publicly known **1.5 Pro** and **Edge** models — even a **1.6 version** is available!
+
+![Image](https://github.com/user-attachments/assets/502e7811-ea96-4114-a107-91e0476feb56)
+
+I wanted to see if it could segment inside objects better than before,  
+so I tested with an image of a baseball bat and used the prompt:  
+**"handle of baseballbat"**
+
+![Image](https://github.com/user-attachments/assets/300df5e0-20be-4918-be09-8bcd2d8859f7)
+
+Result? It didn't differ much from the older version...
+
+![Image](https://github.com/user-attachments/assets/69028f01-b6dd-43f0-b986-329f0e561477)
+
+Oh well~~
+
+I tried more prompts to see what else it can detect well — and honestly, it detects **words** very effectively!
+
+> baby drinking water  
+![Image](https://github.com/user-attachments/assets/56c21afe-4295-4da0-ab19-d3186a758a9e)
+
+> bottle  
+![Image](https://github.com/user-attachments/assets/e66916f6-086a-4473-954b-00ddd911f84f)
+
+> chair  
+![Image](https://github.com/user-attachments/assets/65d5c8cf-9eb4-4911-a39d-bfc82676b99c)
+
+> cap  
+![Image](https://github.com/user-attachments/assets/c6acc20f-0df1-4b8f-abef-57905cc18a79)
+
+> man with short sleeves — still weak with full-sentence prompts!  
+![Image](https://github.com/user-attachments/assets/e1a7f3c5-fcb0-4375-ade4-b9e93a0b5e94)
+
+> child  
+![Image](https://github.com/user-attachments/assets/d7dd7f42-4ed3-48ab-8288-70e6a5bda8b6)
+
+> photo frame  
+![Image](https://github.com/user-attachments/assets/8ad43757-4223-40cc-b092-d2725da73b99)
+
+---
+
+### 🎉 Conclusion
+
+As I felt with the original groundingDINO —  
+**Openset Detection**, where you can use free-form prompts, is incredibly powerful!  
+While it’s unfortunate that you can’t download and run the model due to its closed-source nature,  
+on the flip side, testing and using it through an API is super convenient.  
+And the cost doesn’t seem too high either!  
+
+Here’s to hoping more models like this become open source in the future —  
+**Jiayou!**
+
+
 ---
 
 ## 🦖(한국어) Grounding DINO 1.5 실습!!
@@ -35,7 +116,7 @@ sitemap :
   ![Image](https://github.com/user-attachments/assets/3298117c-6552-4313-a4df-f8db44198d07)
 
 
-- [공식 문서](https://cloud.deepdataspace.com/docs)에서 API 호출출 설명도 확인할 수 있습니다!  
+- [공식 문서](https://cloud.deepdataspace.com/docs)에서 API 호출에 대한 설명도 확인할 수 있습니다!  
 
 ---
 
