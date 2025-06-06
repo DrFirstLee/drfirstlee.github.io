@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Grounding DINO 1.5 Practice!! - Grounding DINO 1.5 실습!!"
+author: [DrFirst]
+date: 2025-06-06 09:00:00 +0900
+categories: [AI, Experiment]
+tags: [grounding DINO 1.5, DINO, 객체 탐지, Object Detection, Openset detection, Closed source, python, 파이썬 실습]
+sitemap :
+  changefreq : weekly
+  priority : 0.9
+---
+
+
+---
+
+## 🦖(한국어) Grounding DINO 1.5 실습!!
+
+문장, 단어 등 자유로운 프롬포트를 바탕으로  
+객채탐지를 할 수 있었던 [groundingDINO](https://drfirstlee.github.io/posts/groundingDINO/)  
+오늘은 그 다음 버전엔 **Grounding DINO 1.5** 에 대한 실습입니다!  
+[기존 실습](https://drfirstlee.github.io/posts/groundingDINO_Detection_usage/) 처럼 오픈소스라면 좋으련만,,  
+이 연구를 진행한 IDEA-research에서는 1.5모델부터는!!  
+[DeepDataSpace 라는 공식플랫폼](https://cloud.deepdataspace.com/) 을 통해,  
+오픈소스가 아니라 API 혹은 사이트에서의 적용 방식으로 보여줍니다.   
+이에 이들의 grounding DINO 1.5 연구도 컨퍼런스에 제출하는 목적은 아닌것 같습니다
+
+---
+
+### 🧱 1. 사이트 접속 및 가입
+
+- [DeepDataSpace](https://cloud.deepdataspace.com/)에 접속하여 가입해줍니다!!  
+- Wechat 등 중국 Oauth 방식 외에도 Google Oauth 도 가능합니다!!  
+- 가입하면 기본 20위안 (5천원정도!) 의 크레딧을 주고 이정도면 충분합니다!!
+
+  ![Image](https://github.com/user-attachments/assets/3298117c-6552-4313-a4df-f8db44198d07)
+
+
+- [공식 문서](https://cloud.deepdataspace.com/docs)에서 API 호출출 설명도 확인할 수 있습니다!  
+
+---
+
+### 📦 2. 사이트에서 DINO 테스트해보기!  
+
+저는 playground 에서 직접 모델을 테스트 해보겠습니다!!   
+논문으로 공개된 1.5도 Pro, edge로 그리고 1.6 모델도 있더라구요!!
+
+![Image](https://github.com/user-attachments/assets/502e7811-ea96-4114-a107-91e0476feb56)
+
+지난 모델에서 잘 못했던 객채 내부 분할도 잘할까? 하는 마음에  
+야구 방망이 사진에  `handle of baseballbat` 이라는 프롬포트를 넣어보았습니다!  
+
+![Image](https://github.com/user-attachments/assets/300df5e0-20be-4918-be09-8bcd2d8859f7)
+
+
+결과는,, 기존 모델과 차이가 없었습니다..
+
+![Image](https://github.com/user-attachments/assets/69028f01-b6dd-43f0-b986-329f0e561477)
+
+
+그랬구나~~  
+
+이제는 그 외에 아래와 같은 프롬포트 들로 테스트를 해보았습니다!!  
+단어들의 탐지는 정말 잘하는것 같아요~!
+
+> baby drinking water
+![Image](https://github.com/user-attachments/assets/56c21afe-4295-4da0-ab19-d3186a758a9e)
+
+> bottle
+![Image](https://github.com/user-attachments/assets/e66916f6-086a-4473-954b-00ddd911f84f)
+
+> chair  
+![Image](https://github.com/user-attachments/assets/65d5c8cf-9eb4-4911-a39d-bfc82676b99c)
+
+> cap  
+![Image](https://github.com/user-attachments/assets/c6acc20f-0df1-4b8f-abef-57905cc18a79)
+
+> man with short sleeves : 여전히 문장에는 약한것 같습니다!
+![Image](https://github.com/user-attachments/assets/e1a7f3c5-fcb0-4375-ade4-b9e93a0b5e94)
+
+> child
+![Image](https://github.com/user-attachments/assets/d7dd7f42-4ed3-48ab-8288-70e6a5bda8b6)
+
+> photo frame
+![Image](https://github.com/user-attachments/assets/8ad43757-4223-40cc-b092-d2725da73b99)
+
+---
+
+### 🎉 마무리
+groundingDINO에서 느껀것이지만  
+openset Detection!! 자유로운 단어를 쓸수 있어 정말 좋네요!  
+폐쇄형 모델로 모델을 다운받아 쓸수 없는 점이 큰 아쉬움이지만,  
+반대로 테스트하거나 API로 사용한다면 엄청 간편하게 사용할수 있는 장점이 있는것 같습니다!  
+비용이 크게 비싸지도 않은것 같구요~!  
+허나 보다 많은 모델들이 오픈소스로 공개되기를 기원하며!!  
+화이팅!  
