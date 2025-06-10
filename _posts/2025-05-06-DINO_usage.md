@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "DINO Python Experiment!! Super Impressive!! - DINO 파이썬 실습!! 완전 신기해!!"
+title: "🖥️ DINO Python Experiment!! Super Impressive!! - DINO 파이썬 실습!! 완전 신기해!!"
 author: [DrFirst]
 date: 2025-05-06 09:00:00 +0900
 categories: [AI, Experiment]

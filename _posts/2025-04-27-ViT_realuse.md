@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Image classification using ViT with Python - 파이썬으로 ViT 모델을 활용, 이미지 분류하기"
+title: "🖥️ Image classification using ViT with Python - 파이썬으로 ViT 모델을 활용, 이미지 분류하기"
 author: [DrFirst]
 date: 2025-04-27 11:00:00 +0900
 categories: [AI,Experiment]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Grounding DINO Practice - Grounding DINO 실습 with python!"
+title: "🖥️ Grounding DINO Practice - Grounding DINO 실습 with python!"
 author: [DrFirst]
 date: 2025-05-12 07:00:00 +0900
 categories: [AI, Experiment]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Object Detection with DETR! Python Practice!! - DETR을 활용한 객체 탐지! 파이썬 실습!!"
+title: "🖥️ Object Detection with DETR! Python Practice!! - DETR을 활용한 객체 탐지! 파이썬 실습!!"
 author: [DrFirst]
 date: 2025-05-08 07:00:00 +0900
 categories: [AI, Experiment]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "LISA Practice!! - Reasoning Segmentation LLM LISA 실습!!"
+title: "🖥️ LISA Practice!! - Reasoning Segmentation LLM LISA 실습!!"
 author: [DrFirst]
 date: 2025-06-04 09:00:00 +0900
 categories: [AI, Experiment]

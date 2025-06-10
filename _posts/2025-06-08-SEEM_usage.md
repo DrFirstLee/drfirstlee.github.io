@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "SEEM Practice!! - SEEM 실습!! with python. gradio"
+title: "🖥️ SEEM Practice!! - SEEM 실습!! with python. gradio"
 author: [DrFirst]
 date: 2025-06-08 09:00:00 +0900
 categories: [AI, Experiment]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🦖 DINO Practice: Running Object Detection with Pretrained Models - DINO 실습: 모델을 받아 직접 객체 탐지 해보기!"
+title: "🖥️ DINO Practice: Running Object Detection with Pretrained Models - DINO 실습: 모델을 받아 직접 객체 탐지 해보기!"
 author: [DrFirst]
 date: 2025-05-11 07:00:00 +0900
 categories: [AI, Experiment]

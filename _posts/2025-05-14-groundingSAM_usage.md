@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Grounded SAM Hands-On with Python! - Grounded SAM 실습 with python!"
+title: "🖥️ Grounded SAM Hands-On with Python! - Grounded SAM 실습 with python!"
 author: [DrFirst]
 date: 2025-05-14 07:00:00 +0900
 categories: [AI, Experiment]
