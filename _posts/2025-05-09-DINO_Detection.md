@@ -1,6 +1,6 @@
 ---
 layout: post
-title: " 🦖 DINO: The Evolutionary Object Detection Model of DETR!! - DINO: DETR의 진화형 객체 탐지 모델!! (ICLR 2023)"
+title: " 📝  DINO: The Evolutionary Object Detection Model of DETR!! - DINO: DETR의 진화형 객체 탐지 모델!! (ICLR 2023)"
 author: [DrFirst]
 date: 2025-05-09 09:00:00 +0900
 categories: [AI, Research]

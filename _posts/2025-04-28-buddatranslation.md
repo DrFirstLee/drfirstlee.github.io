@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 행동으로 옮기기 힘든,, '초역 부처의 말'을 읽고
+title: 📘 행동으로 옮기기 힘든,, '초역 부처의 말'을 읽고 - After reading 『The Buddha's Words: Super Translation』
 author: [DrFirst]
 date: 2025-04-28 09:00:00 +0900
 categories: [Activity, Books]

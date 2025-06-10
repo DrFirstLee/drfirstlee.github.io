@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 김훈 작가의 '흑산(黑山)'를 읽고 - Reading *Heuksan (Black Mountain)* by Kim Hoon
+title: 📘 김훈 작가의 '흑산(黑山)'를 읽고 - Reading *Heuksan (Black Mountain)* by Kim Hoon
 author: [DrFirst]
 date: 2025-04-14 09:00:00 +0900
 categories: [Activity, Books]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading 'The Power of Money' by Paul Sheard - 폴 시어드의 『돈의 권력』을 읽고 "
+title: "📘 Reading 'The Power of Money' by Paul Sheard - 폴 시어드의 『돈의 권력』을 읽고 "
 author: [DrFirst]
 date: 2025-04-11 09:00:00 +0900
 categories: [Activity, Books]

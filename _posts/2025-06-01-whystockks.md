@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading 『Why Stocks Go Up and Down』 - 『주식이 오르고 내리는 이유』를 읽고"
+title: "📘 Reading 『Why Stocks Go Up and Down』 - 『주식이 오르고 내리는 이유』를 읽고"
 author: [DrFirst]
 date: 2025-06-03 09:00:00 +0900
 categories: [Activity, Books]

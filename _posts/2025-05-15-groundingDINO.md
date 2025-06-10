@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Understanding Grounding DINO!! - Grounding DINO 논문 공부!"
+title: "📝 Understanding Grounding DINO!! - Grounding DINO 논문 공부!"
 author: [DrFirst]
 date: 2025-05-15 15:00:00 +0900
 categories: [AI, Research]

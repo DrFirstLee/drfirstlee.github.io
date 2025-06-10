@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Peeking into the Mind of AI: Understanding CAM! - AI의 속마음을 들여다본다!! CAM 알아보기 "
+title: "📝 Peeking into the Mind of AI: Understanding CAM! - AI의 속마음을 들여다본다!! CAM 알아보기 "
 author: [DrFirst]
 date: 2025-04-17 09:00:00 +0900
 categories: [AI, Research]

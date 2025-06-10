@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 명불허전, 『왕자와 거지』를 읽고
+title: 📘 A True Classic, Deserving Its Reputation  - 명불허전, 『왕자와 거지』를 읽고
 author: [DrFirst]
 date: 2025-05-03 09:00:00 +0900
 categories: [Activity, Books]
