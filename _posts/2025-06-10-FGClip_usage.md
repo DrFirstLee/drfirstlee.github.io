@@ -80,7 +80,7 @@ Now the model downloads and loads successfully!
 
 Let’s try with a sample image provided in the repo: `cat_dfclor.jpg`
 
-![catcam](https://github.com/user-attachments/assets/e72f0746-0082-4696-a097-9197bbc88f93) 
+![cat_dfclor.jpg](https://github.com/user-attachments/assets/49723476-d402-4a22-94c7-2d1b801b4aa4)
 
 ```python
 img_root = "cat_dfclor.jpg"
@@ -172,7 +172,7 @@ Then I tested a baseball stadium image:
 > **player** → Seems pretty accurate!?  
 ![player](https://github.com/user-attachments/assets/3dd81666-9f69-42e0-b71f-b5e2725f6830)
 
-> **catch** → Is it right...?
+> **catch** → Is it right...?  
 ![catch](https://github.com/user-attachments/assets/d69491f5-12e7-43d5-b00c-6d765be88d62)
 
 ---
