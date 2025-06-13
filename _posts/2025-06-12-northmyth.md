@@ -1,22 +1,21 @@
 ---
 layout: post
-title: "📘 Reading 『Why Stocks Go Up and Down』 - 『처음 만나는 북유럽 신화』를 읽고"
+title: "📘 『처음 만나는 북유럽 신화』를 읽고 - Reading “An Introduction to Norse Mythology”"
 author: [DrFirst]
 date: 2025-06-12 13:00:00 +0900
 categories: [Activity, Books]
 tags: [북유럽신화 토르, 로키, 오딘, 발키리, 헤임달]
-lastmod : 2025-06-03 09:00:00
 sitemap :
   changefreq : weekly
   priority : 0.9
 ---
 
-
+---
 
 ## 💹 (한국어) 익숙한 이름과 그렇지 못한 이야기 
 _『처음 만나는 북유럽 신화』를 읽고_
 
-![Image]()
+![Image](https://github.com/user-attachments/assets/1f2bc689-7bc3-456d-ba74-52e255c80072)
 
 📖 **책 제목**: 『처음 만나는 북유럽 신화』  
 ✍️ **작가**: 이경덕  
@@ -85,5 +84,87 @@ _『처음 만나는 북유럽 신화』를 읽고_
 > 📚 신화에 관심 있다면?  
 > ✔️ 너무 정제된 로마신화가 지겹다면?  
 > → 한 번쯤 거칠고 매력적인 북유럽 신화도 만나보시길!
+
+---
+
+## 💹 (English) Familiar Names, Yet Unfamiliar Stories  
+_Reading “An Introduction to Norse Mythology”_
+
+![Image](https://github.com/user-attachments/assets/1f2bc689-7bc3-456d-ba74-52e255c80072)
+
+📖 **Book Title**: *An Introduction to Norse Mythology*  
+✍️ **Author**: Lee Kyung-deok  
+🎯 **Recommended for**: Anyone who's heard the names but wants to understand the stories behind them!  
+🌟 **One-Line Impression**: Feels like a raw, unpolished version of Greco-Roman myths!?
+
+---
+
+### 🔤 More Familiar Names Than You Think!?
+
+While reading this book, a lot of old memories came back!
+
+- **Asgard**: A game I used to love from Nexon!  
+- **Ragnarok**: The title of a game my friend used to play non-stop.  
+- **Odin, Thor, Loki, Heimdall**: The gods we met through Marvel movies!  
+- **Valkyrie**: The air unit from StarCraft’s Terran faction!  
+- **The Lord of the Rings**: The fantasy film I watched when I was a kid...
+
+Come to think of it, **we might be living surrounded by fragments of Norse mythology**.  
+Yet, very few people really know the actual stories behind those names.
+
+---
+
+### 🏛️ The Mythology We Know: Greco-Roman!
+
+Let’s be honest — when someone says “mythology,” what comes to mind first?
+
+> **Zeus and the 12 Olympians**, Hera, Poseidon, Aphrodite, Hermes...
+
+Greco-Roman mythology is familiar because its **characters are polished and structured**,  
+and it’s closely tied to **literature, art, and philosophy**.
+
+---
+
+### 🧊 Norse Mythology… Wild and Raw?
+
+What I felt while reading *An Introduction to Norse Mythology* was:
+
+> Each character certainly has their own personality,  
+> but overall, the storytelling feels **raw and unrefined** — in a primal way.
+
+- Less of a chronological flow, more of **scattered episodes**  
+- The gods aren’t neatly defined — they can be **ambiguous or unstable**  
+- While there is a general arc (**from the creation of the world to Ragnarok**),  
+  the overall narrative feels **loose and fragmented**
+
+At the same time, I realized:  
+Maybe **Greco-Roman myths became what they are now** through centuries of **editing, polishing, and romanticizing**.
+
+---
+
+### 📘 How Was the Reading Experience?
+
+Honestly, I liked that it wasn’t too heavy.  
+Even if you know nothing about mythology — or you just vaguely remember the names —  
+you’ll find yourself thinking:
+
+> **“Ah, so this is the backstory behind the Marvel characters!”**
+
+It’s light but insightful, with bite-sized explanations and the author’s own interpretations.  
+A pleasant read overall.
+
+---
+
+### ✅ Final Thoughts
+
+*An Introduction to Norse Mythology* is exactly that —  
+**an encounter with the unfamiliar stories behind familiar names.**
+
+Within the rough edges of its tales, I felt the **raw instinct of nature, war, humanity, and death**.  
+I even began to understand *why* Norse mythology never gained the same global popularity as its Greco-Roman cousin.
+
+> 📚 Curious about mythology?  
+> ✔️ Tired of the same old polished Greek stories?  
+> → Give Norse mythology a shot — it’s wild, strange, and beautifully chaotic.
 
 ---
