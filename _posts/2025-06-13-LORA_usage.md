@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🖥️ LORA Practice!! : LORA 실습!! with python"
+title: "🖥️ LoRA Hands-On Practice!! : LORA 실습!! with python"
 author: [DrFirst]
 date: 2025-06-13 09:00:00 +0900
 categories: [AI, Experiment]
@@ -9,6 +9,320 @@ sitemap :
   changefreq : weekly
   priority : 0.9
 ---
+
+---
+
+## 🦖 (English) LoRA Hands-On Practice!!  
+> **LoRA**: Low-Rank Adaptation of Large Language Models
+
+Today, we're diving into the **practice** of `LoRA`, the essence of fine-tuning, which we studied the theory of in a [previous post](https://drfirstlee.github.io/posts/LORA/)! 🎓
+
+---
+
+### 🧱 1. Install LoRA Package and Load Model
+
+LoRA is now so popular that it’s provided as an official package on Hugging Face — no need to clone a Git repo!
+
+Install all necessary packages using pip:
+
+```bash
+pip install transformers peft datasets accelerate
+```
+
+> **What is PEFT?**  
+> Stands for Parameter-Efficient Fine-Tuning — a collection of techniques that fine-tune only parts of a model efficiently instead of updating all parameters.  
+>> Methods like `PrefixTuningConfig`, `PromptTuningConfig`, `AdaLoraConfig`, and `IA3Config` are also available via `peft`.
+
+Then, import all necessary modules:
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, Trainer, DataCollatorForLanguageModeling
+from peft import get_peft_model, LoraConfig, TaskType
+from datasets import load_dataset
+from datasets import Dataset
+
+import torch
+import os
+os.environ["WANDB_DISABLED"] = "true"  # Prevent wandb-related errors
+```
+
+We'll be fine-tuning using a lightweight and current model: `Qwen/Qwen2.5-0.5B` from Hugging Face!
+
+```python
+# Load tokenizer and base model
+model_name = "Qwen/Qwen2.5-0.5B"
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    load_in_4bit=True,  # Optional 4-bit quantization via bitsandbytes
+    device_map="auto",
+    trust_remote_code=True
+)
+```
+
+---
+
+### 📦 2. Configure LoRA!
+
+Let’s configure the LoRA parameters and inject them into the base Qwen model:
+
+```python
+peft_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=8,
+    lora_alpha=16,
+    lora_dropout=0.05,
+    bias="none",
+    target_modules=["c_proj", "c_attn", "q_proj", "v_proj", "o_proj", "k_proj"],
+)
+
+model = get_peft_model(model, peft_config)
+```
+
+---
+
+### 🔍 Explanation of LoRA Parameters
+
+🔹 `task_type=TaskType.CAUSAL_LM`  
+**Description**: Sets the task type for LoRA  
+**CAUSAL_LM**: Suitable for models like GPT or Qwen that predict the next token.  
+- Use `TaskType.CLASSIFICATION` for classification models  
+- Use `TaskType.SEQ_2_SEQ_LM` for translation/summarization  
+- Use `TaskType.VISION` for models like CLIP, ViT  
+
+---
+
+🔹 `r=8`  
+**Description**: Rank for low-rank matrix decomposition  
+- Smaller values → fewer parameters and better efficiency  
+- Too small → may hurt model performance  
+
+---
+
+🔹 `lora_alpha=16`  
+**Description**: Scaling factor applied to LoRA weights  
+- Computed internally as `alpha / r`  
+- Larger values → more impact from LoRA  
+- Smaller values → closer to original model (conservative tuning)  
+- Typically set to `2 * r`  
+
+---
+
+🔹 `lora_dropout=0.05`  
+**Description**: Dropout rate for LoRA layers  
+**Purpose**: Prevent overfitting and improve generalization, especially useful with small or noisy datasets  
+
+---
+
+🔹 `bias="none"`  
+**Description**: How bias parameters are handled  
+- `"none"`: biases are frozen (recommended for parameter efficiency)  
+- `"all"`: all biases are updated  
+- `"lora_only"`: only biases in LoRA modules are updated  
+
+---
+
+🔹 `target_modules=[...]`  
+**Description**: Modules to apply LoRA on  
+**Qwen-based models typically use**:
+- `q_proj`, `k_proj`, `v_proj`: query, key, value projections  
+- `o_proj`: attention output  
+- `c_proj`, `c_attn`: final projection and attention composition  
+
+＋ **Note**:  
+According to the original LoRA paper, applying LoRA only on `Wq` and `Wv` is most efficient.  
+So, it's often more efficient to use only `["q_proj", "v_proj"]`.
+
+---
+
+### 🧊 3. Fine-Tuning!!
+
+#### With Sample Data
+
+We’ll use a sample from `"tatsu-lab/alpaca"` dataset:
+
+```python
+dataset = load_dataset("tatsu-lab/alpaca", split="train[:100]")
+
+def preprocess(example):
+    prompt = f"### Instruction:\n{example['instruction']}\n### Input:\n{example['input']}\n### Response:\n{example['output']}"
+    tokenized = tokenizer(prompt, truncation=True, padding="max_length", max_length=512)
+    tokenized["labels"] = tokenized["input_ids"].copy()
+    return tokenized
+
+tokenized_dataset = dataset.map(preprocess)
+
+training_args = TrainingArguments(
+    output_dir="./qwen_lora_output",
+    per_device_train_batch_size=2,
+    gradient_accumulation_steps=4,
+    num_train_epochs=1,
+    learning_rate=2e-4,
+    fp16=True,
+    logging_steps=10,
+    save_steps=100,
+    save_total_limit=2,
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
+    tokenizer=tokenizer,
+    data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False)
+)
+
+trainer.train()
+model.save_pretrained("qwen_lora_output")
+```
+
+If successful, you’ll see logs like:
+
+| Step | Training Loss |
+|------|----------------|
+|  10  |    2.292300    |
+
+---
+
+### 🧪 Try Inference!
+
+```python
+from peft import PeftModel
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+base_model_name =  "Qwen/Qwen2.5-0.5B"
+peft_path = "qwen_lora_output"
+
+model = AutoModelForCausalLM.from_pretrained(base_model_name, device_map="auto")
+model = PeftModel.from_pretrained(model, peft_path)
+model.eval()
+
+tokenizer = AutoTokenizer.from_pretrained(base_model_name, trust_remote_code=True)
+
+prompt = "### Instruction:\nWhat is the capital of South Korea?\n### Input:\n\n### Response:\n"
+
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=64, do_sample=False)
+
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
+Expected output:
+
+```text
+### Instruction:
+What is the capital of South Korea?
+### Input:
+
+### Response:
+The capital of South Korea is Seoul.
+```
+
+---
+
+### 🔁 Fine-Tuning with Custom Data
+
+Now let’s try training with custom data to improve performance on domain-specific prompts!
+
+We created 50+ variants of one topic: **Korean divided counties**.
+
+```python
+# Add your custom 50-entry instruction dataset (example shown)
+dataset = Dataset.from_list(data)
+
+def preprocess(example):
+    prompt = f"### Instruction:\n{example['instruction']}\n### Input:\n{example['input']}\n### Response:\n{example['output']}"
+    tokenized = tokenizer(prompt, truncation=True, padding="max_length", max_length=512)
+    tokenized["labels"] = tokenized["input_ids"].copy()
+    return tokenized
+
+tokenized_dataset = dataset.map(preprocess)
+
+training_args = TrainingArguments(
+    output_dir="./qwen_lora_output_mytext",
+    per_device_train_batch_size=2,
+    gradient_accumulation_steps=4,
+    num_train_epochs=10,  # Increased epochs
+    learning_rate=2e-4,
+    fp16=True,
+    logging_steps=10,
+    save_steps=100,
+    save_total_limit=2,
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
+    tokenizer=tokenizer,
+    data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False)
+)
+
+trainer.train()
+model.save_pretrained("qwen_lora_output_mytext")
+```
+
+Now test your fine-tuned model:
+
+```python
+prompt = "### Instruction:\nWhat are the names of the divided counties in Korea?\n### Input:\n\n### Response:\n"
+
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=64, do_sample=False)
+
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
+Sample output:
+
+```text
+### Instruction:
+What are the names of the divided counties in Korea?
+### Input:
+
+### Response:
+연천군, 철원군, 철원군, 철원군, 철원군, 철원군, ...
+```
+
+Although not perfect, it’s significantly better than the original base model — proof that your fine-tuning is working! 🎉
+
+---
+
+### 📊 Count LoRA Parameters
+
+```python
+from peft.tuners.lora import LoraLayer
+
+def count_lora_parameters(model):
+    total = 0
+    for module in model.modules():
+        if isinstance(module, LoraLayer):
+            for name, param in module.named_parameters():
+                if "lora_" in name:
+                    total += param.numel()
+    return total
+
+print("LoRA parameter count:", count_lora_parameters(model))
+```
+
+Sample output:
+
+```text
+LoRA parameter count: 1081344
+```
+
+---
+
+## 🎉 Conclusion
+
+Today we successfully implemented and fine-tuned a LoRA model!  
+Thanks to well-structured packages, applying LoRA to any field feels approachable and scalable!  
+Next up? Exploring other PEFT techniques!
+
 
 
 ---
