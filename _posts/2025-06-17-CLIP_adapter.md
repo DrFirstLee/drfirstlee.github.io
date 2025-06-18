@@ -11,6 +11,195 @@ sitemap :
 ---
 
 
+### 🧠 Understanding CLIP-Adapter!  
+_🔍 Easy Fine-Tuning for CLIP with Just One Adapter!_  
+
+![manhwa](https://github.com/user-attachments/assets/dd150996-b141-4656-a4d8-76b4b94aeaf9)
+
+> Paper: [CLIP-Adapter: Better Vision-Language Models with Feature Adapters](https://arxiv.org/pdf/2110.04544)  
+> Published: IJCV 2024 (Gao, Peng, et al.)  
+> Code: [gaopengcuhk/CLIP-Adapter](https://github.com/gaopengcuhk/CLIP-Adapter)  
+
+---
+
+#### 📌 Why CLIP-Adapter?  
+
+With the rise of large-scale vision-language models like [**CLIP**](https://drfirstlee.github.io/posts/CLIP/),  
+our ability to understand images and text together has significantly improved.  
+One of the most exciting aspects is **zero-shot classification** — prediction without labeled data!
+
+However, these models also have some **serious limitations**.
+
+---
+
+##### ❓ Problem 1: Prompt Sensitivity  
+
+CLIP heavily depends on **natural language prompts** like `"a photo of a {label}"`.  
+Changing a few words (e.g., `"this is a dog"` vs `"a photo of a dog"`) can affect performance.  
+This requires **manual prompt engineering**, which becomes useless in domain-specific tasks.
+
+> 📌 In short: CLIP is too sensitive to small changes in prompts.
+
+To address this, **CoOp (Context Optimization)** was introduced!
+
+> CoOp demonstrated that prompt tuning alone can fine-tune CLIP effectively!
+
+- 🧠 CoOp replaces natural language prompts with **learnable continuous vectors**.  
+  - For example, instead of `this is a dog`, we input `[V1] [V2] [V3] dog`.  
+  - Here, `[V1], [V2], [V3]` are **learned vectors**, and the user only inputs the class name like `dog`.
+- No more manual prompt crafting — the model **learns the prompt by itself**!
+
+---
+
+##### ❗ Problem 2: Tuning Only the Text Side
+
+But CoOp **only tunes the prompt** — that is, the **text side** of CLIP.  
+The **image encoder remains fixed**.
+
+> "We're adapting the language, but still trusting the same image representation?"
+
+This imbalance limits performance, especially in **few-shot** or **domain-specific** scenarios.
+
+> As shown below, CoOp learns only the `[V1], [V2]` tokens in the text.  
+> CLIP-Adapter, in contrast, introduces **adapters on both the image and text branches**!
+
+![compareCOOP](https://github.com/user-attachments/assets/fd6c145d-7576-46da-a0e2-c1c534856ead)
+
+---
+
+##### 💡 CLIP-Adapter Architecture!!!  
+
+![structure](https://github.com/user-attachments/assets/8b56436c-8e37-494a-9232-5fa84ae2e9a1)
+
+CLIP-Adapter performs **fine-tuning at the feature level for both image and text**.
+
+```
+            ┌────────────────────┐                ┌────────────────────┐
+            │   Image Input (x)  │                │   Text Input (t)   │
+            └────────┬───────────┘                └────────┬───────────┘
+                     ↓                                     ↓
+       ┌────────────────────────────┐         ┌────────────────────────────┐
+       │   CLIP Image Encoder       │         │   CLIP Text Encoder        │
+       │       (frozen)             │         │        (frozen)            │
+       └─────────┬──────────────────┘         └────────┬───────────────────┘
+                 ↓                                     ↓
+     ┌─────────────────────┐               ┌─────────────────────┐
+     │  Image Adapter MLP  │               │  Text Adapter MLP   │
+     │     (trainable)     │               │     (trainable)     │
+     └────────┬────────────┘               └──────────┬──────────┘
+              ↓                                       ↓
+     ┌────────────────────────────┐       ┌────────────────────────────┐
+     │ Residual: image + adapted  │       │ Residual: text + adapted   │
+     └────────────────────────────┘       └────────────────────────────┘
+              ↓                                       ↓
+     ┌────────────────────┐              ┌────────────────────┐
+     │  Image Embedding   │              │  Text Embedding    │
+     └────────────────────┘              └────────────────────┘
+                     └───────────────┬───────────────┘
+                                     ↓
+                      Cosine Similarity / Classification
+```
+
+---
+
+##### 🔧 Adapter MLPs (for image and text)
+
+![adapter](https://github.com/user-attachments/assets/8af17eed-1b5a-4069-9836-d974b27f7bea)
+
+The adapter is a **2-layer MLP** with ReLU, also called a bottleneck MLP:
+
+- Structure: `Linear → ReLU → Linear`
+- It reduces the feature dimension and then expands it back.
+
+---
+
+##### 🖇️ Residual Connection
+
+![residual](https://github.com/user-attachments/assets/884a49f8-f76c-4dea-850e-394d93599fee)
+
+In few-shot learning, models tend to **overfit** due to limited data.  
+To solve this, CLIP-Adapter uses **residual blending**:
+
+> "Blend new knowledge (adapter output) with original CLIP features."
+
+The final feature becomes:
+
+- `α × Adapter Output + (1 - α) × CLIP Feature`
+
+This mixing helps retain the **robustness of CLIP** while injecting **task-specific knowledge**.
+
+---
+
+#### 🔬 Performance Experiments
+
+##### 🧪 CLIP-Adapter Experimental Setup
+
+**Datasets**:
+
+- ImageNet, StanfordCars, UCF101, Caltech101, Flowers102  
+- SUN397, DTD, EuroSAT, FGVCAircraft, OxfordPets, Food101
+
+**Settings**:
+- Few-shot setups: 1, 2, 4, 8, 16-shot
+- Evaluation: average over 3 runs, single A100 GPU
+
+**Implementation**:
+- Visual adapter only; text frozen
+- Batch size: 32, learning rate: 1e-5
+- α, β tuned via grid search
+- Visual backbone: ResNet-50
+- Text encoder: 12-layer Transformer
+- Adapter dim: 256 (¼ of original)
+- Prompt: Fixed natural text ("a photo of a {class}")
+
+---
+
+##### 📈 CLIP-Adapter Results
+
+**Baselines**:
+- Zero-shot CLIP: frozen model + prompt only
+- Linear Probe CLIP: frozen encoder + trainable linear classifier
+- CoOp: learns `[V1] [V2] ...` tokens in prompt
+
+![res_compare](https://github.com/user-attachments/assets/7418df5c-fb3e-42f7-aa99-1127700bd362)
+
+CLIP-Adapter outperforms all baselines in accuracy, training speed, parameter efficiency —  
+especially in **few-shot learning**.
+
+---
+
+##### 🔍 Where to Put the Adapter?
+
+- Visual adapter: image only, text only, both
+  → Best: **image-only**
+
+![adaptersto](https://github.com/user-attachments/assets/c58fa9d4-9704-46fa-8f97-574c20601cd9)
+
+- Insertion layer: ViT-B has 12 layers  
+  → Best: insert adapter after **layer 12 (last layer)**
+
+![where](https://github.com/user-attachments/assets/7930d693-3340-4df0-bfbf-a6af0399dd97)
+
+---
+
+##### 🔧 What about Residual Ratio α?
+
+- Fine-grained datasets (e.g. EuroSAT, DTD):  
+  → Best α ≈ 0.6–0.8  
+- Generic datasets (e.g. Caltech101, ImageNet):  
+  → Best α ≈ 0.2
+
+---
+
+#### 🧠 Final Thoughts
+
+This was my second PEFT (Parameter Efficient Fine-Tuning) after studying LoRA —  
+and I found CLIP-Adapter both innovative and effective.
+
+> I used to think of "adapter" as just a power plug —  
+> Now, I'll always remember CLIP-Adapter! 😄
+
+
 ---
 
 ### 🧠 (한국어) CLIP-Adapter 알아보기!  
@@ -216,11 +405,9 @@ CLIP-Adapter 결곡 좋은 성능을 보여주었습니다!!
 3. 잔차 학습의 계수는?!  
 - 오버피팅을 막기위한 `Residual Connection`의 계수 평가를 진행했고!!
 
-  a. 세밀한 도메인의 fine-grained 데이터셋의 경우는  
-  최적의 α 값이 보통 0.6 ~ 0.8 수준에!,  
+  a. 세밀한 도메인의 fine-grained 데이터셋의 경우는 최적의 α 값이 보통 0.6 ~ 0.8 수준에!,  
 
-  b. Caltech-101이나 ImageNet처럼 포괄적이고 일반적인 이미지 데이터셋에서는  
-  최적 α 값이 약 0.2 수준이었다고 합니다!  
+  b. Caltech-101이나 ImageNet처럼 포괄적이고 일반적인 이미지 데이터셋에서는 최적 α 값이 약 0.2 수준이었다고 합니다!  
 
 
 ---
@@ -231,6 +418,6 @@ LORA에 이어 두번째로 공부해본 PEFT (Parameter Efficient Fine Tuning) 
 시도도 참신할 뿐만아니라 성능도 인상적이서!  
 앞으로 이 방식을 기억해서 여러곳에 사용해봐야겠습니다!!  
 
-+ 어뎁터하면 전기콘센트 어뎁터만 떠올랐는데, 앞으로는 이 CLIP-Adapter가 기억에 남을것 같네요! :)
+\+ 어뎁터하면 전기콘센트 어뎁터만 떠올랐는데, 앞으로는 이 CLIP-Adapter가 기억에 남을것 같네요! :)
 
 ---
