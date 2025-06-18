@@ -16,7 +16,7 @@ sitemap :
 ### 🧠 (한국어) CLIP-Adapter 알아보기!  
 _🔍 어댑터 하나로 CLIP을 쉽게 Fine tuning 하기!!_  
 
-![manhwa]()
+![manhwa](https://github.com/user-attachments/assets/dd150996-b141-4656-a4d8-76b4b94aeaf9)
 
 > 논문: [CLIP-Adapter: Better Vision-Language Models with Feature Adapters](https://arxiv.org/pdf/2110.04544)  
 > 발표: IJCV 2024 (Gao, Peng, et al.)  
@@ -69,14 +69,14 @@ CLIP은 `"a photo of a {label}"` 같은 **프롬프트에 의존**합니다.
 
 > CoOp의 구조!! 텍스트 프롬포트 앞의 V1,V2 등등만 학습합니다!!  
 > 오늘의 Clip Adapter는 이와 다르게 텍스트, Image 에 대하여 모두 adapter가 있죠!?  
-![compareCOOP]()
+![compareCOOP](https://github.com/user-attachments/assets/fd6c145d-7576-46da-a0e2-c1c534856ead)
 
 
 ---
 
 #### 💡 CLIP-Adapter 구조!!!   
 
-![structure]()  
+![structure](https://github.com/user-attachments/assets/8b56436c-8e37-494a-9232-5fa84ae2e9a1)  
 
  CLIP-Adapter는 **이미지와 텍스트의 feature level에서 직접 조정**을 수행합니다.
 
@@ -112,7 +112,7 @@ CLIP은 `"a photo of a {label}"` 같은 **프롬프트에 의존**합니다.
 
 ##### 🔧 Adapter MLP (Image, Text에 각각!!)
 
-![adapter]()  
+![adapter](https://github.com/user-attachments/assets/8af17eed-1b5a-4069-9836-d974b27f7bea)  
 
 Adapter 부분의 MLP는!! 
 - 두 개의 선형 계층 + ReLU 비선형 함수구조로서,  
@@ -122,7 +122,7 @@ Adapter 부분의 MLP는!!
 
 ##### 🖇️ Residual Connection
 
-![residual]()
+![residual](https://github.com/user-attachments/assets/884a49f8-f76c-4dea-850e-394d93599fee)
 
 few-shot 으로 학습하게 된다면!!  
 학습 데이터가 극히 적기 때문에, 모델이 데이터에 지나치게 맞춰지는(overfitting) 경향이 있습니다!  
@@ -142,24 +142,24 @@ few-shot 으로 학습하게 된다면!!
 
 1. 📊 사용한 데이터셋
 
-CLIP-Adapter는 총 11개의 이미지 분류 데이터셋에서 성능을 평가했습니다:
+  CLIP-Adapter는 총 11개의 이미지 분류 데이터셋에서 성능을 평가했습니다:
 
-- **ImageNet**
-- **StanfordCars**
-- **UCF101**
-- **Caltech101**
-- **Flowers102**
-- **SUN397**
-- **DTD**
-- **EuroSAT**
-- **FGVCAircraft**
-- **OxfordPets**
-- **Food101**
+  - **ImageNet**
+  - **StanfordCars**
+  - **UCF101**
+  - **Caltech101**
+  - **Flowers102**
+  - **SUN397**
+  - **DTD**
+  - **EuroSAT**
+  - **FGVCAircraft**
+  - **OxfordPets**
+  - **Food101**
 
-각 데이터셋에 대해 **1, 2, 4, 8, 16-shot** 설정으로 fine-tuning을 수행하고,  
-**전체 테스트 세트**에서 성능을 측정합니다.  
-모든 실험은 **NVIDIA A100 GPU 단일 장비**에서 수행되며,  
-**각 실험은 3회 반복하여 평균 정확도**를 산출합니다!!  
+  각 데이터셋에 대해 **1, 2, 4, 8, 16-shot** 설정으로 fine-tuning을 수행하고,  
+  **전체 테스트 세트**에서 성능을 측정합니다.  
+  모든 실험은 **NVIDIA A100 GPU 단일 장비**에서 수행되며,  
+  **각 실험은 3회 반복하여 평균 정확도**를 산출합니다!!  
 
 2. ⚙️ 구현 세부 설정
 
@@ -192,7 +192,7 @@ CLIP-Adapter는 총 11개의 이미지 분류 데이터셋에서 성능을 평�
 - Linear probe CLIP : CLIP의 이미지 인코더는 고정시키고, 그 위에 **얕은 선형 분류기(linear classifier)**만 학습.
 - CoOp (Context Optimization) : 텍스트 프롬포트에 대하여 V1 V2를 추가하여 학습  
 
-![res_compare]()
+![res_compare](https://github.com/user-attachments/assets/7418df5c-fb3e-42f7-aa99-1127700bd362)
 
 CLIP-Adapter 결곡 좋은 성능을 보여주었습니다!!  
 위 이미지에서 보듯, 짧은 학습, 적은 parameter및 GPU메모리 빠른 속도에 높은 정확도를 보여줬는데요!  
@@ -202,11 +202,11 @@ CLIP-Adapter 결곡 좋은 성능을 보여주었습니다!!
 
 추가로 어뎁터를 `이미지만`, `텍스트만`, `이미지랑 텍스트 모두` 에 붙이는 비교도 해보았고!!
 
-![adaptersto]()
+![adaptersto](https://github.com/user-attachments/assets/c58fa9d4-9704-46fa-8f97-574c20601cd9)
 
 결국 이미지만 하는게 제일 좋았다고합니다!!  
 
-![where]()
+![where](https://github.com/user-attachments/assets/7930d693-3340-4df0-bfbf-a6af0399dd97)
 
 또한 12개 Transformer레이어로 구성된 CLIP 의 앞부분, 중간부분 등에 붙이는것도 테스트해보았고,  
 지금까지 이해한것 처럼 CLIP의 맨 뒷부분,  
@@ -225,7 +225,7 @@ CLIP-Adapter 결곡 좋은 성능을 보여주었습니다!!
 
 ---
 
-### 🧠 마무리 생각
+#### 🧠 마무리 생각
 
 LORA에 이어 두번째로 공부해본 PEFT (Parameter Efficient Fine Tuning) 기법!!  
 시도도 참신할 뿐만아니라 성능도 인상적이서!  
