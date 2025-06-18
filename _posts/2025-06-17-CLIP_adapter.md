@@ -1,0 +1,236 @@
+---
+layout: post
+title: "📝Understanding CLIP-Adapter - CLIP-Adapter 알아보기?!!"
+author: [DrFirst]
+date: 2025-06-17 07:00:00 +0900
+categories: [AI, Research]
+tags: [Feature Adapter, Vision-Language Model, Few-shot learning, Open-Vocabulary, IJCV, IJCV 2024]
+sitemap :
+  changefreq : monthly
+  priority : 0.8
+---
+
+
+---
+
+### 🧠 (한국어) CLIP-Adapter 알아보기!  
+_🔍 어댑터 하나로 CLIP을 쉽게 Fine tuning 하기!!_  
+
+![manhwa]()
+
+> 논문: [CLIP-Adapter: Better Vision-Language Models with Feature Adapters](https://arxiv.org/pdf/2110.04544)  
+> 발표: IJCV 2024 (Gao, Peng, et al.)  
+> 코드: [gaopengcuhk/CLIP-Adapter](https://github.com/gaopengcuhk/CLIP-Adapter)  
+
+---
+
+
+#### 📌 배경: CLIP-Adapter 등장의 이유!?  
+
+[**CLIP**](https://drfirstlee.github.io/posts/CLIP/)과 같은 대규모 비전-언어 모델이 등장하면서  
+이미지와 텍스트를 함께 이해하는 능력이 비약적으로 향상되었습니다.  
+그중에서도 **"zero-shot classification"**은 레이블 없이도 추론이 가능하다는 점에서 혁신적이었죠.  
+
+하지만 이런 모델에도 **중대한 한계**가 있었습니다.  
+
+---
+
+##### ❓ 문제 1: 프롬프트 의존성 (Prompt Sensitivity)  
+
+CLIP은 `"a photo of a {label}"` 같은 **프롬프트에 의존**합니다.  
+예를 들어 `"a photo of a dog"`과 `"this is a dog"`은 서로 다른 결과를 낼 수 있습니다.  
+이에 어떤 프롬프트가 가장 좋은 성능을 내는지 사람이 직접 설계(prompt engineering) 해야 했습니다!!  
+또한 특수 도메인에서는 이런 프롬포트 엔지니어링도 의미가 없었지요!!  
+
+> 📌 이건 마치 CLIP이 단어 하나 바뀐 문장에도 민감하게 반응한다는 뜻입니다.  
+
+그래서 등장한 것이 바로 **CoOp (Context Optimization)**!
+
+> 이 CoOp연구를 통해 프롬포트 튜닝을 바탕으로 CLIP을 fine-tuning할수 있다는 것을 알게되었습니다!  
+
+- 🧠 CoOp은 프롬프트 문장을 **학습 가능한 연속 벡터로 대체**합니다.  
+  - 예를 들면 `this is a dog`라고 헀던것을 `[V1] [V2] [V3] dog` 라고 입력하는것입니다!  
+  - 이때  `[V1] [V2] [V3]` 은 Fine-tuning하면서 학습되는 벡터로 결국 사람은 dog만 입력하면 되는거죠!  
+- 사람이 직접 프롬프트를 디자인할 필요 없이(prompt-free tuning)으로써,  
+- 모델이 **프롬프트 자체를 학습**하게 만든 것이죠.  
+
+
+---
+
+##### ❗ 문제 2: 텍스트만 튜닝하는 방식의 한계
+
+
+하지만 CoOp은 **텍스트 프롬포트 부분만 미세조정(Fine-Tuning)**합니다.  
+이미지의 feature는 그대로 둔다는 뜻이죠.
+
+> "텍스트는 학습했는데, 이미지 표현은 여전히 고정되어 있다?"
+
+이런 불균형은 특히 **특수 도메인**이나 **few-shot 학습**에서 성능 저하로 이어질 수 있습니다.
+
+> CoOp의 구조!! 텍스트 프롬포트 앞의 V1,V2 등등만 학습합니다!!  
+> 오늘의 Clip Adapter는 이와 다르게 텍스트, Image 에 대하여 모두 adapter가 있죠!?  
+![compareCOOP]()
+
+
+---
+
+#### 💡 CLIP-Adapter 구조!!!   
+
+![structure]()  
+
+ CLIP-Adapter는 **이미지와 텍스트의 feature level에서 직접 조정**을 수행합니다.
+
+```text
+            ┌────────────────────┐                ┌────────────────────┐
+            │   Image Input (x)  │                │   Text Input (t)   │
+            └────────┬───────────┘                └────────┬───────────┘
+                     ↓                                     ↓
+       ┌────────────────────────────┐         ┌────────────────────────────┐
+       │   CLIP Image Encoder       │         │   CLIP Text Encoder        │
+       │       (frozen)             │         │        (frozen)            │
+       └─────────┬──────────────────┘         └────────┬───────────────────┘
+                 ↓                                     ↓
+     ┌─────────────────────┐               ┌─────────────────────┐
+     │  Image Adapter MLP  │               │  Text Adapter MLP   │
+     │     (trainable)     │               │     (trainable)     │
+     └────────┬────────────┘               └──────────┬──────────┘
+              ↓                                       ↓
+     ┌────────────────────────────┐       ┌────────────────────────────┐
+     │ Residual: image + adapted  │       │ Residual: text + adapted   │
+     └────────────────────────────┘       └────────────────────────────┘
+              ↓                                       ↓
+     ┌────────────────────┐              ┌────────────────────┐
+     │  Image Embedding   │              │  Text Embedding    │
+     └────────────────────┘              └────────────────────┘
+                     └───────────────┬───────────────┘
+                                     ↓
+                      Cosine Similarity / Classification
+
+```
+
+결국 위의 구조에서 `Adapter MLP` 와 `Residual Connection` 부분이 이번 연구의 핵심인데요!!  
+
+##### 🔧 Adapter MLP (Image, Text에 각각!!)
+
+![adapter]()  
+
+Adapter 부분의 MLP는!! 
+- 두 개의 선형 계층 + ReLU 비선형 함수구조로서,  
+- 구조: `Linear → ReLU → Linear`
+- Bottleneck 구조로 중간 차원으로 축소했다가 다시 확장하게 됩니다!! 
+
+
+##### 🖇️ Residual Connection
+
+![residual]()
+
+few-shot 으로 학습하게 된다면!!  
+학습 데이터가 극히 적기 때문에, 모델이 데이터에 지나치게 맞춰지는(overfitting) 경향이 있습니다!  
+이런 오버피팅에 대한 해결 방법으로   Residual Connection (잔차 연결)을 적용했습니다!  
+
+핵심 아이디어는 `"새롭게 학습한 표현과, 기존에 잘 학습된 CLIP 표현을 비율을 조절해 섞자."` 로서  
+
+1. (이미지와 텍스트의 CLIP 임베딩 결과를 adapter 에 통과시킨 결과) X α  
+2. (이미지와 텍스트의 기존 CLIP 임베딩 결과) X (1-α)  
+
+로 하여 학습 결과및 CLIP의 기존 결과를 알맞게 섞어 줍니다!  
+
+
+#### 🔬 성능 실험!!   
+
+##### CLIP-Adapter 실험 세팅!  
+
+1. 📊 사용한 데이터셋
+
+CLIP-Adapter는 총 11개의 이미지 분류 데이터셋에서 성능을 평가했습니다:
+
+- **ImageNet**
+- **StanfordCars**
+- **UCF101**
+- **Caltech101**
+- **Flowers102**
+- **SUN397**
+- **DTD**
+- **EuroSAT**
+- **FGVCAircraft**
+- **OxfordPets**
+- **Food101**
+
+각 데이터셋에 대해 **1, 2, 4, 8, 16-shot** 설정으로 fine-tuning을 수행하고,  
+**전체 테스트 세트**에서 성능을 측정합니다.  
+모든 실험은 **NVIDIA A100 GPU 단일 장비**에서 수행되며,  
+**각 실험은 3회 반복하여 평균 정확도**를 산출합니다!!  
+
+2. ⚙️ 구현 세부 설정
+
+- **기본 구조**: 이미지 특성만 fine-tune (visual adapter), 텍스트(branch)는 고정  
+
+- **하이퍼파라미터**:
+  - 배치 사이즈: `32`
+  - 학습률: `1e-5`
+  - **잔차 비율 α, β**는 각 데이터셋마다 탐색을 통해 선택 (grid search)
+
+- **백본(backbone)**:
+  - Visual encoder: `ResNet-50`
+  - Text encoder: `12-layer Transformer`
+
+- **어댑터 hidden embedding**: 시각/텍스트 어댑터 모두 `256` (기존 임베딩의 1/4)
+
+- **프롬프트 입력**:
+  - CoOp과 달리, **고정 텍스트 프롬프트** 사용  
+    예: `"a photo of a {class}"`
+  - 세밀한 분류에는 도메인 키워드를 포함  
+    예: `"a centered satellite photo of {class}"`
+
+
+##### CLIP-Adapter 실험 결과 분석!!  
+
+1. 기본 실험
+ - CLIP-Adapter는 성능을 비교하기 위해 다음 3가지 주요 베이스라인과 비교 실험을 진행했습니다!  
+
+- Zero-shot CLIP : CLIP 모델 그대로, `a photo of {class}` 로 프롬포트사용
+- Linear probe CLIP : CLIP의 이미지 인코더는 고정시키고, 그 위에 **얕은 선형 분류기(linear classifier)**만 학습.
+- CoOp (Context Optimization) : 텍스트 프롬포트에 대하여 V1 V2를 추가하여 학습  
+
+![res_compare]()
+
+CLIP-Adapter 결곡 좋은 성능을 보여주었습니다!!  
+위 이미지에서 보듯, 짧은 학습, 적은 parameter및 GPU메모리 빠른 속도에 높은 정확도를 보여줬는데요!  
+뿐만아니라 적은 데이터셋 학습 (few shot) 에서도 좋았어요!!
+
+2. 어뎁터는 어디에!?  
+
+추가로 어뎁터를 `이미지만`, `텍스트만`, `이미지랑 텍스트 모두` 에 붙이는 비교도 해보았고!!
+
+![adaptersto]()
+
+결국 이미지만 하는게 제일 좋았다고합니다!!  
+
+![where]()
+
+또한 12개 Transformer레이어로 구성된 CLIP 의 앞부분, 중간부분 등에 붙이는것도 테스트해보았고,  
+지금까지 이해한것 처럼 CLIP의 맨 뒷부분,  
+즉 12번쨰 레이어(CLIP이 12개 Layer로 구성) 뒤에 붙이는 것이 가장 효율이 좋았습니다!!
+
+
+3. 잔차 학습의 계수는?!  
+- 오버피팅을 막기위한 `Residual Connection`의 계수 평가를 진행했고!!
+
+  a. 세밀한 도메인의 fine-grained 데이터셋의 경우는  
+  최적의 α 값이 보통 0.6 ~ 0.8 수준에!,  
+
+  b. Caltech-101이나 ImageNet처럼 포괄적이고 일반적인 이미지 데이터셋에서는  
+  최적 α 값이 약 0.2 수준이었다고 합니다!  
+
+
+---
+
+### 🧠 마무리 생각
+
+LORA에 이어 두번째로 공부해본 PEFT (Parameter Efficient Fine Tuning) 기법!!  
+시도도 참신할 뿐만아니라 성능도 인상적이서!  
+앞으로 이 방식을 기억해서 여러곳에 사용해봐야겠습니다!!  
+
++ 어뎁터하면 전기콘센트 어뎁터만 떠올랐는데, 앞으로는 이 CLIP-Adapter가 기억에 남을것 같네요! :)
+
+---
