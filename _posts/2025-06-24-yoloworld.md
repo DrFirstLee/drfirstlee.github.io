@@ -298,7 +298,7 @@ With this **clever data strategy**, YOLO-World achieved fast yet accurate Open-V
 
 ---
 
-### 🎯 Key Technical Innovations
+#### 🎯 Key Technical Innovations
 
 #### Core Components of RepVL-PAN
 
@@ -312,7 +312,7 @@ With this **clever data strategy**, YOLO-World achieved fast yet accurate Open-V
 
 ---
 
-### 📊 Performance Comparison
+#### 📊 Performance Comparison
 
 #### Zero-shot LVIS Benchmark
 
@@ -328,7 +328,7 @@ With this **clever data strategy**, YOLO-World achieved fast yet accurate Open-V
 
 ---
 
-### ⚠️ Limitations
+#### ⚠️ Limitations
 
 - 🎭 **Limitations in Complex Interaction Expression**  
   Simple text prompts may struggle with complex relationship expressions  
@@ -341,7 +341,7 @@ With this **clever data strategy**, YOLO-World achieved fast yet accurate Open-V
 
 ---
 
-### ✅ Summary
+#### ✅ Summary
 
 YOLO-World is a groundbreaking object detection model that simultaneously achieves **real-time performance** and **Open-Vocabulary capabilities**.
 
@@ -629,7 +629,7 @@ pseudo_labels = {
 
 ---
 
-### 실험결과!! ✨  
+#### 실험결과!! ✨  
 
 | 항목 | 설명 |
 |------|------|
@@ -640,7 +640,7 @@ pseudo_labels = {
 
 ---
 
-### 🎯 주요 기술적 혁신
+#### 🎯 주요 기술적 혁신
 
 #### RepVL-PAN의 핵심 구성요소
 
@@ -654,7 +654,7 @@ pseudo_labels = {
 
 ---
 
-### 📊 성능 비교
+#### 📊 성능 비교
 
 #### Zero-shot LVIS 벤치마크
 
@@ -671,7 +671,7 @@ pseudo_labels = {
 
 ---
 
-### ⚠️ 한계점
+#### ⚠️ 한계점
 
 - 🎭 **복잡한 상호작용 표현의 한계**  
   단순한 텍스트 프롬프트로는 복잡한 관계 표현이 어려울 수 있음  
@@ -684,7 +684,7 @@ pseudo_labels = {
 
 --
 
-### ✅ 마무리 요약
+#### ✅ 마무리 요약
 
 YOLO-World는 **실시간 성능**과 **Open-Vocabulary 능력**을 동시에 달성한 획기적인 객체 탐지 모델입니다.
 
