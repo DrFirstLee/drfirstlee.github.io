@@ -19,7 +19,7 @@ _🔍 YOLO finally enters the Zero-Shot world!!!_
 ![manhwa](https://github.com/user-attachments/assets/be50df88-d7ef-42eb-9fa1-6eca5c12c7f4)  
 
 > Paper: [YOLO-World: Real-Time Open-Vocabulary Object Detection](https://arxiv.org/abs/2401.17270)  
-> Venue: CVPR 2024 (Tencent AI Lab, Cheng, Tianheng, et al.)  
+> Conference: CVPR 2024 (Tencent AI Lab, Cheng, Tianheng, et al.)  
 > Code: [AILab-CVC/YOLO-World](https://github.com/AILab-CVC/YOLO-World)  
 
 ---
