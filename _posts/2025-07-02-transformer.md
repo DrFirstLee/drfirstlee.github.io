@@ -21,15 +21,16 @@ sitemap :
 ## 🎯 **목차**
 
 1. [🔍 Transformer 개요](#overview)
-2. [🧠 Self-Attention의 기본 원리](#self-attention-basics)
-3. [🎪 Single-Head Attention 구현](#single-head-attention)
-4. [🎭 Multi-Head Attention 구현](#multi-head-attention)
-5. [🏗️ Transformer 블록 구현](#transformer-block)
-6. [🎨 Multi-Head Cross Attention](#multi-head-cross-attention)
-7. [🚀 실전 활용 예시](#practical-examples)
-8. [⚡ 성능 최적화 팁](#optimization-tips)
-9. [🎯 요약 및 마무리](#summary)
-10. [📚 참고 자료](#references)
+   - 📚 Attention의 역사
+   - 🔍 초기 Attention (SHCA: Single-head Cross Attention)
+   - ⚡ 2017년: Transformer의 혁신
+   - 🧠 Self-Attention의 기본 원리
+   - 🚀 SHCA → MHCA 혁명적 변화
+   - 🔥 Transformer의 3대 혁신
+   - 📈 발전 과정 요약
+2. [🏗️ Transformer 블록 구현](#transformer-block)
+3. [🎯 요약 및 마무리](#summary)
+4. [📚 참고 자료](#references)
 
 ---
 
