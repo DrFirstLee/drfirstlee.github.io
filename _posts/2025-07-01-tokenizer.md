@@ -254,6 +254,7 @@ print(f"SentencePiece: {sp_tokens}")
 - 제시된 `english_texts` 를 바탕으로 토크나이져 만듬!!  
 
 > 아래 예시는 최대 토큰수는 5000개, 2번 이상 등장해야 함!  
+
 ```python
 
 from tokenizers import Tokenizer
@@ -313,7 +314,7 @@ English BPE tokenizer saved successfully!
 ```
 ---
 
-### 🧩 **고급 토크나이제이션 개념**
+### 🧩 **토크나이제이션 조금더 알아보기!**
 
 #### **1️⃣ Special Tokens** 🎯
 ```python
@@ -605,6 +606,7 @@ for text in medical_texts[:1]:  # First example only
 #### **2️⃣ 멀티모달 토크나이제이션** 🖼️
 > 텍스트는 문자를 토크나이제이션하면서 숫자로 바꾸지만!!  
 > 이미지는 그런거 없이 ViT로 바로 벡터화해버립니다!!  
+
 ```python
 # Future concept: unified text-image tokenization
 multimodal_input = {
@@ -640,7 +642,6 @@ unified_tokens = multimodal_tokenizer.tokenize(multimodal_input)
 - **결과**: 모델이 이미지 토큰을 학습하고 일반화하기 매우 어렵고,연산량이 많아짐    
 **💡 해결법들:**  
 > 이미지 토큰을 최소화하기위해 노력하거나 (1,2,3) 효율화를 통해서 해결하고자합니다!(4,5)  
-
 1. **🔲 고정 패치 분할**: ViT 방식으로 이미지 크기와 상관없이 일정한 토큰 수 보장 (224×224 → 196개 토큰)
 2. **📉 적응적 압축**: 목표 토큰 수에 맞게 이미지 압축 (512×512 → 100개 토큰)  
 3. **🎯 선택적 토큰화**: 중요한 영역만 토큰화 (관심 영역 기반으로 128개만 선택)
