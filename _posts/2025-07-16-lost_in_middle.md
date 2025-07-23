@@ -12,10 +12,153 @@ sitemap :
 
 ---
 
+### 🧠 Reading the Paper `Lost in the Middle`
+_🔍 LLMs struggle to remember information located in the middle of long documents!_
+
+> Paper: [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)  
+> Venue: TACL 2023 (Liu, Nelson F., et al.)
+
+---
+
+### ❓ Core Question from the Paper
+
+> “Can language models **utilize information equally** regardless of its position in a long context?”
+
+**Short answer: No.**  
+- Most LLMs are **least effective at recalling information located in the middle** of long documents.
+- Even with large context windows, **position bias** still persists.
+
+> As shown below, the performance follows a `U-shape` curve:  
+> Models perform best when the answer is at the **beginning (primacy)** or **end (recency)**,  
+> but significantly worse when it is **in the middle**.
+
+![u_shape](https://github.com/user-attachments/assets/e7e2996d-25d9-49aa-9c21-8eb91ca19db7)
+
+---
+
+### 🧪 Experiment: Needle-in-a-Haystack
+
+**Setup:**
+- Insert a single key fact ("needle") into a long passage
+- Place it at the **beginning / middle / end** of the input
+- Ask the model to **extract that specific information**
+
+```text
+Example:
+Document length = 8,000 tokens
+[... lengthy text ...]
+→ Insert target sentence in the middle
+→ Ask: "What was the number mentioned in the document above?"
+```
+
+> 👇 The target sentence is hidden in the middle of the input like this:
+
+![prompt_sample](https://github.com/user-attachments/assets/a870a97d-c1d7-44ad-87eb-ad4b9d74cea9)
+
+---
+
+### 📉 Summary of Results (Figure 5)
+
+When the answer is in the **middle** of the document, model accuracy **drops significantly**.  
+→ Most models, including GPT-3.5, show a **U-shaped performance curve**.
+
+| Position  | Recall (GPT-3.5) | Recall (Claude-1.3) |
+|-----------|------------------|---------------------|
+| Beginning | High             | High                |
+| Middle ⚠️ | **Lowest**       | Slightly lower      |
+| End       | High             | High                |
+
+![result](https://github.com/user-attachments/assets/68954152-f35b-4321-bf6d-601ff5f19404)
+
+> 🔍 GPT-4 also shows similar patterns in a subset of experiments,  
+> but was excluded from full-scale experiments due to high cost (see Appendix D).
+
+---
+
+### 📌 Why does this happen? (Section §2.3, §3.2)
+
+- 🔒 **Limitations of absolute positional encoding**
+- 🔄 **Self-attention's inherent position bias**  
+  → Stronger focus on **early (primacy)** and **late (recency)** positions  
+  → **Middle positions receive less attention**
+- 📏 **The longer the input, the more the performance degrades**,  
+  with over 20% drop in 30-document settings (GPT-3.5)
+
+---
+
+### 🧠 Why does this matter?
+
+> Most real-world tasks like **RAG**, multi-document QA, and summarization rely on **long input contexts**.  
+> But what if the model **ignores the middle**?
+
+- 📉 The **position of retrieved documents** directly impacts answer accuracy
+- 🔀 Effective chunking and **ordering of key information** is critical
+- ❗ Simply increasing the context window size is **not enough**
+
+---
+
+### 💡 Takeaways: Position Bias Matters
+
+> "**LLMs can remember context—but mainly the beginning and the end.**"
+
+**Strategies to mitigate position bias:**
+
+- ✅ **Query-aware contextualization**  
+  → Place the query **before** the documents for decoder-only models
+- ✅ **Chunk ordering optimization**  
+  → Put more relevant content **earlier** in the input
+- ✅ **Improved attention architectures**  
+  → Encoder-decoder models (e.g., T5, BART) perform better with long input
+- ✅ **Position-free architectures**  
+  → Hyena, RWKV, and other models aim to remove positional dependence
+
+---
+
+### 🔍 Retrieval-Based QA Setup (Section §2.2)
+
+- **Task**: Multi-document question answering
+- **Retriever**: Contriever (fine-tuned on MS-MARCO)
+- **Reader input**: Top-k retrieved documents + query
+- **Number of docs (k)**: 10, 20, 30
+- **Document type**: Only paragraphs (no tables or lists)
+
+---
+
+### 📈 Impact of Increasing Retrieved Docs (Figure 5)
+
+![retriever](https://github.com/user-attachments/assets/e7a81572-0558-4c0d-93cd-fb49d731898c)
+
+- ✅ k = 10 or 20 → improved accuracy
+- ⚠️ k = 30 → performance **plateaus or drops**
+  - When the relevant document appears **in the middle**, accuracy drops
+  - Some models even perform worse than **closed-book** setting
+
+---
+
+### ❗ Retrieval Alone Is Not Enough
+
+- Even if retrieval **includes the correct document**,  
+  models may **fail to use it effectively**, especially if it's **in the middle**.
+
+> Retrieval ≠ success  
+> → Prompt design must account for **position bias**
+
+**Practical strategies:**
+
+- ✅ Move relevant docs closer to the top
+- ✅ Use query-aware formatting
+- ✅ Minimize irrelevant context
+
+---
+
+### ✅ TL;DR
+
+> **“LLMs remember long contexts — but often forget what’s in the middle.”**
+
+---
+
 ### 🧠 (한국어) `Lost in the Middle` 논문 읽기 
 _🔍 LLM은 긴 문서 중간에 있는 정보는 잘 기억하지 못함!!_  
-
-![manhwa](https://github.com/user-attachments/assets/95b494fb-daac-4347-8535-6d7f6eb36e06)  
 
 > 논문: [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)  
 > 발표: TACL 2023 (Liu, Nelson F., et al.)
@@ -59,7 +202,7 @@ _🔍 LLM은 긴 문서 중간에 있는 정보는 잘 기억하지 못함!!_
 
 ---
 
-### 📉 실험 결과 요약 (Figure 5)
+### 📉 실험 결과 요약  
 
 문서 **중간에 정보가 있을 경우**, **모델 정확도가 급락**  
 → GPT-3.5 및 대부분의 모델에서 **U자형 성능 곡선**이 나타남
@@ -154,4 +297,4 @@ _🔍 LLM은 긴 문서 중간에 있는 정보는 잘 기억하지 못함!!_
 
 ### ✅ 한 줄 요약
 
-> **“LLM은 긴 context를 기억한다. 하지만, 그건 시작과**
+> **“LLM은 긴 context를 기억하지만 context 내의 중간부분은 잘 망각한다!!!**

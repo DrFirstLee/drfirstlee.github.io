@@ -39,7 +39,7 @@ LLM을 사용하다 보면 이런 경험 있으시죠?
 
 #### **MLflow 서버 실행**
 
-> ![이전 포스트](https://drfirstlee.github.io/posts/mkflow/)에서 만든 Docker 사용 
+> [이전 포스트](https://drfirstlee.github.io/posts/mkflow/)에서 만든 Docker 사용 
 ```bash
 docker run -d -p 5001:5001 --name mlflow \
            -v $(pwd)/mlflow/db:/mlflow/db \
