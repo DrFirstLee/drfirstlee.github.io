@@ -10,38 +10,40 @@ sitemap :
   priority : 0.8
 ---
 
+---
 
+### 🧠 (한국어) `Lost in the Middle` 논문 읽기 
+_🔍 LLM은 긴 문서 중간에 있는 정보는 잘 기억하지 못함!!_  
+
+![manhwa](https://github.com/user-attachments/assets/95b494fb-daac-4347-8535-6d7f6eb36e06)  
+
+> 논문: [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)  
+> 발표: TACL 2023 (Liu, Nelson F., et al.)
 
 ---
 
-### 📚 (한국어) 긴 문맥에서 LLM은 얼마나 잘 기억할까?
+### ❓ 논문이 던진 핵심 질문
 
-_📎 요약: LLM이 긴 문서에서 중간에 있는 정보를 잘 기억하지 못한다는 놀라운 실험 결과!_  
-> LLM은 긴 문서를 처리할 수 있지만,  
-> **문서 중간의 정보는 ‘잃어버리는’ 경향이 있다**는 사실, 알고 계셨나요?  
-> 바로 이 문제를 분석한 논문이  
-> **"Lost in the Middle: How Language Models Use Long Contexts"**입니다.
+> “긴 context 안에서, 모델은 **모든 위치의 정보를 균등하게 활용할 수 있을까?”  
 
-> 🔗 논문 원문: [arXiv:2307.03172](https://arxiv.org/abs/2307.03172)
+**결론: No.**  
+- 대부분의 LLM은 긴 문서에서 **중간 정보**를 가장 잘 놓칩니다.
+- context window가 아무리 길어도 **위치 편향(position bias)**이 존재합니다.
 
----
+> 아래 이미지처럼 `U-shape` 성능 곡선이 나타나며,  
+> **앞(primacy)**과 **뒤(recency)** 정보는 잘 기억하지만,  
+> **중간 정보는 기억력이 급락**합니다.
 
-### 🧠 논문이 제기한 핵심 질문
-
-> “긴 context 안에서, 모델은 **모든 위치의 정보를 균등하게 사용할 수 있을까?”  
-
-**결론부터 말하면: No.**  
-- 대부분의 LLM은 긴 문서의 **중간 정보**를 가장 잘 놓칩니다!
-- 이는 context window가 아무리 길어도 **위치 편향(position bias)**이 존재한다는 뜻입니다.
+![u_shape](https://github.com/user-attachments/assets/e7e2996d-25d9-49aa-9c21-8eb91ca19db7)
 
 ---
 
-### 🔍 실험 방법: Needle-in-a-Haystack
+### 🧪 실험: Needle-in-a-Haystack
 
 **실험 구성:**
-- 긴 문서에 단 하나의 핵심 정보 ("needle")를 넣음
-- 이 정보를 문서의 **시작**, **중간**, **끝**에 위치시켜 각각 테스트
-- 모델에게 해당 정보를 **추출하라고 질문**함
+- 긴 문서에 단 하나의 핵심 정보 ("needle")를 삽입
+- 정보를 문서의 **앞 / 중간 / 끝**에 위치시키고 비교
+- 모델에게 해당 정보를 **정확히 추출하도록 질문**
 
 ```text
 예시:
@@ -51,64 +53,105 @@ _📎 요약: LLM이 긴 문서에서 중간에 있는 정보를 잘 기억하�
 → 모델에게: "위 문서에 나온 숫자는 몇이었지?" 질문
 ```
 
+> 👇 아래와 같이 **중간 위치에 핵심 정보**가 있는 프롬프트를 활용하여 성능을 측정합니다:
 
-### 📉 주요 결과 요약
-
-문서 **중간에 정보가 있을 경우**, 모델 정확도가 **급락**함!  
-**GPT-4조차도** 중간 정보의 회상률이 매우 낮았음
-
-| 위치     | 회상률 (GPT-3.5) | 회상률 (GPT-4) |
-|----------|------------------|----------------|
-| 앞부분   | 높음             | 매우 높음      |
-| 중간 ⚠️ | 낮음             | 중간 이하      |
-| 끝부분   | 높음             | 높음           |
-
-👉 **LLM은 문서의 중간을 가장 취약하게 처리합니다!**
+![prompt_sample](https://github.com/user-attachments/assets/a870a97d-c1d7-44ad-87eb-ad4b9d74cea9)
 
 ---
 
-### 📌 이 현상의 원인
+### 📉 실험 결과 요약 (Figure 5)
 
-- **포지셔널 인코딩(absolute positional encoding)**의 한계
-- **Self-attention 메커니즘의 bias**  
-  → 앞과 뒤에 더 집중하고, **중간은 덜 중요하게 처리**
-- 문서가 길어질수록 **중간 손실(middle drop)** 현상은 더 심해짐
+문서 **중간에 정보가 있을 경우**, **모델 정확도가 급락**  
+→ GPT-3.5 및 대부분의 모델에서 **U자형 성능 곡선**이 나타남
 
----
+| 위치     | 회상률 (GPT-3.5) | 회상률 (Claude-1.3) |
+|----------|------------------|----------------------|
+| 앞부분   | 높음             | 높음                 |
+| 중간 ⚠️ | **최저 성능**    | 소폭 저하            |
+| 끝부분   | 높음             | 높음                 |
 
-### 🛠️ 왜 중요한가?
 
-> 대부분의 **RAG (Retrieval-Augmented Generation)**, long QA, 문서 요약 시스템은 **긴 context**를 활용합니다.  
-> 그런데 모델이 중간 정보를 무시한다면...?
-
-- 🔎 검색 결과의 **위치가 성능에 직접적 영향**
-- 📄 문서 **chunking 전략** 설계 시 **중간 정보 보완** 필요
-- 🧠 단순히 context window를 늘리는 것만으로는 **불충분**
+![result](https://github.com/user-attachments/assets/68954152-f35b-4321-bf6d-601ff5f19404)
+> 🔍 GPT-4도 일부 실험에서 유사한 성능 패턴을 보였으나,  
+> 전체 실험에는 포함되지 않았으며 Appendix D에 제한적으로 보고됨.
 
 ---
 
-### 💡 시사점 & 다음 단계
+### 📌 이 현상의 원인 (논문 §2.3, §3.2)
 
-> LLM을 사용할 때는 "**길이가 되니까 다 기억하겠지?**"는 **금물!**
-
-**위치 편향을 줄이기 위한 방향:**
-
-- ✅ **Chunk overlap**
-- ✅ **Sliding window attention**
-- ✅ **RAG 정렬/재배치 전략**
-- ✅ **Position-free architectures** (e.g., *Hyena*, *RWKV*)
+- 🔒 **Absolute positional encoding**의 구조적 한계
+- 🔄 **Self-attention의 위치 편향(position bias)**  
+  → **앞(primacy)**과 **뒤(recency)**에 주의를 집중, **중간은 희석**
+- 📏 **문서 길이가 길수록 성능 하락 폭이 더 커짐**  
+  → GPT-3.5 기준 30-document 설정에서 20% 이상 성능 하락
 
 ---
 
-### 🔖 논문 정보 정리
+### 🧠 왜 중요한가?
 
-- **논문 제목**: *Lost in the Middle: How Language Models Use Long Contexts*  
-- **저자**: Stanford, Allen AI, Meta AI 등 공동 연구  
-- **링크**: [https://arxiv.org/abs/2307.03172](https://arxiv.org/abs/2307.03172)  
-- **발표일**: 2023년 7월  
+> 대부분의 **RAG (Retrieval-Augmented Generation)**, multi-document QA, long-context summarization 시스템은  
+> **긴 문맥**을 활용합니다. 그런데 **중간 정보를 모델이 무시한다면?**
+
+- 📉 검색 결과의 **위치**가 QA 성능에 직접 영향
+- 🔀 **중요 문서나 핵심 정보는 앞쪽에 배치해야 효과적**
+- ❗ 단순히 context window를 늘리는 것만으로는 **문제 해결 ❌**
+
+---
+
+### 💡 시사점: 위치 편향을 고려한 활용 전략
+
+> "**LLM은 context를 기억한다. 하지만, 그건 시작과 끝일 뿐...**"
+
+**위치 편향을 줄이기 위한 전략:**
+
+- ✅ **Query-aware contextualization**  
+  → 디코더-온리 모델에서는 질문을 문서 앞에 먼저 제시
+- ✅ **Chunk ordering optimization**  
+  → 중요한 정보를 앞쪽에, 덜 중요한 건 뒤로 재배치
+- ✅ **Attention 구조 개선**  
+  → 양방향 인코더가 있는 모델 (T5, BART 등)이 더 유리
+- ✅ **Position-free architectures**  
+  → Hyena, RWKV 등 새로운 구조는 위치 독립성을 추구함
+
+---
+
+### 🔍 Retrieval 기반 실험 구성 (논문 §2.2)
+
+- **Task**: Multi-document QA
+- **Retriever**: Contriever (MS-MARCO fine-tuned)
+- **Reader 입력**: 검색된 k개의 문서 + 질문
+- **문서 수(k)**: 10, 20, 30개
+- **문서 형태**: paragraph 기반 (표, 목록은 제외)
+
+---
+
+### 📈 Retrieval 수 증가 vs 성능 변화
+
+![retriever](https://github.com/user-attachments/assets/e7a81572-0558-4c0d-93cd-fb49d731898c)
+
+- ✅ **k=10, 20 → 성능 향상**
+- ⚠️ **k=30 → 성능 하락 또는 포화**
+  - 정답 문서가 **중간에 위치**할 경우 정확도 급락
+  - 일부 모델은 **closed-book 성능보다도 낮아짐**
+
+---
+
+### ❗ Retrieval은 잘 되어도, 활용은 어려움
+
+- LLM은 **정답 문서를 받아도**,  
+  그 정보가 **중간에 있으면 잘 사용하지 못함**
+
+> Retrieval만 잘해도 성능이 보장되지 않음!  
+> → **LLM의 위치 편향을 고려한 prompt 구조 설계 필수**
+
+**해결 전략 예시:**
+
+- ✅ 정답 문서를 프롬프트 앞에 배치
+- ✅ Query-aware 구조 사용
+- ✅ Noise 문서 수를 줄이기 (문서 선택 압축)
 
 ---
 
 ### ✅ 한 줄 요약
 
-> **“LLM은 context를 기억한다. 하지만, 그건 시작과 끝일 뿐... 중간은 길을 잃는다.”**
+> **“LLM은 긴 context를 기억한다. 하지만, 그건 시작과**
