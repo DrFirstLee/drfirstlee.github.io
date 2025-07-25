@@ -115,46 +115,40 @@ for prompt_name, prompt_template in prompt_templates.items():
         mlflow.log_text(prompt_template, f"prompt_template_{prompt_name}.txt")
         mlflow.log_text(prompt, f"full_prompt_{prompt_name}.txt")
         
-        try:
-            # OpenAI API 호출
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.7,
-                max_tokens=100
-            )
+        # OpenAI API 호출
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=100
+        )
+        
+        # 결과 추출
+        translation = response.choices[0].message.content
+        
+        # 결과 저장
+        mlflow.log_text(translation, f"translation_{prompt_name}.txt")
+        
+        # 메트릭 계산 (간단한 예시)
+        translation_length = len(translation)
+        word_count = len(translation.split())
+        
+        mlflow.log_metric("translation_length", translation_length)
+        mlflow.log_metric("word_count", word_count)
+        mlflow.log_metric("tokens_used", response.usage.total_tokens)
+        mlflow.log_metric("cost_usd", response.usage.total_tokens * 0.0000015)  # 대략적인 비용
+        
+        # 태그 추가
+        mlflow.set_tag("prompt_category", "translation")
+        mlflow.set_tag("language_pair", "en_to_ko")
+        mlflow.set_tag("model_provider", "openai")
+        
+        print(f"✅ {prompt_name} 실험 완료!")
+        print(f"   번역 결과: {translation[:50]}...")
+        print(f"   토큰 사용량: {response.usage.total_tokens}")
+        print(f"   비용: ${response.usage.total_tokens * 0.0000015:.6f}")
+        print()
             
-            # 결과 추출
-            translation = response.choices[0].message.content
-            
-            # 결과 저장
-            mlflow.log_text(translation, f"translation_{prompt_name}.txt")
-            
-            # 메트릭 계산 (간단한 예시)
-            translation_length = len(translation)
-            word_count = len(translation.split())
-            
-            mlflow.log_metric("translation_length", translation_length)
-            mlflow.log_metric("word_count", word_count)
-            mlflow.log_metric("tokens_used", response.usage.total_tokens)
-            mlflow.log_metric("cost_usd", response.usage.total_tokens * 0.0000015)  # 대략적인 비용
-            
-            # 태그 추가
-            mlflow.set_tag("prompt_category", "translation")
-            mlflow.set_tag("language_pair", "en_to_ko")
-            mlflow.set_tag("model_provider", "openai")
-            
-            print(f"✅ {prompt_name} 실험 완료!")
-            print(f"   번역 결과: {translation[:50]}...")
-            print(f"   토큰 사용량: {response.usage.total_tokens}")
-            print(f"   비용: ${response.usage.total_tokens * 0.0000015:.6f}")
-            print()
-            
-        except Exception as e:
-            # 에러 로깅
-            mlflow.log_param("error", str(e))
-            mlflow.set_tag("status", "failed")
-            print(f"❌ {prompt_name} 실험 실패: {e}")
 
 print("🎉 모든 프롬프트 실험 완료!")
 print("🌐 브라우저에서 http://0.0.0.0:5001 으로 접속해서 결과를 확인하세요!")
@@ -163,25 +157,30 @@ print("🌐 브라우저에서 http://0.0.0.0:5001 으로 접속해서 결과를
 #### **실행 결과 예시:**
 ```text
 ✅ basic 실험 완료!
-   번역 결과: 빠른 갈색 여우가 게으른 개를 뛰어넘는다.
-   토큰 사용량: 45
-   비용: $0.000068
-
+   번역 결과: 빠른 갈색 여우가 게으른 개를 뛰어 넘습니다....
+   토큰 사용량: 56
+   비용: $0.000084
+🏃 View run unruly-pig-302 at: http://0.0.0.0:5001/#/experiments/6/runs/2a19fc4770334dd5b17364cd46087cd6
+🧪 View experiment at: http://0.0.0.0:5001/#/experiments/6
 ✅ professional 실험 완료!
-   번역 결과: 민첩한 갈색 여우가 게으른 개 위로 뛰어넘었다.
-   토큰 사용량: 52
-   비용: $0.000078
-
+   번역 결과: 빠른 갈색 여우가 게으른 개를 뛰어넘습니다....
+   토큰 사용량: 82
+   비용: $0.000123
+🏃 View run respected-mole-452 at: http://0.0.0.0:5001/#/experiments/6/runs/3ddf4e93a6564904aa454dfe6903badb
+🧪 View experiment at: http://0.0.0.0:5001/#/experiments/6
 ✅ context_aware 실험 완료!
-   번역 결과: 재빠른 갈색 여우가 게으른 개를 훌쩍 뛰어넘었다.
-   토큰 사용량: 58
-   비용: $0.000087
-
+   번역 결과: 빠른 갈색 여우가 나태한 개를 뛰어넘습니다....
+   토큰 사용량: 154
+   비용: $0.000231
+🏃 View run monumental-cub-767 at: http://0.0.0.0:5001/#/experiments/6/runs/9d5538e33665440687ab940309663fc2
+🧪 View experiment at: http://0.0.0.0:5001/#/experiments/6
 ✅ step_by_step 실험 완료!
-   번역 결과: 빠른 갈색 여우가 게으른 개 위로 점프했다.
-   토큰 사용량: 61
-   비용: $0.000092
-
+   번역 결과: 1. Analyze the English sentence first
+2. Understan...
+   토큰 사용량: 144
+   비용: $0.000216
+🏃 View run indecisive-conch-549 at: http://0.0.0.0:5001/#/experiments/6/runs/f3bc72525ee94ecb8d71098ca330641b
+🧪 View experiment at: http://0.0.0.0:5001/#/experiments/6
 🎉 모든 프롬프트 실험 완료!
 🌐 브라우저에서 http://0.0.0.0:5001 으로 접속해서 결과를 확인하세요!
 ```
@@ -217,6 +216,22 @@ print(f"\n🎯 가장 효율적인 프롬프트: {best_efficiency['params.prompt
 print(f"   토큰 사용량: {best_efficiency['metrics.tokens_used']:.0f}")
 ```
 
+- 결과는!!?  
+
+```text
+📊 총 4개의 프롬프트 실험 완료!
+
+🏆 실험 결과 비교:
+============================================================
+📝 step_by_step    | 토큰: 144 | 비용: $0.000216
+📝 context_aware   | 토큰: 154 | 비용: $0.000231
+📝 professional    | 토큰:  82 | 비용: $0.000123
+📝 basic           | 토큰:  56 | 비용: $0.000084
+
+🎯 가장 효율적인 프롬프트: basic
+   토큰 사용량: 56
+   ```
+
 #### **2. 프롬프트 템플릿 다운로드**
 ```python
 # 최고 성능 프롬프트 다운로드
@@ -251,7 +266,7 @@ print(best_prompt_template)
 import mlflow
 import openai
 import json
-
+client = openai.OpenAI()
 # 감성 분석 실험
 mlflow.set_experiment("llm_sentiment_analysis")
 
@@ -302,30 +317,27 @@ for prompt_name, prompt_template in sentiment_prompts.items():
         for i, review in enumerate(test_reviews):
             prompt = prompt_template.format(text=review)
             
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.1  # 일관성을 위해 낮은 온도
-                )
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1  # 일관성을 위해 낮은 온도
+            )
+
+            result = response.choices[0].message.content
+            tokens = response.usage.total_tokens
+
+            all_results.append({
+                "review": review,
+                "result": result,
+                "tokens": tokens
+            })
+
+            total_tokens += tokens
+
+            # 개별 결과 저장
+            mlflow.log_text(result, f"result_{i}_{prompt_name}.txt")
                 
-                result = response.choices[0].message.content
-                tokens = response.usage.total_tokens
-                
-                all_results.append({
-                    "review": review,
-                    "result": result,
-                    "tokens": tokens
-                })
-                
-                total_tokens += tokens
-                
-                # 개별 결과 저장
-                mlflow.log_text(result, f"result_{i}_{prompt_name}.txt")
-                
-            except Exception as e:
-                print(f"❌ 오류 발생: {e}")
-                continue
+
         
         # 전체 결과 저장
         results_json = json.dumps(all_results, ensure_ascii=False, indent=2)
