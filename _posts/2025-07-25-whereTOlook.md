@@ -13,6 +13,149 @@ sitemap :
 
 ---
 
+### 👁️ MLLMs Know Where to Look: Training-free Perception of Visual Details
+
+- **Title**: [MLLMs know where to look: Training-free perception of small visual details with multimodal LLMs](https://arxiv.org/abs/2502.17422)
+- **Conference**: ICLR 2025 (Zhang, Jiarui et al.)
+- **Code**: [saccharomycetes/mllms_know](https://github.com/saccharomycetes/mllms_know)
+- **Keywords**: `Multimodal LLM`, `Small Visual Details`, `Attention Map`, `Cropping`, `Gradient`, `Inference`
+
+---
+
+### 🧠 TL;DR in 3 Lines
+
+1. MLLMs are generally good at **knowing where to look**,  
+   but often **fail to understand what they’re seeing**.
+
+2. Simply **cropping the relevant part of the image** and feeding it back  
+   significantly improves detail-level recognition.
+
+3. If the image is too large, it is **split and reprocessed to ensure accurate attention**.
+
+---
+
+### ⚠️ Problem Background
+
+![prob1](https://github.com/user-attachments/assets/d959e40b-4cda-40b5-8d29-2184607d97e5)  
+
+- MLLMs often fail on questions about small objects in an image,  
+  but they succeed if we crop and provide only the relevant region.
+
+---
+
+### 📚 Datasets Used
+
+The authors validate their method on the following 6 datasets:
+
+| Dataset     | Purpose                                         | Image Type             | Question Focus                          | External Knowledge | Example Models                |
+|-------------|--------------------------------------------------|-------------------------|------------------------------------------|---------------------|-------------------------------|
+| **DocVQA**   | Document-level question answering                | Document images (PDFs) | Text extraction + layout understanding   | ❌                  | LayoutLM, Donut, DocFormer   |
+| **TextVQA**  | Scene text-based VQA                             | Natural images w/ text | Text in context of visual scene          | ❌                  | M4C, GRILL, LLaVA            |
+| **POPE**     | Evaluating model bias and hallucination          | Mixed image types       | Robustness to misleading contexts        | ❌                  | BLIP2, Pythia                |
+| **A-OKVQA**  | Knowledge-based multiple-choice VQA              | Natural images          | External knowledge + choice selection    | ✅                  | ReGAT, RAVQA, NoteMR         |
+| **GQA**      | Relation reasoning and scene understanding       | Complex scenes          | Logic and spatial reasoning              | ❌                  | MAC, NS-VQA, GraftNet        |
+| **VQAv2**    | General-purpose VQA benchmark                    | Natural images          | Object, attribute, and general questions | ❌                  | UpDn, Pythia, LXMERT         |
+
+---
+
+### 🔧 Three Key Investigations
+
+0. **Can humans solve these problems better just by cropping?**  
+   → Manually cropping the region significantly improved model performance!
+
+1. **Do LLMs fail because they don’t know where to look, or because they can’t understand even when looking correctly?**  
+   → It’s the latter: they look in the right place but misinterpret it.
+
+2. **Then what if we just show them the right region only?**  
+   → That works very well!
+
+#### 0. Human cropping improves accuracy
+
+![crop_Effect](https://github.com/user-attachments/assets/a7a2ab90-5998-41bd-8bea-31fdb64acd76)  
+- When humans crop only the relevant region of the image,
+- MLLMs answer detail-based questions much more accurately.
+
+#### 🔍 1. Do MLLMs attend to the right place?
+
+![looking](https://github.com/user-attachments/assets/e73e8306-f992-43cd-b948-8723e1884ca2)  
+- By visualizing attention layers,  
+- It turns out the model **does look in the right area** even when it gives a wrong answer.
+
+#### ✂️ 2. Just give the right region → better performance!
+
+![cropping](https://github.com/user-attachments/assets/74214622-05ed-4dc8-9b43-ce3f2ff8857d)
+
+- As seen above, **cropping and reinserting alone greatly boosts performance**
+- So, how to crop effectively?
+- The authors propose **3 attention-based cropping strategies**:
+
+| Method      | Description |
+|-------------|-------------|
+| **Rel-Att** (Relative Attention) | Compares attention maps between the true question and a generic one to highlight the difference |
+| **Grad-Att** (Gradient-weighted Attention) | Uses gradients to find regions most sensitive to the model's confidence |
+| **Pure-Grad** (Input Gradient) | Uses input image gradients to locate visually salient pixels |
+
+**Cropping pipeline**:
+
+- **Input**: image + question  
+- **Process**: compute attention map via one of the above → derive ROI crop  
+- **Output**: crop image → reinsert to MLLM → generate answer
+
+The paper also compares cropping methods using **external tools like YOLO, CLIP, and SAM**:
+
+> Surprisingly, even against SOTA external methods, their proposed internal methods held up well.
+
+![crop_res](https://github.com/user-attachments/assets/3d5510f0-4e4d-4e1a-a054-2a213158e9a2)
+
+| Method         | One-line Summary |
+|----------------|------------------|
+| **CLIP ViCrop** | Uses CLIP similarity to iteratively crop toward the most semantically aligned region |
+| **YOLO ViCrop** | Selects bounding boxes from YOLO with highest CLIP similarity to the question |
+| **SAM ViCrop**  | Converts segmentation masks from SAM into bounding boxes, then selects the one with best CLIP match |
+
+---
+
+### 🧪 Experiment Results
+
+- The system performs **inference-only cropping**—no retraining required
+- Large images are pre-cropped to better guide attention
+- Evaluation covers multiple datasets and question types
+
+---
+
+### 📈 Key Results
+
+![res1](https://github.com/user-attachments/assets/ebb016dc-7ef6-448a-859c-d8a1bc8284d2)  
+- Attention-based crops like Rel-Att and Grad-Att outperform other approaches—especially for small-object questions.
+
+![res2](https://github.com/user-attachments/assets/9a546460-7318-4318-bf91-6a2e1b4f988d)  
+- Cropping greatly helps when image resolution is high.
+
+**Summary of Effects**:
+
+| Setup                      | Performance Impact |
+|---------------------------|--------------------|
+| Full image only           | Poor on detail-based questions |
+| Crop via attention-guided methods | Much higher accuracy |
+| No retraining needed      | Zero-shot + Inference-time only |
+
+Overall, this approach **greatly improves fine-grained perception**,  
+even without scaling up the model size.
+
+---
+
+## ✅ Conclusion & Impact
+
+- The paper shows MLLMs **already know where to look**,  
+  but need help **seeing better** via focused cropping.
+- Significant performance gains are possible **without any retraining**—just with attention-based inference.
+- Has strong applicability in domains like **OCR**, **tiny-object detection**, or **interactive AI tutors**.
+
+> "**MLLMs know where to look. Let’s help them see better.**"
+
+
+---
+
 ### 👁️ (한국어) MLLMs Know Where to Look: Training-free 시각 디테일 인식
 
 - **제목**: [MLLMs know where to look: Training-free perception of small visual details with multimodal llms](https://arxiv.org/abs/2502.17422)
