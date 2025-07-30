@@ -3,7 +3,7 @@ layout: post
 title: "🧠Lost in the Middle - 긴 문맥에서 언어모델이 진짜 정보를 기억할까?"
 author: [DrFirst]
 date: 2025-07-16 07:00:00 +0900
-categories: [AI, Experiment]
+categories: [AI, Research]
 tags: [LLM, Context, Prompt Engineering, Language Models, Long Context, TACL]
 sitemap :
   changefreq : monthly
