@@ -77,6 +77,8 @@ The **FashionIQ** dataset is a large-scale fashion dataset specifically for **Co
 
 #### 📷 FashionIQ Query Example
 
+![cirr_example](https://github.com/user-attachments/assets/de11f116-3f7e-488f-8c4e-3863506fa9da)  
+
 * **Reference Image**: A long-sleeved red dress
 * **Text Modification**: "Change color to black and make sleeves shorter"
 * **Target Image**: A short-sleeved black dress
@@ -176,6 +178,8 @@ FashionIQ는 **조합적 이미지 검색(Composed Image Retrieval, CIR)**에 �
 
 #### 📷 FashionIQ의 쿼리 예시
 
+![cirr_example](https://github.com/user-attachments/assets/de11f116-3f7e-488f-8c4e-3863506fa9da)  
+
 * **Reference Image**: 빨간색 긴팔 드레스
 * **Text Modification**: “Change color to black and make sleeves shorter”
 * **Target Image**: 검은색 반팔 드레스
@@ -193,7 +197,7 @@ FashionIQ는 **조합적 이미지 검색(Composed Image Retrieval, CIR)**에 �
     * 위 1단계에서 얻은 이미지와 텍스트의 벡터를 입력으로 받아, **논문에서 새롭게 설계한 6개 레이어의 트랜스포머**를 통해 두 정보를 결합  
     * 이 **멀티모달 트랜스포머**는 이미지와 텍스트의 관계를 학습하여 최종적으로 검색에 사용될 쿼리 벡터를 생성
 
-결론적으로, 이 모델은 **각각의 모달리티(이미지, 텍스트)를 위한 사전 학습된 인코더를 활용**하면서, **이 둘을 통합하는 핵심적인 역할은 자체 제작한 트랜스포머가 담당**하는 하이브리드 구조로 구성  
+> 결론적으로, 이 모델은 **각각의 모달리티(이미지, 텍스트)를 위한 사전 학습된 인코더를 활용**하면서, **이 둘을 통합하는 핵심적인 역할은 자체 제작한 트랜스포머가 담당**하는 하이브리드 구조로 구성  
 ---
 
 ### 🧩 결론
