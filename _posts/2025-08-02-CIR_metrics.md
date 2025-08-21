@@ -51,6 +51,7 @@ sitemap :
 
 #### 4. TIFA (Text-to-Image Faithfulness Assessment, Hu et al. 2023)  
 > I will write a separate post on TIFA in more detail soon!!  
+
 - **Definition**: A metric for evaluating the **faithfulness of generated images** to the input text prompt.  
   - Uses a **VQA (Visual Question Answering) model** to automatically generate questions like *“Is there a dog?”*, *“Is the dog brown?”* and compares them with the image.  
 - **Strengths**: Goes beyond Recall by measuring **textual faithfulness**, and shows strong correlation with human evaluation.  
@@ -78,9 +79,11 @@ sitemap :
 
 #### 1. Recall@K (R@K)  
 - **정의**: 검색된 Top-K 결과 안에 정답 이미지가 존재하는 비율을 측정하는 지표.  
-  \[
-  Recall@K = \frac{\#\{\text{쿼리에서 Top-K 안에 정답 존재}\}}{\#\{\text{전체 쿼리}\}}
-  \]  
+
+$$
+Recall@K = \frac{\#\{\text{쿼리에서 Top-K 안에 정답 존재}\}}{\#\{\text{전체 쿼리}\}}
+$$
+
 - **장점**: 계산이 단순하고 직관적이며, 대부분의 CIR 벤치마크에서 표준적으로 사용됨.  
 - **한계**: 정답 이미지가 여러 개인 경우 이를 충분히 반영하지 못하며, False Negative가 많은 데이터셋(CIRR)에서는 성능을 과소평가할 수 있음.  
 - **주 사용처**: CIRR(ICCV 2021), FashionIQ.  
@@ -98,9 +101,9 @@ sitemap :
 
 #### 3. mAP@K (mean Average Precision at K)  
 - **정의**: Top-K 결과에서 **모든 정답 이미지의 위치(rank)**를 고려해 평균 정밀도를 계산.  
-  \[
-  mAP@K = \frac{1}{N}\sum_{i=1}^N \frac{1}{|G_i|}\sum_{j=1}^{|G_i|} Precision@r_{ij}
-  \]  
+$$
+mAP@K = \frac{1}{N}\sum_{i=1}^N \frac{1}{|G_i|}\sum_{j=1}^{|G_i|} Precision@r_{ij}
+$$
   (여기서 \(r_{ij}\)는 i번째 쿼리의 j번째 정답 이미지의 순위)  
 - **장점**: 다중 정답(Multi-Ground Truth) 상황에서도 공정하게 평가 가능, Recall@K보다 세밀하게 검색 품질을 반영.  
 - **한계**: 계산이 복잡하며, 직관적으로 이해하기는 Recall보다 어려움.  
@@ -110,6 +113,7 @@ sitemap :
 
 #### 4. TIFA (Text-to-Image Faithfulness Assessment, Hu et al. 2023)  
 > TIFA에 대하여는 다시한번 포스팅해보겠쓰므니다!!  
+
 - **정의**: 텍스트 조건(prompt)과 결과 이미지의 충실도를 평가하는 지표.  
   - VQA(Visual Question Answering) 모델을 이용해 "강아지가 있나요?", "강아지는 갈색인가요?" 같은 질문을 자동 생성하고, 이미지 결과와 비교.  
 - **장점**: Recall처럼 단순 정답 여부가 아니라, **텍스트 조건 충실성(faithfulness)**을 정밀하게 평가 가능.  
