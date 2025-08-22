@@ -37,6 +37,7 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 
 > **단 몇 장의 이미지를 통해 새로운 개념을 표현하는 “단어 임베딩”을 만들자!!!**
 
+> 첫번째이미지의 거시기는 "머리가 없는 가부좌 동상" 이고 둘째이미지의 거시기는 "고양이 모양의 수제품" 이다!
 ![Image](https://github.com/user-attachments/assets/b039b904-cc71-4c83-9a9a-40deb7036f39)
 
 - 전체 Diffusion 모델을 학습시키는 대신,  
@@ -58,6 +59,7 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 1. **입력 데이터 준비**
    - 대상 객체/사람의 대표 이미지 **3~5장** 수집 (정면/측면, 다양한 배경/조명 포함 권장).
    - 과도한 배경 노이즈·강한 필터·낮은 해상도는 지양.
+   - 3~5 장이있어야하는 이유는 거시기를 파악할때 알맞게 특징을 뽑을수 있도록하기위해서!!  
 
 2. **모델 고정 (Freeze Pretrained Diffusion)**
    - Stable Diffusion 등 **사전학습된 Diffusion 모델과 텍스트 인코더는 동결**.
@@ -67,10 +69,25 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
    - 프롬프트 구성: 예) `"a photo of S* dog"`, `"S* plush toy on a table"`.
    - **Forward**: 프롬프트 → 텍스트 인코더(동결) → U-Net(동결) → 노이즈 예측 / 샘플링.
    - **손실 계산**:
-     - (필수) **Diffusion 노이즈 예측 MSE**:  \(\mathcal{L}_{\text{diff}} = \|\hat{\epsilon} - \epsilon\|^2\)
-     - (선택) **정체성 유지/유사도 보조손실**: CLIP/Image encoder 특징 유사도 \(\mathcal{L}_{\text{clip}}\)
-     - 총손실: \(\mathcal{L} = \mathcal{L}_{\text{diff}} + \lambda \mathcal{L}_{\text{clip}}\)
-   - **역전파 & 갱신**: 파라미터 업데이트는 **S\*** 임베딩에만 적용(Adam 등).
+     - (필수) **Diffusion 노이즈 예측 MSE**:  
+
+       $$
+       \mathcal{L}_{\text{diff}} = \|\hat{\epsilon} - \epsilon\|^2
+       $$
+
+     - (선택) **정체성 유지/유사도 보조손실** (CLIP/Image encoder 특징 유사도):  
+
+       $$
+       \mathcal{L}_{\text{clip}}
+       $$
+
+     - 총손실:  
+
+       $$
+       \mathcal{L} = \mathcal{L}_{\text{diff}} + \lambda \mathcal{L}_{\text{clip}}
+       $$
+
+   - **역전파 & 갱신**: 파라미터 업데이트는 **S\*** 임베딩에만 적용 (Adam 등).
    - 여러 이미지·여러 프롬프트 변형에 대해 수십~수백 step 반복 → **S\***가 타깃 개념을 가리키도록 수렴.
 
 4. **활용 (Generation with Learned Token)**
@@ -86,7 +103,7 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 - S\*는 타깃 객체를 **저장**하지 않고, **잠재 공간(latent space)에서 그 객체를 가리키는 좌표/주소** 역할.
 - 학습 시 Diffusion 샘플링 반복으로 **리소스 소모↑**, 활용 시에는 **가볍고 유연**.
 
-#### 실무 팁
+#### 추가 사항  
 - 초기 S\*는 랜덤 또는 **유사 의미 단어 임베딩 평균**으로 초기화하면 수렴이 빠름.
 - 프롬프트에 **클래스 단서**(e.g., dog, figurine, backpack)를 함께 넣으면 안정적.
 - 과적합 방지: 이미지 증강(크롭/색감/좌우반전), 프롬프트 다양화, 손실 가중치 \(\lambda\) 조절.
@@ -94,6 +111,9 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 ---
 
 ### 🧪 실험  
+
+> 꽤 잘만들쥬!?  
+![Image](https://github.com/user-attachments/assets/e66503b2-1adc-41b6-9d0e-52a35190bd29)
 
 - 단 **3~5장만으로**도 개념 학습 가능.  
 - 다양한 스타일, 장소, 맥락에서 **일관된 재현** 성공.  
@@ -121,19 +141,29 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 
 ---
 
-### ⚠️ 한계  
+### ⚠️ 한계 (Limitations)
 
-- 최소 몇 장의 이미지 필요.  
-- 너무 적은 데이터에서는 과적합 위험.  
-- 추상적 개념까지는 완벽히 일반화하기 어려움.  
+- **정확한 형태(Shape) 학습 어려움** → 개념의 “의미적 본질(semantic essence)”을 주로 포착  
+- **최적화 시간 길음** → 개념 하나 학습에 약 2시간 소요  
+  - 개선 방안: 인코더 학습을 통해 이미지를 바로 텍스트 임베딩으로 매핑  
+- 정밀도가 요구되는 작업에는 아직 한계 존재  
 
 ---
+### 🚀 결론 (Conclusions)
+
+- **Textual Inversion 기법 제안**  
+  - 사전학습된 텍스트-투-이미지 모델의 임베딩 공간에 **새로운 pseudo-word** 삽입  
+  - 자연어 프롬프트에 삽입하여 직관적이고 단순한 방식으로 개념을 새로운 장면·스타일에 적용 가능  
+
+- **특징**  
+  - LDM(Rombach et al., 2021) 기반으로 구현했으나 **특정 아키텍처에 종속되지 않음**  
+  - **다른 대규모 모델에도 적용 가능!!** → 정합성, 형태 보존, 품질 향상 가능성  
+
+- **의의**  
+  - **개인화된 생성 AI 연구의 토대** 마련  
+  - 예술적 영감, 제품 디자인 등 다양한 **후속 응용 가능성** 제시  
 
 ### 🚀 의의  
-
-- **개인화 생성 AI** 연구의 큰 전환점.  
-- 후속 연구 촉발: **DreamBooth, Custom Diffusion 등**.  
-- 오늘날 Stable Diffusion 커뮤니티에서도 **커스텀 임베딩 학습**에 널리 활용됨.  
 
 ---
 

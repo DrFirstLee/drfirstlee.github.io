@@ -19,9 +19,11 @@ sitemap :
 
 #### 1. Recall@K (R@K)  
 - **Definition**: A metric that measures the proportion of queries where the ground-truth image is within the Top-K retrieved results.  
-  \[
-  Recall@K = \frac{\#\{\text{Queries with GT in Top-K}\}}{\#\{\text{Total Queries}\}}
-  \]  
+
+$$
+Recall@K = \frac{\#\{\text{쿼리에서 Top-K 안에 정답 존재}\}}{\#\{\text{전체 쿼리}\}}
+$$
+ 
 - **Strengths**: Simple to compute and highly intuitive; widely adopted as the standard in most CIR benchmarks.  
 - **Limitations**: Fails to fully capture cases with multiple correct answers, and may **underestimate performance in datasets with many false negatives** (e.g., CIRR).  
 - **Common Usage**: CIRR (ICCV 2021), FashionIQ.  
@@ -39,9 +41,10 @@ sitemap :
 
 #### 3. mAP@K (mean Average Precision at K)  
 - **Definition**: Considers the **ranking positions of all correct answers** within the Top-K results and computes the average precision.  
-  \[
-  mAP@K = \frac{1}{N}\sum_{i=1}^N \frac{1}{|G_i|}\sum_{j=1}^{|G_i|} Precision@r_{ij}
-  \]  
+$$
+mAP@K = \frac{1}{N}\sum_{i=1}^N \frac{1}{|G_i|}\sum_{j=1}^{|G_i|} Precision@r_{ij}
+$$
+
   (where \(r_{ij}\) is the rank of the j-th ground-truth image for the i-th query)  
 - **Strengths**: Fair in **multi-ground-truth** scenarios; reflects retrieval quality more precisely than Recall@K.  
 - **Limitations**: More complex to compute and less intuitive than Recall.  
@@ -104,6 +107,7 @@ $$
 $$
 mAP@K = \frac{1}{N}\sum_{i=1}^N \frac{1}{|G_i|}\sum_{j=1}^{|G_i|} Precision@r_{ij}
 $$
+
   (여기서 \(r_{ij}\)는 i번째 쿼리의 j번째 정답 이미지의 순위)  
 - **장점**: 다중 정답(Multi-Ground Truth) 상황에서도 공정하게 평가 가능, Recall@K보다 세밀하게 검색 품질을 반영.  
 - **한계**: 계산이 복잡하며, 직관적으로 이해하기는 Recall보다 어려움.  
