@@ -54,6 +54,8 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 
 ### 🔧 방법론 
 
+> 계속 S*를 바꿔가며 이미지 생성해가며 S*의 최적점을 찾는것!!  
+ 
 ![Image](https://github.com/user-attachments/assets/beddb3ba-5c7c-4816-884b-78cbb307999f)
 
 1. **입력 데이터 준비**
@@ -110,14 +112,28 @@ Text-to-Image 생성 모델들 (Stable Diffusion, DALL·E, Imagen 등)은 뛰어
 
 ---
 
-### 🧪 실험  
+### 🧪 실험 & 구현 세부사항 (Implementation Details)
 
-> 꽤 잘만들쥬!?  
-![Image](https://github.com/user-attachments/assets/e66503b2-1adc-41b6-9d0e-52a35190bd29)
+
 
 - 단 **3~5장만으로**도 개념 학습 가능.  
 - 다양한 스타일, 장소, 맥락에서 **일관된 재현** 성공.  
 - 모델 전체 학습보다 **빠르고 효율적**.  
+
+> 꽤 잘만들쥬!?  
+![Image](https://github.com/user-attachments/assets/e66503b2-1adc-41b6-9d0e-52a35190bd29)
+
+- 구현 세부사항 : 학습 세팅!!
+  - **기본 설정**: LDM(Rombach et al., 2021)의 하이퍼파라미터 유지.  
+  - **임베딩 초기화**: 개체를 설명하는 단일 단어(예: "sculpture", "cat")의 사전학습 임베딩으로 시작.  
+  - **실험 환경**:  
+    - GPU: **2 × V100**  
+    - Batch size: **4**  
+  - **학습률**:  
+    - 기본 learning rate = 0.005  
+    - GPU 수와 배치 크기에 따라 스케일링 → 최종 **0.04** 적용  
+  - **최적화 스텝**: 총 **5,000 step**  
+  - **추가 관찰**: 일부 개념은 더 적은 step 또는 더 높은 learning rate로 더 좋은 결과 가능.  
 
 ---
 
