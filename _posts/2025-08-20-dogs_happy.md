@@ -70,3 +70,67 @@ _『네발의 철학자』를 읽고_
 행복을 ‘생각’하기보다, 행복을 ‘살아내라’는 메시지가 오래 남았다.  
 
 > 성찰!! 성찰로 우리는 행복해질수 있을까? 오히려 성찰이 있이게 삶이 고통이 되는게 아닐까?  
+
+
+---
+
+## 💡 Where Dogs Meet Philosophy  
+_Reading 『The Philosopher and the Wolf』_
+
+![Image](https://github.com/user-attachments/assets/60911672-613e-4d37-94b4-4327f388c7a2)
+
+* **Book Title**: 『The Philosopher and the Wolf』  
+* **Author**: Mark Rowlands  
+* **One-line Impression**: An essay of a dog lover!   
+
+---
+
+### 🧐 From a Monk’s Talk to a Book  
+
+I once came across a monk’s talk by chance:  
+“Don’t dwell on what happiness is. Does a deer in the forest ponder happiness? It simply lives.”  
+
+That thought lingered with me. Later, when I found 『The Philosopher and the Wolf』 in the library, it felt like that very idea had been put into writing.  
+Moreover, with Professor Choi Jae-cheon’s recommendation, I had every reason to read it.  
+
+The book begins with the example of a **sea squirt**—a creature that has a brain in its youth but later lets it degenerate. Why? Because keeping a brain becomes a disadvantage, so it chooses to live without one. The fact that being a “thinking being” is not always an advantage struck me in an odd way.  
+
+---
+
+### 😅 Between Expectation and Disappointment  
+
+Still, the book reads less like a philosophical treatise and more like **the author’s personal essays drawn from life with his dog**.  
+Instead of sharp philosophical arguments, it offers small insights from everyday companionship. That left me a little disappointed.  
+
+Especially the parts about dogs he personally raised, which didn’t particularly interest me…  
+
+Yet, I also found myself nodding along at times.  
+For instance, when he wrote about sports or stacking coins—simple activities where one can fall into deep concentration. But the very moment we become aware, “Ah, I’m immersed right now,” the immersion collapses.  
+
+He distinguished this as the **“immersed self” versus the “self aware of immersion.”** Dogs live only as the former, and that’s why they are happier. That point stayed with me. I thought: I want to live as the “immersed self,” not as the “self others perceive.”  
+
+---
+
+### 🐾 Did Dogs Tame Humans, or the Other Way Around?  
+
+Another part reminded me of Jared Diamond’s metaphor: humans didn’t tame wheat—**wheat tamed humans**.  
+
+The author argues that it wasn’t dogs who adapted to humans, but rather **humans who adapted to dogs**.  
+Dogs passed on the heavy burden of cognition to humans and in return gained simple, immersive happiness.  
+
+I couldn’t help but laugh at that. It conjured the image of a husband happily enjoying life while leaving everything—finances, child-rearing, and more—in his wife’s hands.  
+
+---
+
+### ✅ Final Thoughts  
+
+『The Philosopher and the Wolf』 is not armed with a systematic philosophy. Instead, it speaks philosophy through everyday moments.  
+
+* **Living rather than overthinking**: Happiness isn’t something to worry about, but something to live.  
+* **The power of immersion**: We exist more fully when we remain in the immersed self.  
+* **Reflections on coexistence**: The relationship between humans and dogs raises questions about adaptation and the true bearer of happiness.  
+
+It felt lighter than expected, but perhaps that lightness made it easier to approach.  
+The message that lingers: Don’t just “think” about happiness—**live it**.  
+
+> Reflection!! Can reflection really make us happy? Or is it precisely reflection that makes life more painful?
