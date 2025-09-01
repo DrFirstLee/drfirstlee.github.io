@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "📘 『Prisoner of the State – 자오쯔양 국가의 죄수』 독후감"
+title: "📘 『Prisoner of the State – 자오쯔양 국가의 죄수』를 읽고"
 author: [DrFirst]
 date: 2025-08-27 07:00:00 +0900
 categories: [Activity, Books]
