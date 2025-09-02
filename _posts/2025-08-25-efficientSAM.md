@@ -12,6 +12,165 @@ sitemap:
 
 ---
 
+### 🧠 (English) EfficientSAM: A ‘Light & Fast’ Segment Anything via Leveraged Masked Image Pretraining
+
+![Image](https://github.com/user-attachments/assets/87091298-8c04-4d89-a0f1-9f4a47459569)
+
+* **Title**: [EfficientSAM: Leveraged Masked Image Pretraining for Efficient Segment Anything](https://arxiv.org/abs/2312.00863)  
+* **Venue**: CVPR 2024 (OpenAccess) – [PDF](https://openaccess.thecvf.com/content/CVPR2024/papers/Xiong_EfficientSAM_Leveraged_Masked_Image_Pretraining_for_Efficient_Segment_Anything_CVPR_2024_paper.pdf)  
+* **Code/CKPT**: [GitHub – yformer/EfficientSAM](https://github.com/yformer/EfficientSAM)  
+* **Keywords**: `Segment Anything`, `Masked Image Pretraining`, `Lightweight ViT`, `Promptable Segmentation`  
+* **TL;DR**: EfficientSAM keeps SAM’s strengths while being **faster and lighter** for practical use.
+
+---
+
+### 🚀 EfficientSAM — Key Points
+
+> One-liner: **“Retain SAM’s capability, optimize weight and speed for deployment.”**
+
+1) **Efficient architecture 🧠**  
+- **Lightweight image encoder**: Replace SAM’s heavy ViT-H with **ViT-Tiny/Small** backbones. **Prompt encoder & mask decoder stay compatible** with SAM, preserving the pipeline.
+
+2) **Smarter pretraining 🎯**  
+- **SAMI (SAM-Leveraged Masked Image Pretraining)**: Train the lightweight encoder to **reconstruct features from SAM’s ViT-H** with a masked pretext task → **transfers SAM’s representation power** into a compact backbone.
+
+3) **Practical extensibility 🛠️**  
+- Keeps SAM’s **interactive prompts** (points/boxes/“segment everything”) and can be fine-tuned for **classification, detection, segmentation** downstream.
+
+4) **Better efficiency–accuracy trade-off ⚡**  
+- Aims to **retain segmentation quality** while **cutting params/FLOPs**, ideal for **edge/mobile/real-time** scenarios.
+
+---
+
+### 🔍 Prior Work
+
+- **Making SAM & ViT efficient**  
+  - SAM is widely used; many works reduce its compute cost.  
+  - **FastSAM** uses a **CNN (e.g., YOLOv8-seg)** to segment all objects efficiently.  
+  - **MobileSAM** distills a **light image encoder** via decoupled distillation.  
+  - Efficient ViT variants continue to emerge: **ViT/DeiT Tiny/Small**, **MobileViT, LeViT, EfficientViT**, etc.
+
+- **Knowledge Distillation (KD)**
+  - **KD** transfers knowledge from a large **teacher** to a small **student** **without changing architecture**, supervised by **hard + soft labels**.  
+    - **Hard labels**: one-hot targets (e.g., `[cat=1, fox=0, car=0]`); typically trained with CE; lack inter-class similarity.  
+    - **Soft labels**: teacher’s probability distribution (e.g., `[cat=0.60, fox=0.35, car=0.05]`), often with **temperature** to reveal **dark knowledge** (class relations), improving generalization/calibration.  
+  - Recent trends: stronger **soft-label KD**, **decoupling** (separate feature learning vs. classification), and **Decoupled KD** (split KD loss into **target/non-target** parts) so the student learns both confidence for the true class and relations among the rest.  
+  - Another line matches **intermediate features** directly—e.g., **FitNet**, SSTA for ViT students, or aligning features between **MAE teacher/student**.
+
+- **MIM (Masked Image Modeling)**
+  - Self-supervised pretraining: **mask patches** and **reconstruct** the missing parts.  
+  - **BEiT** predicts **visual tokens**; **SimMIM** reconstructs pixels; **MaskFeat** reconstructs HOG features.  
+  - **MAE (Masked Autoencoder)**: high mask ratio (~75%), **asymmetric** encoder–decoder; encoder sees only visible patches, decoder reconstructs the full image (usually pixels).
+
+---
+
+### 🧱 EfficientSAM Architecture
+
+![Image](https://github.com/user-attachments/assets/f94e0292-d4e5-44eb-8dde-c9e7ff6681b9)
+
+- **Image Encoder**  
+  - **ViT-Tiny/Small** backbones.  
+  - **SAMI pretraining** teaches them to **reconstruct SAM ViT-H features**, so the compact encoder **inherits SAM-like representations**.  
+  - Instead of vanilla KD, masking improves **local/occluded-region awareness** and robustness.
+
+- **Prompt Encoder (same as SAM)**  
+  - Lightweight transformer that embeds **points/boxes** into a unified prompt embedding.
+
+- **Mask Decoder (same as SAM)**  
+  - Combines image & prompt embeddings with **dual cross-attention**, outputs **masks (+ IoU prediction)**.  
+  - Full compatibility with existing SAM tooling/interfaces.
+
+---
+
+### 🔧 Training Recipe & Results
+
+- **1) SAMI Pretraining**  
+  - **Teacher**: SAM’s ViT-H image encoder features.  
+  - **Student**: lightweight ViT-T/S.  
+  - **Goal**: via **masked reconstruction**, reproduce SAM features → student learns **promptable-segmentation-friendly** representations.
+
+- **2) SA-1B Finetuning**  
+  - **SAMI-initialized encoder + SAM decoder** are finetuned on **SA-1B** for points/boxes/“everything”.
+
+- **3) Downstream transfer**  
+  - Use the SAMI encoder for **classification/detection/segmentation** to show broad applicability.
+
+![Image](https://github.com/user-attachments/assets/17184218-d11b-4d30-ac3f-ffa5fdf1b058)
+
+- Shows solid performance on **Image Classification, Object Detection & Instance Segmentation, Semantic Segmentation**.
+
+---
+
+### 🧪 Segmentation Results & Ablations
+
+1) **Benefit of SAMI**  
+   - Compared to vanilla MAE-like pretraining, **SAMI** (reconstructing SAM features) learns representations **more suitable for promptable segmentation**.
+
+2) **Effectiveness of lightweight backbones**  
+   - With **ViT-T/S** + **SAMI + finetune**, EfficientSAM **keeps quality while boosting efficiency**, reducing reliance on ViT-H.
+
+3) **Practical compatibility**  
+   - Maintains **points/boxes/everything** prompts and **SAM mask decoder**, minimizing replacement cost (checkpoints/examples provided).
+
+#### 🎯 Zero-shot single-point valid mask evaluation (1-click / 1-box)
+
+- **Protocol**: Random foreground point within GT mask; tight GT bbox as prompt; among multiple predictions, evaluate the **highest-confidence** mask.
+
+![Image](https://github.com/user-attachments/assets/d47f8842-c867-483f-9077-5ec92fdc4cc4)
+
+- **Highlights**
+  - **EfficientSAM-Ti**: vs **MobileSAM**, **+1.9 mIoU (1-click)**, **+1.5 mIoU (1-box)** at similar complexity.  
+  - **SAMI > MAE**: SAMI-pretrained weights outperform MAE-pretrained on COCO/LVIS interactive.  
+  - **EfficientSAM-S**: COCO(box) **−1.5 mIoU** vs SAM; LVIS(box) **−3.5 mIoU** (**~20× fewer params**).  
+  - Competitive on multi-click as well.
+
+---
+
+#### 📦 Zero-shot instance segmentation
+
+![Image](https://github.com/user-attachments/assets/5f8fbdcd-e317-44d6-b231-000b670fcde6)
+
+- **Protocol**: Use **ViTDet**-generated **bbox prompts**; pick the mask with **max IoU** to the bbox.  
+  - Thus **ViTDet-H** serves as a **strong upper baseline** for comparison.
+- **Results**
+  - **EfficientSAM-S**: vs FastSAM **COCO +6.5 AP**, **LVIS +7.8 AP**.  
+  - **EfficientSAM-Ti**: vs FastSAM **COCO +4.1 AP**, **LVIS +5.3 AP**; vs MobileSAM **COCO +3.6 AP**, **LVIS +5.5 AP**.  
+  - **Model size**: **Ti 9.8M** vs **FastSAM 68M** → **much lighter**.  
+  - **S model** narrows the gap to full **SAM (0.6G params)** to about **~2 AP**.  
+- **Summary**: Beats other **lightweight** models; **slightly below** the **very large** ViTDet-H+SAM pipeline.
+
+---
+
+#### 👀 Qualitative & Salient Instance Segmentation
+
+![Image](https://github.com/user-attachments/assets/ee90727f-09e1-4a65-aeeb-2279180b631d)
+
+- **Qualitative**: For points/boxes/“segment everything,” EfficientSAM’s boundaries & occlusion reasoning are **close to SAM**.  
+- **Salient Instance Seg.**: Generate a **saliency map** with **U²-Net**, then sample **3 points (3-click)** inside the map to segment with EfficientSAM.  
+  → Promising for **accessibility** (e.g., users with limited hand mobility).
+
+---
+
+### 🧪 Core Ablations
+
+- **Reconstruction loss in SAMI**: **MSE > Cosine** → directly reconstructing SAM **feature values** works better.  
+- **Cross-attention decoder**: **Query only masked tokens** (encoder outputs act like anchors) → **+3% Top-1** vs decoding all tokens (MAE-style) on ImageNet-1K (SAMI-Ti).  
+- **Mask ratio**: **High ratio (~75%)** remains consistently strong (50/75/85% tested).  
+- **Reconstruction target**: Using **CLIP encoder features** as target still yields **+0.8%p over MAE** (ViT-Tiny, IN-1K) → validates **Guided MIM** with strong teacher features.  
+- **Finetuning steps**: Good results even at **0.1 epoch**; **+2.5 mIoU** by **1 epoch**.  
+  - **EfficientSAM-S** final **76.9 mIoU**, only **−1.5 mIoU** vs SAM.
+
+---
+
+## ✅ Conclusion
+
+- **EfficientSAM** transfers **SAM’s representational power** into a **lightweight encoder** via **SAMI pretraining**, achieving **similar accuracy with much better efficiency**.  
+- With **prompt compatibility** (points/boxes/everything) and **open checkpoints**, it’s highly suitable for **edge, real-time, and large-scale deployment**.
+
+
+
+---
+
 ### 🧠 (한국어) EfficientSAM : Leveraged Masked Image Pretraining로 ‘가볍고 빠른’ SAM!   
 
 ![Image](https://github.com/user-attachments/assets/87091298-8c04-4d89-a0f1-9f4a47459569)
@@ -77,7 +236,7 @@ sitemap:
 
 ---
 
-## 🧱 EfficientSAM 구조(Architecture)
+#＃# 🧱 EfficientSAM 구조(Architecture)
 
 ![Image](https://github.com/user-attachments/assets/f94e0292-d4e5-44eb-8dde-c9e7ff6681b9)
 
@@ -95,7 +254,7 @@ sitemap:
 
 ---
 
-## 🔧 학습법(Training Recipe) 및 학습 결과(Results)  
+#＃# 🔧 학습법(Training Recipe) 및 학습 결과(Results)  
 
 - **1) SAMI 프리트레이닝 (사전학습)**  
   - **교사**: SAM의 ViT-H 인코더로부터 얻은 **고품질 특징**.  
@@ -114,7 +273,7 @@ sitemap:
 
 ---
 
-## 🧪 Segmentation 결과 분석 & Ablation 테스트  
+### 🧪 Segmentation 결과 분석 & Ablation 테스트  
 
 1) **SAMI의 이득**  
    - 일반 MAE류 대비, **SAM 특징 복원**에 목표를 둔 **SAMI**가 **프롬프트 분할**에 더 적합한 표현을 학습하는 것으로 보고됩니다. :contentReference[oaicite:16]{index=16}
@@ -125,7 +284,6 @@ sitemap:
 3) **실전 호환성**  
    - **포인트/박스/Everything** 프롬프트와 **SAM 마스크 디코더**를 유지해, **기존 파이프라인 대체 비용**이 낮습니다(체크포인트·예제 제공). :contentReference[oaicite:18]{index=18}
 
-===========
 
 
 #### 🎯 Zero-shot single point valid mask evaluation results (1-click / 1-box)  
