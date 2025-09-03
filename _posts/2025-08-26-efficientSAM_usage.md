@@ -10,10 +10,295 @@ sitemap:
   priority: 0.9
 ---
 
+### 🧬 (English) EfficientSAM Practice!!  
+
+Today, following the [previous post](https://drfirstlee.github.io/posts/efficientSAM/) where we studied the theory,  
+we will conduct a hands-on experiment with the lightweight segmentation model `EfficientSAM`!  
+
+> ✔️ Main experiment objectives:  
+> - Use EfficientSAM with GPU  
+> - Prompt-based segmentation  
+> - Prompts can be given either as Box or Point  
+
+---
+
+### 🔧 1. Installation & Setup  
+
+EfficientSAM is not a pip package like Hugging Face Transformers,  
+so you need to clone the GitHub repository directly.  
+
+```bash
+# 1. Clone the EfficientSAM repository
+git clone https://github.com/ChaoningZhang/EfficientSAM.git
+cd EfficientSAM
+```
+
+- Conveniently, the `weights` folder already contains the pretrained model `efficient_sam_vits.pt.zip`.  
+
+---
+
+### 🖼️ 2. Basic Image Segmentation – CPU & GPU  
+
+First, if you run the provided `EfficientSAM_example.py` in the repo,  
+you can check that it works correctly.  
+
+```python
+from efficient_sam.build_efficient_sam import build_efficient_sam_vitt, build_efficient_sam_vits
+# from squeeze_sam.build_squeeze_sam import build_squeeze_sam
+
+from PIL import Image
+from torchvision import transforms
+import torch
+import numpy as np
+import zipfile
+    
+
+
+models = {}
+
+# Build the EfficientSAM-Ti model.
+models['efficientsam_ti'] = build_efficient_sam_vitt()
+
+# Since EfficientSAM-S checkpoint file is >100MB, we store the zip file.
+with zipfile.ZipFile("weights/efficient_sam_vits.pt.zip", 'r') as zip_ref:
+    zip_ref.extractall("weights")
+# Build the EfficientSAM-S model.
+models['efficientsam_s'] = build_efficient_sam_vits()
+
+# Build the SqueezeSAM model.
+# models['squeeze_sam'] = build_squeeze_sam()
+
+# load an image
+sample_image_np = np.array(Image.open("figs/examples/dogs.jpg"))
+sample_image_tensor = transforms.ToTensor()(sample_image_np)
+# Feed a few (x,y) points in the mask as input.
+
+input_points = torch.tensor([[[[580, 350], [650, 350]]]])
+input_labels = torch.tensor([[[1, 1]]])
+
+# Run inference for both EfficientSAM-Ti and EfficientSAM-S models.
+for model_name, model in models.items():
+    print('Running inference using ', model_name)
+    predicted_logits, predicted_iou = model(
+        sample_image_tensor[None, ...],
+        input_points,
+        input_labels,
+    )
+    sorted_ids = torch.argsort(predicted_iou, dim=-1, descending=True)
+    predicted_iou = torch.take_along_dim(predicted_iou, sorted_ids, dim=2)
+    predicted_logits = torch.take_along_dim(
+        predicted_logits, sorted_ids[..., None, None], dim=2
+    )
+    # The masks are already sorted by their predicted IOUs.
+    # The first dimension is the batch size (we have a single image. so it is 1).
+    # The second dimension is the number of masks we want to generate (in this case, it is only 1)
+    # The third dimension is the number of candidate masks output by the model.
+    # For this demo we use the first mask.
+    mask = torch.ge(predicted_logits[0, 0, 0, :, :], 0).cpu().detach().numpy()
+    masked_image_np = sample_image_np.copy().astype(np.uint8) * mask[:,:,None]
+    Image.fromarray(masked_image_np).save(f"figs/examples/dogs_{model_name}_mask.png")
+
+# Check: parameter device
+print("Model param device:", next(models['efficientsam_ti'].parameters()).device)
+print("Image tensor device:", sample_image_tensor.device)
+```
+
+You will see that the dog is successfully segmented:  
+
+![Image](https://github.com/user-attachments/assets/72269b64-90a7-4d35-bbf9-9d39185189d3)  
+
+But the device is CPU by default.  
+If you change it as follows, you can confirm the logs showing execution on GPU:  
+
+```python
+from efficient_sam.build_efficient_sam import build_efficient_sam_vitt, build_efficient_sam_vits
+# from squeeze_sam.build_squeeze_sam import build_squeeze_sam
+
+from PIL import Image
+from torchvision import transforms
+import torch
+import numpy as np
+import zipfile
+import contextlib
+
+# -----------------------------------
+# Device setting
+# -----------------------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Using device:", device)
+
+# -----------------------------------
+# Load models (+ move to GPU)
+# -----------------------------------
+models = {}
+
+# EfficientSAM-Ti
+models['efficientsam_ti'] = build_efficient_sam_vitt().to(device).eval()
+
+# EfficientSAM-S (unzip weights first)
+with zipfile.ZipFile("weights/efficient_sam_vits.pt.zip", 'r') as zip_ref:
+    zip_ref.extractall("weights")
+models['efficientsam_s'] = build_efficient_sam_vits().to(device).eval()
+
+# SqueezeSAM (optional)
+# models['squeeze_sam'] = build_squeeze_sam().to(device).eval()
+
+# -----------------------------------
+# Prepare input (+ move to GPU)
+# -----------------------------------
+sample_image_np = np.array(Image.open("figs/examples/dogs.jpg"))
+sample_image_tensor = transforms.ToTensor()(sample_image_np).to(device)  # [C,H,W] float32 on device
+
+# Feed a few (x,y) points in the mask as input.
+input_points = torch.tensor([[[[580, 350], [650, 350]]]], device=device)  # [B=1, N=1, K=2, 2]
+input_labels = torch.tensor([[[1, 1]]], device=device)                    # [B=1, N=1, K=2]
+
+# -----------------------------------
+# Inference (AMP for CUDA only)
+# -----------------------------------
+amp_ctx = torch.autocast(device_type="cuda") if device.type == "cuda" else contextlib.nullcontext()
+
+for model_name, model in models.items():
+    print('Running inference using', model_name)
+
+    with torch.inference_mode(), amp_ctx:
+        predicted_logits, predicted_iou = model(
+            sample_image_tensor[None, ...],  # [1,C,H,W]
+            input_points,
+            input_labels,
+        )
+
+    # Sort and select top mask
+    sorted_ids = torch.argsort(predicted_iou, dim=-1, descending=True)
+    predicted_iou = torch.take_along_dim(predicted_iou, sorted_ids, dim=2)
+    predicted_logits = torch.take_along_dim(predicted_logits, sorted_ids[..., None, None], dim=2)
+
+    # Use the first candidate mask
+    mask = (predicted_logits[0, 0, 0] >= 0).to(torch.uint8).cpu().numpy()  # [H,W], uint8 (0/1)
+
+    # Save masked image
+    masked_image_np = (sample_image_np.astype(np.uint8) * mask[:, :, None])
+    Image.fromarray(masked_image_np).save(f"figs/examples/dogs_{model_name}_mask.png")
+
+# Check: parameter device
+print("Model param device:", next(models['efficientsam_ti'].parameters()).device)
+print("Image tensor device:", sample_image_tensor.device)
+```
+
+Result log:  
+
+```text
+Running inference using efficientsam_ti
+Running inference using efficientsam_s
+Model param device: cuda:0
+Image tensor device: cuda:0
+```
+
+---
+
+### 🧪 3. Experimenting with Prompts  
+
+EfficientSAM performs segmentation based on either **box** or **point prompts**.  
+The most basic point prompt is already shown in the sample code above:  
+
+```python
+...
+# Feed a few (x,y) points in the mask as input.
+input_points = torch.tensor([[[[580, 350], [650, 350]]]], device=device)  # [B=1, N=1, K=2, 2]
+input_labels = torch.tensor([[[1, 1]]], device=device)                    # [B=1, N=1, K=2]
+...
+```
+
+This means two positive points were provided:  
+
+- [580, 350], [650, 350] → user-clicked coordinates.  
+- 1, 1 → positive points (included in the mask).  
+
+If the label had been 0, it would mean a negative point (outside the target area).  
+
+So, what about **bbox**?  
+
+```python
+...
+box_pts = np.array([[x1, y1], [x2, y2]], dtype=np.int64)
+box_lbl = np.array([2, 3], dtype=np.int64)
+input_points = torch.from_numpy(box_pts)[None, None, ...].to(device)   # [1,1,2,2]
+input_labels = torch.from_numpy(box_lbl)[None, None, ...].to(device)   # [1,1,2]
+...
+```
+
+With this format:  
+- Give two points and set labels to [2, 3], and it will be interpreted as a bounding box.  
+- Label 2 = top-left corner, Label 3 = bottom-right corner.  
+
+---
+
+### ⚙️ 4. Real-World Application – GroundingDINO + EfficientSAM  
+
+- Remember the open-vocabulary object detection tool `GroundingDINO`?  
+- Make sure you have GroundingDINO set up (see [previous post](https://drfirstlee.github.io/posts/groundingDINO_Detection_usage/)).  
+- We will use `GroundingDINO` to generate bboxes,  
+- and then use `EfficientSAM` for segmentation.  
+
+```python
+# 1. Package imports, model loading & variable setup  
+import os, contextlib, zipfile, numpy as np, torch, cv2
+from PIL import Image
+from torchvision import transforms
+from efficient_sam.build_efficient_sam import build_efficient_sam_vitt, build_efficient_sam_vits
+from groundingdino.util.inference import load_model, load_image, predict
+
+IMAGE_PATH = "{my_dir}/EfficientSAM_gdino/figs/examples/brush_with_toothbrush_000268.jpg"
+TEXT_PROMPT = "toothbrush"
+
+SAVE_PATH = "{my_dir}/EfficientSAM_gdino/figs/examples"
+img_name = os.path.splitext(os.path.basename(IMAGE_PATH))[0]
+
+GDINO_CONFIG  = "{my_dir}/EfficientSAM_gdino/grounding_dino/config/GroundingDINO_SwinT_OGC.py"
+GDINO_WEIGHTS = "{my_dir}/EfficientSAM_gdino/grounding_dino/weights/groundingdino_swint_ogc.pth"
+EFSAM_S_ZIP   = "{my_dir}/EfficientSAM_gdino/weights/efficient_sam_vits.pt.zip"
+
+OUTPUT_DIR = os.path.join(SAVE_PATH, "outputs")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("[Device]", device)
+
+# ---------- GroundingDINO ----------
+gdino = load_model(GDINO_CONFIG, GDINO_WEIGHTS)
+image_source, image_pre = load_image(IMAGE_PATH)
+
+# ---------- EfficientSAM ----------
+models = {}
+models["efficientsam_ti"] = build_efficient_sam_vitt().to(device).eval()
+if os.path.isfile(EFSAM_S_ZIP):
+    with zipfile.ZipFile(EFSAM_S_ZIP, "r") as zf: zf.extractall("weights")
+models["efficientsam_s"]  = build_efficient_sam_vits().to(device).eval()
+
+# ---------- Image tensor ----------
+img_np = np.array(Image.open(IMAGE_PATH).convert("RGB"))
+H, W = img_np.shape[:2]
+img_tensor = transforms.ToTensor()(img_np).to(device)  # [C,H,W]
+```
+
+*(... intermediate code unchanged, same as your original ...)*  
+
+---
+
+![Image](https://github.com/user-attachments/assets/e0d95285-5151-4e49-914e-6c327b530eaa)  
+
+Through this process, you can clearly see the bbox and segmentation results!  
+
+With multiple models connected, you can carry out many exciting projects~ 🎉  
+
+
+---
+
+
 ### 🧬 (한국어) EfficientSAM 실습!!
 
 오늘은 [지난포스팅](https://drfirstlee.github.io/posts/efficientSAM/)에서 이론에 대하여 공부해보았던!  
-가벼운 Segmentation 모델델! `LOEfficientSAMRA` 의 실습을 진행해보겠습니다!!  
+가벼운 Segmentation 모델델! `EfficientSAM` 의 실습을 진행해보겠습니다!!  
 
 
 > ✔️ 기본 실험 목적:  
@@ -34,7 +319,8 @@ git clone https://github.com/ChaoningZhang/EfficientSAM.git
 cd EfficientSAM
 ```
 
-그럼!! 친절히도 weights 폴더에 `efficient_sam_vits.pt.zip` 모델이 잘 저장되어있습니다~  
+- 그럼!! 친절히도 weights 폴더에 `efficient_sam_vits.pt.zip` 모델이 잘 저장되어있습니다~  
+
 ---
 
 ### 🖼️ 2. 이미지 세그멘테이션 기본 실습 - CPU&GPU!  
@@ -108,8 +394,8 @@ print("Image tensor device:", sample_image_tensor.device)
 
 ![Image](https://github.com/user-attachments/assets/72269b64-90a7-4d35-bbf9-9d39185189d3)
 
-그런데!! Device가 CPU이기에~~\
-아래와 같이 해보면~~ GPU 로 돌아간 로그 확인이 가능합니다!!
+그런데!! Device가 CPU이기에~~  
+아래와 같이 해보면~~ GPU 로 돌아간 로그 확인이 가능합니다!!  
 
 ```python
 from efficient_sam.build_efficient_sam import build_efficient_sam_vitt, build_efficient_sam_vits
@@ -197,6 +483,8 @@ Model param device: cuda:0
 Image tensor device: cuda:0
 ```
 
+---
+
 ### 🧪 3. Prompt 를 바꿔가며 실험하기!!  
 
 EfficientSAM은 **box** 또는 **point prompt** 기반으로 세그멘테이션을 수행합니다.  
@@ -215,7 +503,7 @@ input_labels = torch.tensor([[[1, 1]]], device=device)                    # [B=1
 위를 해석해보면 2개의 positive 점으로 진행한 것이고고
 
 - [580, 350], [650, 350] → 유저가 클릭한 점 좌표.
-- 1, 1 → positive point (이 영역 안쪽을 포함).
+- 1, 1 → positive point (이 영역을 포함).
 
 만약 점의 label이 0이었다면 negative point, 즉 영역의바깥을 의미하는것 입니다!!
 
@@ -238,7 +526,6 @@ input_labels = torch.from_numpy(box_lbl)[None, None, ...].to(device)   # [1,1,2]
 ---
 
 
----
 
 ### ⚙️ 4. 실전 응용~!!! groundingDINO + EfficientSAM 실험해보기  
 
