@@ -10,6 +10,7 @@ sitemap:
   priority: 0.8
 ---
 
+---
 ### 🔎 (한국어) CLIP Surgery: CLIP을 수술해서 설명 가능성을 높이다!  
 
 ![Image](https://github.com/user-attachments/assets/c0ab1e6d-506b-46b1-bd0f-519e74812557)

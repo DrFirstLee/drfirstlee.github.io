@@ -10,6 +10,7 @@ sitemap:
   priority: 0.8
 ---
 
+---
 ### 🧩 (한국어) PartCLIPSeg: CLIP으로 파트 단위까지 인식하는 Open-Vocabulary 세분화!  
 
 ![Image](https://github.com/user-attachments/assets/fda00fce-3252-44bb-a18b-4d91a653ef45)
