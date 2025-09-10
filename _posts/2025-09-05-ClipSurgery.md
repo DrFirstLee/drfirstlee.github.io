@@ -67,7 +67,7 @@ sitemap:
 
 ### 🧱 CLIP Surgery 구조 (Architecture)
 
-![Image](https://github.com/user-attachments/assets/2233bbbb-cccc-dddd-eeee-ffff11112222)
+![Image](https://github.com/user-attachments/assets/a2afeaa7-cf08-4156-a214-b8dcc167b5ab)
 
 #### i) Architecture Surgery(구조적 문제 개선)  
 - Raw Self-attention(i-1)이 일관되지 않은 의미 영역을 연결하는 문제가 있는데,  
@@ -81,7 +81,7 @@ sitemap:
 
   - 이를 코드로 보면 Transformer Attention 부분인 `Attention` forward 부분에서,   
   ```python
-  # i-1) Raw Self-attention
+    # i-1) Raw Self-attention
     def forward(self, x):
         B, N, C = x.shape
         qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
@@ -92,7 +92,7 @@ sitemap:
         attn_ori = attn_ori.softmax(dim=-1)
         attn_ori = self.attn_drop(attn_ori)
 
-  # i-2) consistent Self-attention  
+        # i-2) consistent Self-attention  
         # replace k & q by v
         k = v
         q = k
@@ -100,7 +100,7 @@ sitemap:
         attn = (attn).softmax(dim=-1)
         attn = self.attn_drop(attn)
 
-  ## 마무리!! 둘다 사용할 수 있도록 return  
+        ## 마무리!! 둘다 사용할 수 있도록 return  
         x_ori = (attn_ori @ v).transpose(1, 2).reshape(B, N, C)
         x = (attn @ v).transpose(1, 2).reshape(B, N, C) # clip_surgery
         #x = v.transpose(1, 2).reshape(B, N, C) # mask_clip
