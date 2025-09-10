@@ -115,7 +115,7 @@ sitemap:
   - 그렇기에 `새 경로`에서는 self-attention만 적용하고 FFN은 스낍!!  
   - 한편 `원래 경로` 도 유지해서 CLIP 본래 임베딩 보존  
 
-  - 이를 코드로 보면, Transformer layer인 `ResidualAttentionBlock` forward 부분에서,   
+  - 이를 코드로 보면, Transformer layer인 `ResidualAttentionBlock` forward 부분에서,    
   ```python
     def forward(self, x):
         # dual paths for blocks deeper than "d"
