@@ -11,6 +11,228 @@ sitemap:
 ---
 
 ---
+### 🔎 (English) CLIP Surgery: Enhancing Explainability by Operating on CLIP!  
+
+![Image](https://github.com/user-attachments/assets/c0ab1e6d-506b-46b1-bd0f-519e74812557)
+
+* **Title**: [A Closer Look at the Explainability of Contrastive Language-Image Pre-training (CLIP Surgery)](https://arxiv.org/abs/2304.05653)  
+* **Journal**: Pattern Recognition (2025)  
+* **Code**: [GitHub – CLIP Surgery](https://github.com/xmed-lab/CLIP_Surgery)  
+* **Keywords**: `CLIP`, `Explainability`, `CAM`, `Vision-Language`, `Open-Vocabulary`  
+* **Summary**: CLIP is a powerful vision-language model, but it often **focuses on the background instead of the foreground** or suffers from **noisy activation**. To address this, the authors propose **Architecture Surgery** and **Feature Surgery**, significantly improving explainability!  
+
+---
+
+### 🚀 Key Summary of CLIP Surgery  
+
+> One-liner: **“Without extra training, only structural and feature surgeries enhance CLIP’s explainability!”**
+
+1) **Proving CLIP’s Issues**: Found problems of inconsistency in self-attention and redundant features.  
+
+2) **Feature Surgery**: Successfully removed redundant features and suppressed unnecessary noisy activation → produced clean CAMs!!  
+
+3) **Training-Free Explainability**: No fine-tuning required, explainability secured with original CLIP → versatile applications!!  
+
+---
+
+### 🔍 Research Background  
+
+- **CAM, Grad-CAM**: Effective for CNN/ViT but fail on CLIP.  
+  > In CLIP they are *noisy* and produce *opposite visualization*. In other words, localization fails!!  
+  ![Image](https://github.com/user-attachments/assets/21e4b20a-093a-4cb0-828e-31c6e5d82d86)
+
+- Why do they fail in CLIP?  
+  - Because self-attention links inconsistent semantic regions, and redundant features emphasize background rather than foreground.  
+
+  a. Why does self-attention link inconsistent semantic regions?  
+    a-1. CLIP was only trained for **global image–text matching**, so attention didn’t need to focus precisely on object interiors.  
+    a-2. CLIP’s Query, Key, and Value parameters are different (heterologous), so Q/K relations connect inconsistent semantic areas.  
+    > A_raw = σ(s · QK_⊤)V : heterologous parameters  
+    > A_con = σ(s · VV_⊤)V : homogeneous parameters  
+
+  b. Why do redundant features cause noise?  
+    b-1. CLIP trains on many categories at once, so shared features (e.g., “sky”, “grass”, “road”) frequently appear.  
+    b-2. These generic features are often in the background, so self-attention is easily pulled toward them, causing noisy activation.  
+    ![Image](https://github.com/user-attachments/assets/e2ca7fa6-4181-47cc-95a8-70eaea9278e6)
+
+- **Alignment-based approaches** exist but require extra models, layers, or fine-tuning (not training-free).  
+  - **ECLIP**: Realigns CLIP features with segmentation masks using **self-supervision**.  
+  - **RCLIP**: Uses **bounding box annotations** to refine CLIP’s image–text features per object.  
+  - Both require **retraining (fine-tuning)**.  
+
+---
+
+### 🧱 CLIP Surgery Architecture  
+
+![Image](https://github.com/user-attachments/assets/a2afeaa7-cf08-4156-a214-b8dcc167b5ab)
+
+#### i) Architecture Surgery (Fixing Structural Issues)  
+- Raw self-attention (i-1) connects inconsistent semantic regions.  
+- Consistent self-attention (i-2) prevents unnecessary background emphasis.  
+
+> mFSR measures how much self-attention focuses on the foreground (object).  
+![Image](https://github.com/user-attachments/assets/8c327f9a-df42-4330-a191-b98221d83cf9)
+
+  i-1) `raw self-attention : A_raw = σ(s · QK_T)V`  
+  i-2) `consistent self-attention : A_con = σ(s · VV_⊤)V`  
+
+- Code example: Transformer `Attention` forward pass  
+
+```python
+    # i-1) Raw Self-attention
+    def forward(self, x):
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv[0], qkv[1], qkv[2]
+
+        # original self-attention for the original path
+        attn_ori = (q @ k.transpose(-2, -1)) * self.scale
+        attn_ori = attn_ori.softmax(dim=-1)
+        attn_ori = self.attn_drop(attn_ori)
+
+        # i-2) consistent Self-attention  
+        # replace k & q by v
+        k = v
+        q = k
+        attn = (q @ k.transpose(-2, -1)) * scale
+        attn = (attn).softmax(dim=-1)
+        attn = self.attn_drop(attn)
+
+        ## return both paths  
+        x_ori = (attn_ori @ v).transpose(1, 2).reshape(B, N, C)
+        x = (attn @ v).transpose(1, 2).reshape(B, N, C) # clip_surgery
+        x = self.proj_drop(self.proj(x))
+        x_ori = self.proj_drop(self.proj(x_ori))
+        return [x, x_ori]
+```
+
+- Dual paths: one for CLIP embeddings, another for CAM generation. FFN skipped to avoid negative effects.  
+
+![Image](https://github.com/user-attachments/assets/ff53ea79-cfcd-422f-95df-38a5b3564764)  
+
+- In the figure, FFN inside CLIP Transformer focuses incorrectly, and early self-attention blocks are also inaccurate.  
+- Thus, in the **new path**, only self-attention is applied (FFN skipped).  
+- The **original path** is kept to preserve embeddings.  
+
+- Code example: `ResidualAttentionBlock` forward  
+
+```python
+    def forward(self, x):
+        # dual paths for blocks deeper than "d"
+        if isinstance(self.attn, Attention):
+            if isinstance(x, list):
+                x, x_ori = x ## x_ori = original path, x = new path
+                x_res = self.attention(self.ln_1(x_ori))
+                x_res, x_ori_res = x_res ## consistent vs raw self-attention
+                x_ori += x_ori_res 
+                x_ori = x_ori + self.mlp(self.ln_2(x_ori)) # original path adds FFN
+                x += x_res # new path only adds consistent self-attention
+                return [x, x_ori]
+```
+
+#### ii) Feature Surgery (Fixing Representational Issues)  
+- CLIP learns many categories at once, leading to redundant shared features.  
+- Example: when target = “dog”, embeddings of cat, sky, sea, airplane also overlap.  
+  > Small L1 distance means positive and empty overlap → redundancy problem!!  
+  ![Image](https://github.com/user-attachments/assets/e2ca7fa6-4181-47cc-95a8-70eaea9278e6)
+
+- Code: **clip_feature_surgery** subtracts redundant_feats from all features.  
+
+```python
+# in demp.py, define all_texts and target_texts
+all_texts = [...]
+target_texts = ['dog']
+
+with torch.no_grad():
+    image_features = model.encode_image(image)
+    image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+    
+    text_features = clip.encode_text_with_prompt_ensemble(model, all_texts, device)
+
+    similarity = clip.clip_feature_surgery(image_features, text_features)
+    similarity_map = clip.get_similarity_map(features[:, 1:, :], cv2_img.shape[:2])
+
+    for b in range(similarity_map.shape[0]):
+        for n in range(similarity_map.shape[-1]):
+            if all_texts[n] not in target_texts:
+                continue
+            vis = (similarity_map[b, :, :, n].cpu().numpy() * 255).astype('uint8')
+            vis = cv2.applyColorMap(vis, cv2.COLORMAP_JET)
+            vis = cv2_img * 0.4 + vis * 0.6
+            vis = cv2.cvtColor(vis.astype('uint8'), cv2.COLOR_BGR2RGB)
+            print('CLIP:', all_texts[n])
+            plt.imshow(vis)
+            plt.show()
+```
+
+```python
+## clip.py clip_feature_surgery implementation
+def clip_feature_surgery(image_features, text_features, redundant_feats=None, t=2):
+
+    if redundant_feats != None:
+        similarity = image_features @ (text_features - redundant_feats).t()
+
+    else:
+        prob = image_features[:, :1, :] @ text_features.t()
+        prob = (prob * 2).softmax(-1)
+        w = prob / prob.mean(-1, keepdim=True)
+
+        b, n_t, n_i, c = image_features.shape[0], text_features.shape[0], image_features.shape[1], image_features.shape[2]
+        feats = image_features.reshape(b, n_i, 1, c) * text_features.reshape(1, 1, n_t, c)
+        feats *= w.reshape(1, 1, n_t, 1)
+        redundant_feats = feats.mean(2, keepdim=True) # along cls dim
+        feats = feats - redundant_feats
+        
+        similarity = feats.sum(-1)
+
+    return similarity
+```
+
+---
+
+### 🧪 Experimental Results  
+
+#### 🎯 Explainability Benchmarks  
+- On VOC 2012, COCO, PascalContext:  
+  - **mIoU +22–36% improvement**  
+  - **mSC +48–65% improvement**  
+
+#### 🎯 Open-Vocabulary Tasks  
+- **Semantic Segmentation**: best training-free method (PascalContext mIoU 29.3%)  
+- **Multi-label Recognition**: +11.61% mAP over CLIP on NUS-Wide  
+- **Interactive Segmentation**: replace manual labels by converting text → points for SAM  
+- **Multimodal Visualization**: interpret CLIP’s training itself  
+  ![Image](https://github.com/user-attachments/assets/bf45702f-6073-4693-b8a5-9007e63b0ca0)  
+  - `[end]` token most often activated; non-object words like “in”, “.”, “of” also highly active!!  
+  - Suggests **redundant tokens** in CLIP’s vocabulary.  
+  - Provides ideas for improving CLIP training in the future.  
+
+#### 👀 Qualitative Comparison  
+
+![Image](https://github.com/user-attachments/assets/ddf81331-3582-4ae1-bcec-20c60b6110a0)
+
+- Original CLIP: emphasizes background + noisy  
+- CLIP Surgery: sharp, object-focused heatmaps  
+- → Clear improvement vs Grad-CAM, Bi-Modal, gScoreCAM  
+
+#### 🧪 Ablation Study  
+
+![Image](https://github.com/user-attachments/assets/73150a1c-13ca-4e48-bb1c-8648056b2c0b)
+
+- Only **Architecture Surgery (i)** → mSC +47.88%  
+- Add **Feature Surgery (ii)** → extra +3.17%  
+- Without dual paths → collapse occurs, proving it’s essential.  
+
+---
+
+## ✅ Conclusion  
+
+- **CLIP Surgery** solves CLIP’s fundamental explainability issues (**opposite visualization, noisy activation**).  
+- A **training-free approach** strengthens CAM-based interpretation.  
+- Directly applicable to downstream tasks like Semantic Segmentation, Multi-label Recognition, Interactive Segmentation.  
+- Provides key insights for understanding CLIP internals and guiding future model improvements.  
+
+---
 ### 🔎 (한국어) CLIP Surgery: CLIP을 수술해서 설명 가능성을 높이다!  
 
 ![Image](https://github.com/user-attachments/assets/c0ab1e6d-506b-46b1-bd0f-519e74812557)
@@ -166,9 +388,10 @@ with torch.no_grad():
             print('CLIP:', all_texts[n])
             plt.imshow(vis)
             plt.show()
+```
 
-
-## clip.py clip_feature_surgery 부분에서 전체에서 겹치는 부의를 가지고 redundant_feats를 만들고 각 feats에서 redundant_feats를 빼줌
+```python 
+## clip.py clip_feature_surgery 부분에서 전체에서 겹치는 부의를 가지고 redundant_feats를 만들고 각 feats에서 redundant_feats를 빼줌  
 def clip_feature_surgery(image_features, text_features, redundant_feats=None, t=2):
 
     if redundant_feats != None:
