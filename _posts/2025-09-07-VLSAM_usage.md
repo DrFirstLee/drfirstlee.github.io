@@ -4,257 +4,247 @@ title: "🔎 VL-SAM Hands-on: VL-SAM 을 실습해보자!"
 author: [DrFirst]
 date: 2025-09-07 07:00:00 +0900
 categories: [AI, Research]
-tags: [Open-Vocabulary, Detection, Segmentation, SAM, VLM,python, Open-ended]
+tags: [Open-Vocabulary, Detection, Segmentation, SAM, VLM, python, Open-ended]
 sitemap:
   changefreq: monthly
   priority: 0.8
 ---
 
----
+## 개요
 
-### 🧬 (한국어) EfficientSAM 실습!!
-
-오늘은 [예전포스팅](https://drfirstlee.github.io/posts/SAM2/)에서 이론에 대하여 공부해보았던!  
-그리고 [실습도 해보았던](https://drfirstlee.github.io/posts/SAM2_usage/)
-새로운 SAM 모델! `SAM2` 의 실습을 다시 한 번 진행해보겠습니다!!  
-이번엔 지난번과 달리 `ultralytics` 가 아니라 huggingface에서 모델을 받아서고고!!  
-
-> 그런데,, 이 SAM2, EfficientSAM보다는 결과물이 맘에들지 않구만유,,
+이 포스트에서는 **VL-SAM**의 핵심인 *“객체 이름 → 위치 힌트(Attention Map) 생성 → SAM 포인트 프롬프트”* 중, **Attention Map 생성(VLM 측)** 실습을 다룹니다.  
+(반복 iteration 없이, 단일 패스 성격의 데모)
 
 ---
 
-### 🔧 1. 설치 및 셋업
+## 1) [Object Recognition] – Attention Map Generation (VLM)
 
-GitHub에서 직접 클론하여 설치합니다.  
-저는 그전에 sam2라는 가상환경을 만들고 진행했습니다!!  
+**핵심 아이디어:** SAM에 넣을 **Object Prompt**를 VLM의 **어텐션 흐름**으로부터 만들자!
 
-```bash
-conda create --name sam2 python=3.12
-git clone https://github.com/facebookresearch/sam2.git && cd sam2
-
-pip install -e .
-```
-
-추가로 SAM2 git의 readme에서는 `./download_ckpts.sh`로 모델을 받으라고했지만,  
-실제 코드는 `hf_hub_download`를 통해 weight를 받아오는 기능이 있기에 스킵!!
+- **a.** 이미지 기반으로 VLM에게 “이미지 속 모든 객체를 나열해”라고 요청 → 응답에서 **Tag2Text 유사 방식**으로 객체 리스트를 확보  
+- **b.** 토큰 생성 과정에서 **모든 레이어/헤드의 Q, K**를 저장  
+- **c.** 추출한 객체 토큰에 대해 **Q × Kᵀ** → **causal mask** 적용 → **Softmax** 표준화 → **similarity matrix S**  
+- **d.** 레이어/헤드 별 **가중치 W** 산출  
+  - 예시: `W = Mean(Max(S, dim=1), dim=0)`  
+- **e.** 가중치 W로 보정된 **S′** 계산  
+- **f.** 레이어별 S′를 종합하여 **attention flow** 산출  
+- **g.** Auto-Regressive VLM의 특성(좌상단으로 collapse 경향)을 줄이기 위해 **Regularized attention flow column** 사용  
+- **Finally,** 최종 **Attention Map** 완성!
 
 ---
 
-### 🖼️ 2. 이미지 세그멘테이션    
+## 2) 실습 코드 (Attention Map 생성)
 
-지난 [EfficientSAM 실습](https://drfirstlee.github.io/posts/efficientSAM_usage/)과 동일하게!! 멍멍이 사진으로 진행해보겠습니다!!  
-프롬포트도~ 점을 2개만!!  
+> **환경 가정**
+> - `Qwen/Qwen2.5-VL-3B-Instruct`  
+> - 4-bit 양자화(`bitsandbytes`) 사용 가능 시 메모리 절약  
+> - 아래 코드는 **어텐션 맵 생성까지** (SAM 연동은 별도 단계에서 진행 가능)
 
-```python
-import torch
-import numpy as np
-from PIL import Image, ImageDraw
+> **주의**
+> - 블로그에 맞춰 코드 펜스는 **`$$$`** 로 감쌌습니다. 복붙 후 바로 실행하세요.
+> - 경로(`IMAGE_PATH`)는 로컬 환경에 맞게 수정하세요.
+
+$$$
 import os
-from sam2.sam2_image_predictor import SAM2ImagePredictor
-
-# 1. 기본 설정
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using device: {device}")
-
-# 2. SAM2 모델 불러오기
-predictor = SAM2ImagePredictor.from_pretrained("facebook/sam2-hiera-large")
-
-# 3. 이미지 준비
-image_path = "./EfficientSAM_gdino/figs/examples/dogs.jpg"
-output_image_path = "output_masked_image.png"
-
-
-image_pil = Image.open(image_path).convert("RGB")
-image_np = np.array(image_pil)
-
-
-# -----------------------------------------------------
-# 4. 프롬프트 준비 
-# -----------------------------------------------------
-# input_points를 (batch, num_points, 2) 형태의 3D 텐서로 만듭니다.
-input_points = torch.tensor([[[580, 350], [650, 350]]], device=device)
-input_labels = torch.tensor([[1, 1]], device=device)
-
-# input_labels = torch.tensor([[1, 1, 1, 1]], device=device) # 모든 점이 전경
-# 5. 예측 실행
-with torch.inference_mode(), torch.autocast(device_type=device.split(":")[0], dtype=torch.bfloat16):
-    predictor.set_image(image_np)
-    masks, scores, _ = predictor.predict(
-        point_coords=input_points,
-        point_labels=input_labels,
-    )
-mask = masks[0]
-print(f"mask shape :{mask.shape}")
-
-# 원본 이미지와 같은 크기의 완전히 검정색 NumPy 배열 생성
-segmented_image_np = np.zeros_like(image_np)
-
-# 마스크가 True인 영역에만 원본 이미지 픽셀을 복사
-# mask는 boolean 배열 (True/False)이거나 0~1 사이의 float 배열일 수 있습니다.
-# float 배열이라면 임계값을 적용하여 boolean 마스크로 만듭니다.
-binary_mask = (mask > 0.5) # 0.5를 기준으로 True/False 마스크 생성
-
-# 마스크가 True인 위치에 원본 이미지 픽셀을 할당
-segmented_image_np[binary_mask] = image_np[binary_mask]
-
-# NumPy 배열을 PIL Image로 변환
-result_image = Image.fromarray(segmented_image_np)
-
-# 프롬프트 점도 이미지 위에 그리기 (선택 사항)
-draw_result = ImageDraw.Draw(result_image)
-points_np = input_points[0].cpu().numpy()
-labels_np = input_labels[0].cpu().numpy()
-
-for i, (x, y) in enumerate(points_np):
-    label = labels_np[i]
-
-    fill_color = "green" if label == 1 else "red"
-    outline_color = "white"
-    radius = 5
-
-    if label == 1:
-        draw_result.ellipse((x - radius, y - radius, x + radius, y + radius), fill=fill_color, outline=outline_color, width=1)
-    else:
-        draw_result.line((x - radius, y - radius, x + radius, y + radius), fill=fill_color, width=2)
-        draw_result.line((x + radius, y - radius, x - radius, y + radius), fill=fill_color, width=2)
-
-result_image.save(output_image_path)
-print(f"결과 이미지가 '{output_image_path}'에 저장되었습니다.")
-```
-
-결과 이미지는!!!??
-
-![Image](https://github.com/user-attachments/assets/a175eae3-a5e8-463b-bb96-15dcd5c94c51)
-
-완전 실망스러운데,,??  
-그래서, 프롬포트 점을 4개로, 모델도 `sam2.1_hiera_large.pt`로 바꿔서 해보았는데!!
-
-![Image](https://github.com/user-attachments/assets/83a1eb1c-3d3a-4b9a-812b-eb951fdd7ee4)
-
- 그래도 결과가 실망스럽네요,,
-GPT에 물어보니 프롬포트의 해석차이라고하는데,,  
-저는 그래도 EfficientSAM이 좋네요!!
-
-```text
-EfficientSAM이 더 "잘" 했다기보다는, 사용자의 부정확한 프롬프트를 더 "관대하게" 해석해 준 것입니다.
-
-반면에 SAM2는 훨씬 강력하고 정밀한 도구이기 때문에, 그 성능을 제대로 활용하려면 사용자도 더 정확한 프롬프트를 제공해야 합니다. 이전 답변에서 제안해 드린 것처럼 강아지들의 몸통과 머리에 여러 개의 점을 찍어주시면, SAM2가 EfficientSAM보다 훨씬 더 고품질의 정교한 마스크를 생성하는 것을 확인하실 수 있을 겁니다.
-```
- 
-
----
-
-### 🧪 3. 영상 Segmentation    
-
-![Image](https://github.com/user-attachments/assets/0ef426cb-262a-42ab-b714-d109844500b0)
-
-결과부터!!! 맘에드는데요~~  
-
-코드는 아래와 같습니다!
-
-```python
-import torch
-import numpy as np
+import re
 import cv2
-import os
-from sam2.sam2_video_predictor import SAM2VideoPredictor
-from moviepy.editor import VideoFileClip
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
 
-# 1. 기본 설정
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using device: {device}")
+from transformers import AutoProcessor, AutoModelForVision2Seq
+from transformers import BitsAndBytesConfig
 
-# 원본 및 출력 경로 설정
-output_video_path = "output_segmented_video_50_55s.mp4"
-clipped_video_path = "temp_clip.mp4"
+# ---------------------------
+# Config
+# ---------------------------
+QWEN_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"   # VRAM에 맞춰 조정 가능 (3B 권장)
+IMAGE_PATH = "/home/bongo/porter_notebook/research/dog.jpg"  # 실습용 이미지(강아지 1마리)
+TEXT_QUERY = "dog"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
+# 4bit 양자화(가능 시 메모리 절약) — bnb 미설치면 이 줄 삭제
+bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)
 
-# 3. 비디오 로딩
-cap = cv2.VideoCapture(clipped_video_path)
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-fps = cap.get(cv2.CAP_PROP_FPS)
-total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+print(f"[Info] Device: {DEVICE}")
+image_pil = Image.open(IMAGE_PATH).convert("RGB")
 
-video_frames = []
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-    video_frames.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-cap.release()
-print(f"클립 로드 완료: {width}x{height}, {total_frames} 프레임, {fps:.2f} FPS")
+print(f"[Info] Loading {QWEN_MODEL}...")
+processor = AutoProcessor.from_pretrained(QWEN_MODEL, trust_remote_code=True)
+model = AutoModelForVision2Seq.from_pretrained(
+    QWEN_MODEL,
+    device_map="auto",
+    torch_dtype="auto",
+    quantization_config=bnb,        # bitsandbytes 미설치 시 제거
+    trust_remote_code=True,
+)
+print("[Info] Model loaded.")
 
-# 4. SAM2 모델 로드
-print("SAM2 비디오 예측기 모델을 로드합니다...")
-predictor = SAM2VideoPredictor.from_pretrained("facebook/sam2-hiera-large")
+# ---------------------------------------------
+# Step (a): 이미지에서 객체 리스트 생성 (Tag2Text 유사)
+# ---------------------------------------------
+print("\n[Step a] Generating object list from the image...")
 
-# -----------------------------------------------------
-# 5. 프롬프트 준비 (★★★★★ 이 부분이 수정되었습니다 ★★★★★)
-# -----------------------------------------------------
-prompt_frame_idx = 0  # 프롬프트를 적용할 프레임 인덱스 (0은 첫 번째 프레임)
-prompt_obj_id = 1     # 추적할 객체의 고유 ID (첫 번째 객체이므로 1)
+messages_for_obj_list = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "image"},
+            {"type": "text", "text": "Please analyze the image and list all the objects present."}
+        ]
+    }
+]
 
-# 점 좌표: (NumPoints, 2) 형태의 NumPy 배열
-points = np.array([[width // 2, height // 2]], dtype=np.float32)
-# 레이블: (NumPoints,) 형태의 NumPy 배열
-labels = np.array([1], dtype=np.int32)
+text_template = processor.apply_chat_template(messages_for_obj_list, tokenize=False, add_generation_prompt=True)
+inputs_for_obj_list = processor(text=[text_template], images=[image_pil], return_tensors="pt").to(DEVICE)
 
-# -----------------------------------------------------
-# 6. 모델 초기화 및 첫 프레임 예측
-# -----------------------------------------------------
-with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
-    print("예측기 상태를 초기화합니다...")
-    state = predictor.init_state(clipped_video_path) 
-    
-    print("첫 번째 프레임에 프롬프트를 추가합니다...")
-    # 예제 코드에 맞춰 함수 이름과 인자를 모두 변경
-    _, _, masks = predictor.add_new_points_or_box(
-        inference_state=state,
-        frame_idx=prompt_frame_idx,
-        obj_id=prompt_obj_id,
-        points=points,
-        labels=labels,
+with torch.no_grad():
+    output = model.generate(
+        **inputs_for_obj_list,
+        max_new_tokens=256,      # 과도한 길이는 메모리↑
+        do_sample=False,
+        temperature=0.0
     )
-    # 7. 비디오 전파 및 결과 저장
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out_writer = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
-    
-    print("클립 전체에 마스크를 전파하고 결과를 저장합니다...")
-    for frame_idx, object_ids, masks in predictor.propagate_in_video(state):
-        original_frame = video_frames[frame_idx]
-        # segmented_image_np = np.zeros_like(original_frame)
-        # segmented_image_np = np.zeros_like(original_frame)
-        segmented_image_np = np.full_like(original_frame, 255)
 
-        # prompt_obj_id (1)가 추적되고 있는지 확인
-        if prompt_obj_id in object_ids:
-            mask_logits = masks[0][0].cpu().numpy()
-            binary_mask_before_resize = (mask_logits > 0.0).astype(np.uint8)
-            resized_mask = cv2.resize(binary_mask_before_resize, (width, height), interpolation=cv2.INTER_NEAREST)
+generated_text = processor.batch_decode(output, skip_special_tokens=True)[0]
 
-            # 4. 리사이즈된 마스크를 boolean 타입으로 최종 변환
-            boolean_mask = (resized_mask == 1)
+# 간단 파서: "assistant\n" 이후를 긁어 쉼표/개행으로 split
+obj_list_raw = generated_text.split("assistant\n")[-1].strip()
+object_list = [obj.strip().lower() for obj in re.split(r'[,\n]', obj_list_raw) if obj.strip()]
 
-            # 5. 올바른 마스크로 인덱싱
-            segmented_image_np[boolean_mask] = original_frame[boolean_mask]
-            # # 이제 shape이 일치하므로 정상적으로 작동합니다.
-            # segmented_image_np[mask] = original_frame[mask]   
-        # --- 추가된 부분: 모든 프레임에 프롬프트 점 그리기 ---
-        for x, y in points:
-            # cv2.circle을 사용하여 빨간색 점을 그립니다.
-            # segmented_image_np는 RGB 상태이므로, 빨간색은 (255, 0, 0)입니다.
-            # thickness=-1은 채워진 원을 의미합니다.
-            cv2.circle(segmented_image_np, (int(x), int(y)), radius=5, color=(255, 0, 0), thickness=-1)
+print(f"  - Detected objects (raw): {object_list}")
 
-        output_frame = cv2.cvtColor(segmented_image_np, cv2.COLOR_RGB2BGR)
-        out_writer.write(output_frame)
-        
-        print(f"\r- 처리 중: 프레임 {frame_idx + 1}/{total_frames}", end="")
+# 데모용으로 대상 객체 1개만 사용
+if len(object_list) == 0:
+    object_list = [TEXT_QUERY]
+target_object = object_list[0]
+print(f"  - Target object: {target_object}")
 
-    out_writer.release()
-    print(f"\n비디오 분할 완료! 결과가 '{output_video_path}'에 저장되었습니다.")
+# ------------------------------------------------------------
+# Final: 수동 생성 루프를 통해 디코더 어텐션을 수집 → 맵 근사
+#   (주의) 실제로는 Vision 패치 어텐션이 더 공간 의미가 명확하지만,
+#         빌드/메모리 제약 시 디코더 어텐션 근사를 사용.
+# ------------------------------------------------------------
+print(f"\n[Final Step] Generating attention map for '{target_object}' via a MANUAL generation loop...")
 
-```
+prompt_for_attention = "Please analyze the image and list all the objects present."
+messages_for_attention = [
+    {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt_for_attention}]}
+]
+text_template = processor.apply_chat_template(messages_for_attention, tokenize=False, add_generation_prompt=True)
+inputs = processor(text=[text_template], images=[image_pil], return_tensors="pt").to(DEVICE)
+input_ids = inputs.input_ids
 
-SAM2, 영상에서 트래이싱은 정말 맘에드는군요!^^
+# 대상 토큰 ID (간단히 공백+토큰 인코딩)
+token_ids = processor.tokenizer.encode(f" {target_object}", add_special_tokens=False)
+target_token_id = token_ids[0] if len(token_ids) > 0 else None
+
+found_target_attention = None
+generated_token_idx = -1
+past_key_values = None
+
+# 메모리 안전을 위해 토큰 길이 제한 (예: 최대 30)
+for step in range(30):
+    with torch.no_grad():
+        outputs = model(
+            input_ids=input_ids,
+            past_key_values=past_key_values,
+            use_cache=True,
+            output_attentions=True,    # 디코더 어텐션 요청
+            return_dict=True
+        )
+
+    next_token_logits = outputs.logits[:, -1, :]
+    next_token = torch.argmax(next_token_logits, dim=-1).unsqueeze(-1)
+
+    # 대상 토큰이 생성되면 어텐션 저장
+    if target_token_id is not None and next_token.item() == target_token_id and found_target_attention is None:
+        print(f"  - Found '{target_object}' token at generation step {step}.")
+        # outputs.attentions: Tuple[ num_layers x (B, num_heads, tgt_len, src_len) ]
+        found_target_attention = outputs.attentions
+        generated_token_idx = input_ids.shape[1]  # 현재 마지막 위치
+
+    # 다음 단계 준비
+    input_ids = torch.cat([input_ids, next_token], dim=-1)
+    past_key_values = outputs.past_key_values
+
+    # EOS면 중단
+    if next_token.item() == processor.tokenizer.eos_token_id:
+        print("  - Reached EOS.")
+        break
+
+print("  - Manual generation complete.")
+
+# ---------------------------------------------
+# Attention Map 집계 (근사) 및 시각화
+# ---------------------------------------------
+if found_target_attention:
+    print(f"  - Aggregating attention from {len(found_target_attention)} layers...")
+    # 비전 패치 그리드 크기 추정값 (간단한 데모용)
+    image_size = 448
+    patch_size = getattr(model.config.vision_config, "patch_size", 14)
+    grid_size = max(1, image_size // patch_size)
+    num_patches = grid_size * grid_size
+
+    all_layer_attentions = []
+    for layer_attention in found_target_attention:
+        # layer_attention: (B, num_heads, tgt_len, src_len)
+        # 생성된 직전 토큰의 query가 바라본 src 분포(row) 취득
+        token_row = layer_attention[0, :, generated_token_idx - 1, :]     # (num_heads, src_len)
+        # 앞쪽 패치 토큰에 해당한다고 가정하고 num_patches만 취득 (근사)
+        image_patch_attention = token_row[:, :num_patches]                # (num_heads, num_patches)
+        layer_avg = image_patch_attention.mean(dim=0)                     # (num_patches,)
+        all_layer_attentions.append(layer_avg)
+
+    final_avg = torch.stack(all_layer_attentions, dim=0).mean(dim=0)      # (num_patches,)
+    attention_map = final_avg.reshape(grid_size, grid_size).cpu().numpy()
+
+    # 원본 해상도로 업샘플
+    resized_map = cv2.resize(attention_map, (image_pil.width, image_pil.height), interpolation=cv2.INTER_CUBIC)
+
+    # 시각화
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1); plt.title("Original Image"); plt.axis('off'); plt.imshow(image_pil)
+    plt.subplot(1, 2, 2); plt.title(f"Aggregated Attention for '{target_object}'"); plt.axis('off')
+    plt.imshow(image_pil); plt.imshow(resized_map, cmap='jet', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig("attention_map_result.png", dpi=200)
+    print("[OK] Saved attention_map_result.png")
+else:
+    print(f"  - Could not find or generate the token for '{target_object}' within the generation limit.")
+$$$
+
+---
+
+## 3) 실행 팁 & 트러블슈팅
+
+- **메모리(OOM) 회피**
+  - 가능하면 **3B 체크포인트** 사용
+  - 입력 이미지를 먼저 **긴 변 384~448**로 축소 후 투입
+  - `max_new_tokens`를 **48~128** 범위로 제한
+- **bitsandbytes(4bit) 미설치/호환 문제**
+  - `quantization_config=bnb` 줄을 **삭제**하고 실행 (대신 VRAM 여유 필요)
+  - 또는 `pip install -U bitsandbytes` (NVIDIA CUDA 환경에서만)
+- **어텐션이 None으로 오는 경우**
+  - 빌드에 따라 `generate()`에서는 어텐션을 반환하지 않음  
+  - 위 코드는 **수동 생성 루프 + `output_attentions=True`**로 디코더 어텐션을 수집 (공간적 근사)
+  - 더 정확한 공간 히트맵이 필요하면 **비전 타워 어텐션 후킹** 또는 **히든 유사도(cosine)** 방식으로 대체 가능
+
+---
+
+## 4) 다음 단계 (SAM 연동)
+
+- 위에서 얻은 **Attention Map**에서 **Positive/Negative 포인트**를 샘플링  
+- `segment-anything`의 `SamPredictor.predict(point_coords, point_labels)`에 전달  
+- 결과 **segmentation mask** 시각화(overlay)
+
+> SAM 연동 예시는 별도 포스트/섹션에서 다룹니다. (`sam_vit_b.pth` 등 체크포인트 필요)
+
+---
+
+## 마치며
+
+이 글에서는 **VLM 기반 Attention Map**을 만들어 **VL-SAM**의 전반적인 흐름을 검증했습니다.  
+환경/빌드 차이로 어텐션 제공 방식이 다를 수 있으니, 위 **수동 루프/근사 전략**을 기반으로 시작해 보세요.  
+필요하시면 **비전 어텐션 후크 버전** 또는 **히든 유사도 기반 경량 버전**도 첨부해 드릴게요.
