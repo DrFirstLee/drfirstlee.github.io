@@ -10,6 +10,191 @@ sitemap:
   priority: 0.8
 ---
 
+---
+### 🎭 (English) MaskPrompt: Achieving Open-Vocabulary Affordance Segmentation with Object Shape Mask Prompts!  
+
+![Image](https://github.com/user-attachments/assets/cbe289c4-dada-435e-b2ee-2fca297c2166)  
+
+* **Title**: [MaskPrompt: Open-Vocabulary Affordance Segmentation with Object Shape Mask Prompts](https://ojs.aaai.org/index.php/AAAI/article/view/32200)  
+* **Conference**: AAAI 2025  
+* **Authors**: Dongpan Chen, Dehui Kong, Jinghua Li, Baocai Yin (Beijing Univ. of Tech)  
+* **Keywords**: `Affordance`, `Segmentation`, `Open-Vocabulary`, `Mask Prompt`, `Vision-Language`  
+* **Summary**: MaskPrompt proposes a novel approach using **object mask prompts** to accurately segment object functional units (affordances) in complex scenes and open vocabulary settings. A new OVAS-25 benchmark is built, and the method significantly outperforms existing SOTA models! 🚀  
+
+---
+
+### 🚀 Key Contributions
+
+> One-line summary: **“MaskPrompt = Object mask + text prompt to solve open-world affordance segmentation!”**
+
+1) **New Task Definition (OVAS)**  
+- Propose **Open-Vocabulary Affordance Segmentation (OVAS)**  
+- Generalizes to affordances unseen in training  
+
+2) **MaskPrompt Method**  
+- **Mask Prompt Generation (MPGM)**: Use DETR + SAM to generate object masks, Alpha-CLIP to generate mask region captions  
+- **Mask Prompt Feature Enhancement (MPFEM)**: Remove background, enhance instance-centric features  
+- **Affordance Prediction Module (APM)**: Fuse visual features + text prompts for fine-grained affordance segmentation  
+
+3) **Benchmark & Experimental Performance**  
+- Build new **OVAS-25 dataset** (28 entities, 25 affordances, 18.9k images)  
+- Achieves strong performance on existing datasets (IIT-AFF, UMD)  
+
+---
+
+### 🔍 Limitations of Prior Work & Our Differences  
+
+- **Previous Affordance Segmentation methods**:  
+  - Tried attention-based segmentation, but data was insufficient  
+  - Explored weakly supervised methods  
+  - Recently extended to 3D affordance segmentation  
+  - However, these methods only leveraged global features → vulnerable to background and adjacent object interference  
+
+- **In Open-Vocabulary Image Segmentation**:  
+  - Aim to segment categories unseen during training  
+  - Existing works map image & word embeddings, or use VLMs like CLIP to leverage visual-semantic knowledge  
+  - Prompt learning and other strategies have been introduced to further boost segmentation performance  
+
+---
+
+### 🧱 MaskPrompt Architecture
+
+![Image](https://github.com/user-attachments/assets/ea6f1ecc-1b08-4fc3-9a21-d01cd728d74f)  
+
+1) **MPGM (Mask Prompt Generation Module): Object Mask + Caption Generation**  
+  a. Generate Object Shape Mask (\(M_{os}\)) using DETR (bbox detection) + SAM (segmentation)  
+  b. Generate Mask Caption (\(w_{mask}\)): feed original image + mask into Alpha-CLIP (BLIP2-based) to obtain mask region captions  
+
+2) **MPFEM (Mask Prompt Feature Enhancement Module): Background Removal + Feature Enhancement**  
+  a. Input original image into ViT → Global Feature  
+  b. Use \(M_{os}\) to create instance features per object  
+  c. Concatenate all and reduce dimension with CNN → Enhanced visual feature (\(F_v\))  
+
+3) **APM (Affordance Prediction Module): Fuse Text Prompts & Output Affordance Segmentation Map**  
+![Image](https://github.com/user-attachments/assets/9a828b15-9f5e-4db9-8afd-b0b4eebd48c1)  
+
+  a. **Mask Proposals**  
+   - Tokenize object names (\(w_{obj}\)), affordance names (\(w_{aff}\)), and \(w_{mask}\)  
+   - Concatenate tokens and encode with CLIP → joint embedding \(F_t\)  
+   - Input \(F_v\) (visual features) and \(F_t\) (text embedding) into **Pixel Decoder**  
+   - Pixel Decoder: \(F_v\) passes self-attention + normalization, then cross-attention with \(F_t\), followed by FFN (repeated L times) → fused feature \(F_{vt}\)  
+
+  b. **Affordance Classification (Mask Class Embedding)**  
+   - Pass \(F_{vt}\) through MLP → generate class-agnostic mask proposals (\(M_{ca}\)) and mask class embedding (\(F_{cls}\))  
+   - Compute dot product between \(F_{cls}\) and \(F_t\) → affordance class scores (\(s_{cls}\))  
+
+  - **Loss Function**: classification accuracy + mask accuracy  
+      \[
+      L = L_{cls}(\hat{s}_{cls}, s_{cls}) + \lambda \cdot L_{mask}(\hat{m}, m)
+      \]  
+
+---
+
+### 🧪 Experiments  
+
+#### Datasets  
+
+1. **OVAS-25 (Proposed Dataset)**  
+- **Composition**: IIT-AFF + Pascal-Part-108 re-annotated (object, human, animal affordances)  
+- **Classes**: 28 entity classes, 25 affordance classes  
+- **Size**: 18,938 images total  
+  - Train: 11,363  
+  - Test: 7,575  
+
+2. **IIT-AFF (Nguyen et al. 2017)**  
+- **Classes**: 10 object categories, 9 affordances  
+- **Size**: 8,835 images  
+  - 6,496 from ImageNet  
+  - 2,339 from robot video frames  
+
+3. **Pascal-Part-108 (Michieli et al. 2020)**  
+- **Classes**: 20 object categories, 108 object part categories  
+- **Size**: 10,103 images  
+- Re-annotated for OVAS-25 with affordance labels  
+
+4. **UMD (Myers et al. 2015) & Other Part Segmentation Datasets**  
+- **UMD affordance dataset**  
+- Additional datasets: Pascal-Part-58, Pascal-Part-116, Pascal-Part-201, ADE20K-Part-234  
+
+---
+
+#### Training & Evaluation  
+
+- **Object Detector**: Pre-trained DETR  
+  - Threshold \(T = 0.7\)  
+  - DETR, SAM, Alpha-CLIP → frozen  
+
+- **Training Settings**  
+  - Iterations: **120K**  
+  - Learning Rate: **1e-4**, reduced 10× at 60K & 100K  
+  - Optimizer: **AdamW**  
+  - Weight Decay: **1e-4**  
+  - Batch Size: **32**  
+
+- **Pixel Decoder**  
+  - Layers \(L\): **6**  
+  - Embedding Dim: **768**  
+  - Heads: **12**  
+  - Hidden Dim (FFN): **3072**  
+  - Feature dims: \(d, d_t, d_v, d_{vt}, d_{cls} = 512\)  
+
+- **Environment**: NVIDIA A800 80GB GPU  
+
+- **Metrics**  
+  - mIoU (mean Intersection over Union)  
+  - mAvg (mean Average)  
+  - F1-Score  
+
+---
+
+#### Results & Analysis  
+
+A. **Quantitative Results**  
+![Image](https://github.com/user-attachments/assets/39b2293d-d9bf-4e2c-a7da-0d4d1fec83ab)  
+
+1. 🎯 **OVAS-25 (Proposed Benchmark)**  
+- MaskPrompt (ResNet-101): **mIoU 71.26, F1 81.58** → **+5.27% improvement** over prior SOTA  
+
+2. 🎯 **Existing Datasets (IIT-AFF, UMD)**  
+- IIT-AFF: F1 89.46  
+- UMD: F1 93.83 (competitive with prior SOTA)  
+
+3. 🎯 **Generalization to Part Segmentation**  
+- Strong generalization on Pascal-Part-58/108/201 and ADE20K-Part-234  
+
+---
+
+B. **Qualitative Comparison**  
+![Image](https://github.com/user-attachments/assets/2d46fde6-7ba3-427e-92f9-aaa88eb7a65b)  
+
+a. **Complex Backgrounds**: Suppresses interference better than baselines  
+b. **Small Object Parts**: e.g., detects bottle cap “contain” affordance precisely  
+c. **Adjacent Objects**: Accurately separates overlapping boundaries  
+
+---
+
+C. **Ablation Analysis**  
+
+- 2nd Row: **+MPFEM** → +6.9% mIoU  
+- 3rd Row: **+Fine-grained Text Prompts (MPGM outputs)** + Pixel Decoder modified with cross-attention → +2.24% mIoU  
+- 4th Row: **Proposed Pixel Decoder** → further +1.61% mIoU (best result)  
+
++ Also achieved **lower compute cost** compared to alternatives!  
+
+---
+
+## ✅ Conclusion  
+
+- MaskPrompt offers a new approach for **open-vocabulary affordance segmentation**  
+- **Key Contributions**:  
+  1. Propose OVAS task & build **OVAS-25 dataset**  
+  2. Develop **MaskPrompt framework** with object mask prompts  
+  3. Achieve SOTA-level performance across diverse datasets  
+- → Potentially impactful for real-world applications in **robotics, HOI, AR/VR** 🎯  
+
+---
+
+
 ### 🎭 (한국어) MaskPrompt: 객체 Shape Mask 프롬프트로 Open-Vocabulary Affordance Segmentation 달성!  
 
 ![Image](https://github.com/user-attachments/assets/cbe289c4-dada-435e-b2ee-2fca297c2166)  
@@ -74,17 +259,17 @@ sitemap:
 3) **APM**(affordance prediction module): 텍스트 프롬프트와 융합해 최종 affordance segmentation map 출력  
 ![Image](https://github.com/user-attachments/assets/9a828b15-9f5e-4db9-8afd-b0b4eebd48c1)
 
-  a. 첫번째로 클래스에 매칭되는 mask를 만들고(Mask proposals)
+  a. **첫번째로 클래스에 매칭되는 mask를 만들고(Mask proposals)**  
     - 객채 이름(w_obj), Affordance 명칭(w_aff) 이랑 1-b의 w_mask를 각각 클립으로 토크나이즈로 토큰만들고,  
     - 토큰을 합쳐서 CLIP으로 임베딩한 F_t를 만든다!!  
     - 2-c에서 만든 Visual Feature F_v랑 텍스트 임베딩 F_t를 **Pixel Decoder**에 넣는다.  
     - Pixel Decoder는 F_v는 self-attention block 및 L2정규화를 지나 cross-attention block에 F_t랑 같이 들어가고,  
     - 그들은 그 다음 FFN 블록을 지나서 (L번 반복해서) F_vt라는 Feature로 만들어진다.  
-  b. 두번쨰로 그 mask에 대한 affordance class를 예측한다.(Mask Class Embedding)  
+  b. **두번쨰로 그 mask에 대한 affordance class를 예측한다.(Mask Class Embedding)**  
     - 마지막으로 F_vt는 MLP를 지나서 클클래스에 매칭되는 mask(M_ca)랑 mask class embedding(F_cls)를 생성한다.    
     - 그리고 F_cls 랑 F_t를 dot product 해서 open set of affordance classes에 대한 점수(s_cls)를 구한다.  
 
-  - 이때의 Loss function은 Class 구분에 대한 정확성 + mask의 정확석 을 가지고 구함!
+  - 이때의 Loss function은 Class 구분에 대한 정확성 + mask의 정확석 을 가지고 구함!  
       `L = L_cls(ˆs_cls; s_cls) + λ*L_mask( ˆm; m)`
 
 
@@ -101,22 +286,18 @@ sitemap:
   - 학습: 11,363장
   - 테스트: 7,575장
 
----
-
 2. IIT-AFF (Nguyen et al. 2017)
 - **클래스**: 10개 객체 카테고리, 9개 affordance 카테고리
 - **규모**: 총 8,835장
   - ImageNet에서 6,496장
   - 로봇 카메라로 수집된 복잡한 장면 비디오 프레임 2,339장
 
----
 
 3. Pascal-Part-108 (Michieli et al. 2020)
 - **클래스**: 20개 객체 카테고리, 108개 객체 파트 카테고리
 - **규모**: 총 10,103장
 - 본 연구에서는 **annotation을 affordance 기준으로 변경**하여 OVAS-25 구축에 활용
 
----
 
 4. UMD (Myers et al. 2015) & 기타 파트 데이터셋
 - **UMD affordance dataset**
@@ -126,7 +307,6 @@ sitemap:
   - Pascal-Part-201 (Singh et al. 2022)
   - ADE20K-Part-234 (Wei et al. 2024)
 
----
 
 #### 실험 설계 및 평가지표  
 
@@ -162,18 +342,18 @@ sitemap:
 
 #### 실험 결과 및 분석 
 
-A 실험결과지표  
+A. 실험결과지표  
 ![Image](https://github.com/user-attachments/assets/39b2293d-d9bf-4e2c-a7da-0d4d1fec83ab)
 
-1.🎯 OVAS-25 (본 논문 제안 벤치마크)  
-- MaskPrompt (ResNet-101): **mIoU 71.26, F1 81.58** → 기존 SOTA 대비 **+5.27% 향상**
+  1.🎯 OVAS-25 (본 논문 제안 벤치마크)  
+  - MaskPrompt (ResNet-101): **mIoU 71.26, F1 81.58** → 기존 SOTA 대비 **+5.27% 향상**  
 
-2. 🎯 기존 데이터셋 (IIT-AFF, UMD)  
-- IIT-AFF: F1 89.46  
-- UMD: F1 93.83 (기존 최고 성능 모델과 경쟁적)
+  2. 🎯 기존 데이터셋 (IIT-AFF, UMD)  
+  - IIT-AFF: F1 89.46  
+  - UMD: F1 93.83 (기존 최고 성능 모델과 경쟁적)
 
-3. 🎯 Part Segmentation 확장성  
-- Pascal-Part-58, 108, 201, ADE20K-Part-234에서도 강력한 일반화 성능 입증  
+  3. 🎯 Part Segmentation 확장성  
+  - Pascal-Part-58, 108, 201, ADE20K-Part-234에서도 강력한 일반화 성능 입증  
 
 ---
 
@@ -181,9 +361,9 @@ B. 👀 정성 비교
 
 ![Image](https://github.com/user-attachments/assets/2d46fde6-7ba3-427e-92f9-aaa88eb7a65b)
 
-a. **복잡한 배경**: 기존 모델 대비 간섭 억제 성능 우수  
-b. **작은 객체 부품 탐지**: 예) 병뚜껑의 “contain” affordance까지 정확히 탐지  
-c. **인접 객체 처리**: 경계가 섞이는 경우에도 정밀하게 분리  
+  a. **복잡한 배경**: 기존 모델 대비 간섭 억제 성능 우수  
+  b. **작은 객체 부품 탐지**: 예) 병뚜껑의 “contain” affordance까지 정확히 탐지  
+  c. **인접 객체 처리**: 경계가 섞이는 경우에도 정밀하게 분리  
 
 ---
 
@@ -193,7 +373,8 @@ C. 🧪 Ablation 분석
 - 3행: **MPGM추가** + Pixel Decoder가 텍스트를 받을 수 있도록 변형됨 (cross-attention 추가) → 추가로 mIoU +2.24%  
 - 4행 : **Pixel Decoder 추가** → 최고 성능   
 
-D. 또한 Computing power 도 적게썻다!!  
++ 또한 Computing power 도 적게썻다!!  
+
 ---
 
 ## ✅ 결론  
