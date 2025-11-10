@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🔍 Contrastive Learning을 통한 Affordance Grounding 문제해결! (ICCV 2025)"
+title: "🔍양방향 학습을 통한 Affordance Grounding 문제해결! (ICCV 2025)"
 author: [DrFirst]
 date: 2025-11-10 09:00:00 +0900
 categories: [AI, Research]
@@ -35,7 +35,7 @@ sitemap:
   - exo의 가림도 반영이 안되기에 진짜 affordance 영역을 잘 못찾는다!  
 
 2) **Their solutions**  
-① 양방향의 학습법(LoopTrans)를 통해서 exo와 ego domain을 모두 학습한다!  
+  ① 양방향의 학습법(LoopTrans)를 통해서 exo와 ego domain을 모두 학습한다!  
 
 ---
 
@@ -55,13 +55,15 @@ sitemap:
 
 ### 🔍 본 연구의 방법론!!!    
 
-#### 4 모델 Architecture  
+#### 4. 모델 Architecture  
 
 ![Image](https://github.com/user-attachments/assets/15d0fc26-2dfd-4cbe-a671-a0b7df7ee04c)
 
 A. 𝜣_pixel : 최종 inference에 사용되는 모델.  
   - 추론단계 : I_ego => DINO-ViT => F_ego => 𝜣_pixel 을 통해 최종 heatmap(P) 가 나온다.  
+
 B. 𝜣_scam : ego 이미지와 exo 이미지를 동시에 활용하여 학습된, 공통 CAM 모델 (shared CAM)으로 𝜣_pixel 학습에 활용됨    
+
 C. Loss는?  3가지 Loss로 구성  
   - 1번.  Interaction → Activation 로,  CAM 모델을 학습시키는 Loss. `L_cls`  
   - 2번. Activation → Localization 으로써, ego 이미지의 activation 결과를 모델 locatalization에 적용시키는 `L_pixel`  
@@ -72,7 +74,7 @@ C. Loss는?  3가지 Loss로 구성
 #### 4.1 Unified Exo-to-Ego Activation  
 > 𝜣_scam 을 학습시킨다!!  
 
-![Image4.1](https://private-user-images.githubusercontent.com/43365171/512231866-9a3c6263-3ac2-45c2-94f2-ab27d5ad48bc.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjI3ODc3NjIsIm5iZiI6MTc2Mjc4NzQ2MiwicGF0aCI6Ii80MzM2NTE3MS81MTIyMzE4NjYtOWEzYzYyNjMtM2FjMi00NWMyLTk0ZjItYWIyN2Q1YWQ0OGJjLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTExMTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMTEwVDE1MTEwMlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWJhNWM4ZGUzNjhlNDczZjgyY2M5ODk0NWRmMTU4Njg0MDQ5MDEwZjAyNDljNzQ4ZWFiMWMxNDg0MzYxMGUxYTUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.sPuL_WCsnnnLOQQzLcDn0gLZvhVv4oEcv2ervZRo4aE)
+![Image4.1](https://github.com/user-attachments/assets/9a3c6263-3ac2-45c2-94f2-ab27d5ad48bc)
 
 - exo 와 exo 이미지를 통합, action 을 label로하는 shared CAM 모델을 만든다!
 - `L_cls`를 통하여 학숩됨  
@@ -80,7 +82,7 @@ C. Loss는?  3가지 Loss로 구성
 #### 4.2. Region Activation to Pixel Localization  
 > inference의 메인 모델인 𝜣_pixel 을 학습시킨다!!  
 
-![Image4.2](https://private-user-images.githubusercontent.com/43365171/512233616-0c3829a6-cb22-4654-aa10-106d4c5ca5dc.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjI3ODc5NzUsIm5iZiI6MTc2Mjc4NzY3NSwicGF0aCI6Ii80MzM2NTE3MS81MTIyMzM2MTYtMGMzODI5YTYtY2IyMi00NjU0LWFhMTAtMTA2ZDRjNWNhNWRjLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTExMTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMTEwVDE1MTQzNVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWI2MWQzZGY0ZDliNDFjODZmMjIwOTZjMDhlMzc1NWRiZTAxMTQ5MzUyZDgzMmE0ZGQ4NWNkOGExYTE0YjBkNDImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.3PS_Z_fM3fjLRUqiSYx6cnLN2TgxcKbfI413QtJCjKY)
+![Image4.2](https://github.com/user-attachments/assets/0c3829a6-cb22-4654-aa10-106d4c5ca5dc)
 
 - DINO 결과를 통해 clusted 된 Localization 결과물(M_ego)에 우리의 activation 결과를 일치시킨다.  
 - 즉! Activation → Localization  
