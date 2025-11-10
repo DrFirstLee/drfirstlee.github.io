@@ -2,7 +2,7 @@
 layout: post
 title: "🔍 Contrastive Learning을 통한 Affordance Grounding 문제해결! (ICCV 2025)"
 author: [DrFirst]
-date: 2025-11-1009:00:00 +0900
+date: 2025-11-10 09:00:00 +0900
 categories: [AI, Research]
 tags: [Computer Vision, Affordance, Weakly-Supervised, Cloased-Loop, ICCV 2025, ICCV]
 sitemap:
@@ -12,7 +12,7 @@ sitemap:
 
 ### 🔍 Closed-Loop Transfer for Weakly-supervised Affordance Grounding 논문 읽기!  
 
-![manhwa]()
+![manhwa](https://github.com/user-attachments/assets/8cdb3aa3-2313-4ab4-9e7f-08b928ee40ff)
 
 * **제목**: [Closed-Loop Transfer for Weakly-supervised Affordance Grounding](https://arxiv.org/pdf/2510.17384)  
 * **학회 및 저자**: Tang et al., ICCV 2025  
