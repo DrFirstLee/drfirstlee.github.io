@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "🔍양방향 학습을 통한 Affordance Grounding 문제해결! (ICCV 2025)"
+title: "🔍LocalizationHeads - LVLM을 활용하여 Training-Free로 Segmentation 하기!! (CVPR 2025)"
 author: [DrFirst]
 date: 2025-12-12 09:00:00 +0900
 categories: [AI, Research]
-tags: [Computer Vision, Affordance, Weakly-Supervised, Cloased-Loop, ICCV 2025, ICCV]
+tags: [Computer Vision, LVLM, TrainingFree, LocalizationHeads, CVPR 2025, CVPR]
 sitemap:
   changefreq: monthly
   priority: 0.8
@@ -13,7 +13,7 @@ sitemap:
 ### 🔍 Your Large Vision-Language Model Only Needs A Few Attention Heads For Visual Grounding 논문 읽기!  
 
 ![wow](https://github.com/user-attachments/assets/392d75be-41d6-4c4a-85a6-b5b48cb9041a)
-> 결과이미지 감상하기!
+> 결과이미지 감상하기! - TF방식으로 다양한 LVLM에 적용 가능하다!  
 
 * **제목**: [Your Large Vision-Language Model Only Needs A Few Attention Heads For Visual Grounding](https://arxiv.org/pdf/2503.06287)  
 * **학회 및 저자**: Kang et al., CVPR 2025  

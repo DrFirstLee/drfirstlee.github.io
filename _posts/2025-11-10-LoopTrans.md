@@ -4,7 +4,7 @@ title: "🔍양방향 학습을 통한 Affordance Grounding 문제해결! (ICCV 
 author: [DrFirst]
 date: 2025-11-10 09:00:00 +0900
 categories: [AI, Research]
-tags: [Computer Vision, Affordance, Weakly-Supervised, Cloased-Loop, ICCV 2025, ICCV]
+tags: [Computer Vision, Affordance, Weakly-Supervised, Closed-Loop, ICCV 2025, ICCV]
 sitemap:
   changefreq: monthly
   priority: 0.8
