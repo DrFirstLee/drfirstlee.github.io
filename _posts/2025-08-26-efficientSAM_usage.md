@@ -3,7 +3,7 @@ layout: post
 title: "🧠 EfficientSAM Hands-On Practice!! : EfficientSAM 실습!! with Python"
 author: [DrFirst]
 date: 2025-08-26 09:00:00 +0900
-categories: [Computer Vision, Experiment]
+categories: [AI, Experiment]
 tags: [EfficientSAM, Segment Anything, Meta AI, Fine-tuning, Python, SAM, Vision]
 sitemap:
   changefreq: weekly
