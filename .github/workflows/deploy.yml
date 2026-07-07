@@ -1,0 +1,70 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: ["master"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: blog
+
+      - name: Install Node tools & Build Assets
+        run: |
+          if [ -f package.json ]; then
+            npm install
+            npm run build
+          fi
+        working-directory: blog
+
+      - name: Build Jekyll Site
+        run: bundle exec jekyll build
+        working-directory: blog
+        env:
+          JEKYLL_ENV: production
+
+      - name: Organize Deployment Directory
+        run: |
+          mv blog/_site ./_tmp_blog
+          rm -rf blog
+          mv ./_tmp_blog blog
+
+      - name: Create sub-nojekyll
+        run: touch blog/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
